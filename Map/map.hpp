@@ -4,21 +4,32 @@
 #include <iostream>
 #include <utility>
 #include <climits>
-#include "../iterators/bidirectional_iterator.hpp"
+#include "map_iterator.hpp"
 
-template<typename Key, typename T> class bidirectional_iterator;
-template<typename Key, typename T> class reverse_bidirectional_iterator;
-template<typename Key, typename T> struct __map;
-
+/*
+**SPECIAL CASES
+**Empty containers do not segfault in begin(), iterator object that tries to access ->first ->second, returns uninitilized memory address with random value
+**Iterator going out of scope segfaults
+**
+**Begin should return empty iterator if container is empty
+**Do not protect iterator from going out of scope
+*/
 
 namespace ft
 {
-
   template<typename Key, typename T, typename Compare=std::less<Key> > //less found in functional library,
   class map //Ordered list, the key values should be ordered not the element values, default comparison is from smaller to bigger values
   {
   private:
-    struct __map<Key, T> *_map;
+    struct __map
+    {
+      struct __map *head;
+      struct __map *next;
+      struct __map *prev;
+      T element_value;
+      Key key_value;
+    };
+    struct __map *_map;
     unsigned int _size;
 
     class value_compare //Not necessary to use, but asked to do and return in vlue_comp function
@@ -32,27 +43,37 @@ namespace ft
       void operator=(const value_compare &to_copy) {comp = to_copy.get_comp();}
 
       Compare get_comp() const { return (comp); }
-      bool operator()(const bidirectional_iterator<Key, T> &x, const bidirectional_iterator<Key, T> &y) { return (comp(x->first, y->first)); } // directly give iterators as argument, easier but not necessary...
+      bool operator()(const Map::iterator<Key, T> &x, const Map::iterator<Key, T> &y) { return (comp(x->first, y->first)); } // directly give iterators as argument, easier but not necessary...
     };
 
-    bidirectional_iterator<Key, T> _insert(const Key &k, const T &value);
-    void _erase(struct __map<Key, T> *position);
+    Map::iterator<Key, T> _insert(const Key &k, const T &value);
+    void _erase(struct __map *position);
     bool is_in(const Key &k) const;
     template<typename inputiterator>
     void cpy(inputiterator first, inputiterator last);
+
   public:
+    typedef Map::iterator<Key, T> iterator;
+    typedef const Map::iterator<Key, T> const_iterator;
+    typedef Map::reverse_iterator<Key, T> reverse_iterator;
+    typedef const Map::reverse_iterator<Key, T> const_reverse_iterator;
+
     map(): _size(0) {}
     template<typename inputiterator>
     map(inputiterator first, inputiterator last) { _size = 0; cpy(first, last); } //range constructor
     map(const map<Key, T> &to_copy) { _size = 0; *this = to_copy; }
-    ~map() { clear(); };
     void operator=(const map<Key, T> &to_copy) { clear(); cpy(to_copy.begin(), to_copy.end()); }
+    ~map() { clear(); };
 
     //Iterators
-    bidirectional_iterator<Key, T> begin() const { return (bidirectional_iterator<Key, T>(_map->head)); }
-    bidirectional_iterator<Key, T> end() const;
-    reverse_bidirectional_iterator<Key, T> rbegin() const;
-    reverse_bidirectional_iterator<Key, T> rend() const { return (reverse_bidirectional_iterator<Key, T>(_map->head)); }
+    iterator begin() { return (iterator(_map->head)); }
+    const_iterator begin() const { return (const_iterator(_map->head)); }
+    iterator end();
+    const_iterator end() const;
+    reverse_iterator rbegin();
+    const_reverse_iterator rbegin() const;
+    reverse_iterator rend() { return (reverse_iterator(_map->head)); }
+    const_reverse_iterator rend() const { return (const_reverse_iterator(_map->head)); }
 
     //Capacity
     bool empty() const;
@@ -63,13 +84,13 @@ namespace ft
     T &operator[](const Key& k);
 
     //Modifiers
-    std::pair<bidirectional_iterator<Key, T>, bool> insert(const std::pair<Key, T> &val);
-    bidirectional_iterator<Key, T> insert(bidirectional_iterator<Key, T> position, const std::pair<Key, T> &val);
+    std::pair<iterator, bool> insert(const std::pair<Key, T> &val);
+    iterator insert(iterator position, const std::pair<Key, T> &val);
     template<typename inputiterator>
     void insert(inputiterator first, inputiterator last);
-    void erase(bidirectional_iterator<Key, T> position);
+    void erase(iterator position);
     unsigned int erase(const Key &k);
-    void erase(bidirectional_iterator<Key, T> first, bidirectional_iterator<Key, T> last);
+    void erase(iterator first, iterator last);
     void swap(map &x);
     void clear();
 
@@ -78,33 +99,79 @@ namespace ft
     value_compare value_comp() const { return (value_compare()); } //Returns the value comparison object or class created above
 
     //Operations
-    bidirectional_iterator<Key, T> find(const Key &k);
+    iterator find(const Key &k);
+    const_iterator find(const Key &k) const;
     unsigned int count(const Key &k) const;
-    bidirectional_iterator<Key, T> lower_bound(const Key &k);
-    bidirectional_iterator<Key, T> upper_bound(const Key &k);
-    std::pair<bidirectional_iterator<Key, T>, bidirectional_iterator<Key, T> > equal_range(const Key &k);
+    iterator lower_bound(const Key &k);
+    const_iterator lower_bound(const Key &k) const;
+    iterator upper_bound(const Key &k);
+    const_iterator upper_bound(const Key &k) const;
+    std::pair<iterator, iterator > equal_range(const Key &k);
+    std::pair<const_iterator, const_iterator > equal_range(const Key &k) const;
   };
 
   template<typename Key, typename T, typename Compare>
-  bidirectional_iterator<Key, T> map<Key, T, Compare>::end() const
+  Map::iterator<Key, T> map<Key, T, Compare>::end()
   {
-    struct __map<Key, T> *tmp;
+    struct __map *tmp;
 
+    if (_size == 0)
+    {
+      std::cout << "Out of range calling segfault..." << std::endl;
+      raise (SIGSEGV);
+    }
     tmp = _map->head;
     while (tmp->next != 0)
       tmp = tmp->next;
-    return (bidirectional_iterator<Key, T>(tmp));
+    return (iterator(tmp));
   }
 
   template<typename Key, typename T, typename Compare>
-  reverse_bidirectional_iterator<Key, T> map<Key, T, Compare>::rbegin() const
+  const Map::iterator<Key, T> map<Key, T, Compare>::end() const
   {
-    struct __map<Key, T> *tmp;
+    struct __map *tmp;
 
+    if (_size == 0)
+    {
+      std::cout << "Out of range calling segfault..." << std::endl;
+      raise (SIGSEGV);
+    }
     tmp = _map->head;
     while (tmp->next != 0)
       tmp = tmp->next;
-    return (reverse_bidirectional_iterator<Key, T>(tmp));
+    return (const_iterator(tmp));
+  }
+
+  template<typename Key, typename T, typename Compare>
+  Map::reverse_iterator<Key, T> map<Key, T, Compare>::rbegin()
+  {
+    struct __map *tmp;
+
+    if (_size == 0)
+    {
+      std::cout << "Out of range calling segfault..." << std::endl;
+      raise (SIGSEGV);
+    }
+    tmp = _map->head;
+    while (tmp->next != 0)
+      tmp = tmp->next;
+    return (reverse_iterator(tmp));
+  }
+
+  template<typename Key, typename T, typename Compare>
+  const Map::reverse_iterator<Key, T> map<Key, T, Compare>::rbegin() const
+  {
+    struct __map *tmp;
+
+    if (_size == 0)
+    {
+      std::cout << "Out of range calling segfault..." << std::endl;
+      raise (SIGSEGV);
+    }
+    tmp = _map->head;
+    while (tmp->next != 0)
+      tmp = tmp->next;
+    return (const_reverse_iterator(tmp));
   }
 
   template<typename Key, typename T, typename Compare>
@@ -116,10 +183,10 @@ namespace ft
       return (false);
   }
 
-  template<typename Key, typename T, typename Compare> //If key not found inserts it as new key with a non specified element value
+  template<typename Key, typename T, typename Compare> //If key not found inserts it as new key with a non specified element value 0
   T &map<Key, T, Compare>::operator[](const Key &k)
   {
-    struct __map<Key, T> *tmp;
+    struct __map *tmp;
 
     _insert(k, 0);
     _map = _map->head;
@@ -130,9 +197,9 @@ namespace ft
   }
 
   template<typename Key, typename T, typename Compare>
-  std::pair<bidirectional_iterator<Key, T>, bool> map<Key, T, Compare>::insert(const std::pair<Key, T> &val) //Pair is a class from the utility library it acts like a tuple that can hold two values of different type
+  std::pair<Map::iterator<Key, T>, bool> map<Key, T, Compare>::insert(const std::pair<Key, T> &val) //Pair is a class from the utility library it acts like a tuple that can hold two values of different type
   {
-    std::pair<bidirectional_iterator<Key, T>, bool> ret;
+    std::pair<iterator, bool> ret;
 
     if (is_in(val.first))
       ret.second = true; //Set to true because key element did not exist yet
@@ -143,9 +210,9 @@ namespace ft
   }
 
   template<typename Key, typename T, typename Compare>
-  bidirectional_iterator<Key, T> map<Key, T, Compare>::insert(bidirectional_iterator<Key, T> position, const std::pair<Key, T> &val) //Position is a hint to where the new element should be placed in map, but order is always primordial in the map container thus the hint position is not necessary, thus prior insert funtion can be used but return value differs
+  Map::iterator<Key, T> map<Key, T, Compare>::insert(iterator position, const std::pair<Key, T> &val) //Position is a hint to where the new element should be placed in map, but order is always primordial in the map container thus the hint position is not necessary, thus prior insert funtion can be used but return value differs
   {
-    std::pair<bidirectional_iterator<Key, T>, bool> inser;
+    std::pair<iterator, bool> inser;
 
     (void)position; //Unused parameter
     inser = insert(val);
@@ -165,13 +232,18 @@ namespace ft
   }
 
   template<typename Key, typename T, typename Compare>
-  void map<Key, T, Compare>::erase(bidirectional_iterator<Key, T> position)
+  void map<Key, T, Compare>::erase(iterator position)
   {
-    struct __map<Key, T> *tmp;
+    struct __map *tmp;
 
+    if (_size == 0)
+    {
+      std::cout << "Out of range calling segfault..." << std::endl;
+      raise (SIGSEGV);
+    }
     _map = _map->head;
     tmp = _map;
-    while (tmp != 0 && tmp != position.get_map_ptr())
+    while (tmp != 0 && tmp != position.get_map()) //Get address map
       tmp = tmp->next;
     _erase(tmp);
   }
@@ -179,10 +251,13 @@ namespace ft
   template<typename Key, typename T, typename Compare>
   unsigned int map<Key, T, Compare>::erase(const Key &k) //Returns number of erased elements
   {
-    struct __map<Key, T> *tmp;
+    struct __map *tmp;
 
     if (_size == 0)
-      return 0;
+    {
+      std::cout << "Out of range calling segfault..." << std::endl;
+      raise (SIGSEGV);
+    }
     _map = _map->head;
     tmp = _map;
     while (tmp != 0 && tmp->key_value != k)
@@ -194,12 +269,15 @@ namespace ft
   }
 
   template<typename Key, typename T, typename Compare>
-  void map<Key, T, Compare>::erase(bidirectional_iterator<Key, T> first, bidirectional_iterator<Key, T> last)
+  void map<Key, T, Compare>::erase(iterator first, iterator last)
   {
-    bidirectional_iterator<Key, T> rem;
+    iterator rem;
 
     if (_size == 0)
-      return ;
+    {
+      std::cout << "Out of range calling segfault..." << std::endl;
+      raise (SIGSEGV);
+    }
     while (first != last)
     {
       rem = first; //Because value first and rem point on will get deleted
@@ -222,7 +300,7 @@ namespace ft
   template<typename Key, typename T, typename Compare>
   void map<Key, T, Compare>::clear()
   {
-    struct __map<Key, T> *tmp;
+    struct __map *tmp;
 
     if (_size == 0)
       return ;
@@ -237,10 +315,15 @@ namespace ft
   }
 
   template<typename Key, typename T, typename Compare>
-  bidirectional_iterator<Key, T> map<Key, T, Compare>::find(const Key &k)
+  Map::iterator<Key, T> map<Key, T, Compare>::find(const Key &k)
   {
-    struct __map<Key, T> *tmp;
+    struct __map *tmp;
 
+    if (_size == 0)
+    {
+      std::cout << "Out of range calling segfault..." << std::endl;
+      raise (SIGSEGV);
+    }
     _map = _map->head;
     tmp = _map;
     while (tmp != 0 && tmp->key_value != k)
@@ -248,11 +331,31 @@ namespace ft
     if (tmp == 0) //If value not found return end
       return (end());
     else
-      return (bidirectional_iterator<Key, T>(tmp));
+      return (iterator(tmp));
   }
 
   template<typename Key, typename T, typename Compare>
-  unsigned int map<Key, T, Compare>::count(const Key &k) const //NUmber of occurences of a key value, in map all key values are unique so maximum 1
+  const Map::iterator<Key, T> map<Key, T, Compare>::find(const Key &k) const
+  {
+    struct __map *tmp;
+
+    if (_size == 0)
+    {
+      std::cout << "Out of range calling segfault..." << std::endl;
+      raise (SIGSEGV);
+    }
+    _map = _map->head;
+    tmp = _map;
+    while (tmp != 0 && tmp->key_value != k)
+      tmp = tmp->next;
+    if (tmp == 0) //If value not found return end
+      return (end());
+    else
+      return (const_iterator(tmp));
+  }
+
+  template<typename Key, typename T, typename Compare>
+  unsigned int map<Key, T, Compare>::count(const Key &k) const //Number of occurences of a key value, in map all key values are unique so maximum 1
   {
     if (is_in(k) == true)
       return (1);
@@ -260,11 +363,16 @@ namespace ft
   }
 
   template<typename Key,typename T, typename Compare>
-  bidirectional_iterator<Key, T> map<Key, T, Compare>::lower_bound(const Key &k)
+  Map::iterator<Key, T> map<Key, T, Compare>::lower_bound(const Key &k)
   {
-    struct __map<Key, T> *tmp;
+    struct __map *tmp;
     Compare _comp; //Use Compare as type but the variable as the actual function
 
+    if (_size == 0)
+    {
+      std::cout << "Out of range calling segfault..." << std::endl;
+      raise (SIGSEGV);
+    }
     _map = _map->head;
     tmp = _map;
     while (tmp != 0 && _comp(tmp->key_value, k) && tmp->key_value != k)
@@ -272,15 +380,41 @@ namespace ft
     if (tmp == 0) //If value not found return end
       return (end());
     else
-      return (bidirectional_iterator<Key, T>(tmp));
+      return (iterator(tmp));
   }
 
   template<typename Key,typename T, typename Compare>
-  bidirectional_iterator<Key, T> map<Key, T, Compare>::upper_bound(const Key &k)
+  const Map::iterator<Key, T> map<Key, T, Compare>::lower_bound(const Key &k) const
   {
-    struct __map<Key, T> *tmp;
+    struct __map *tmp;
     Compare _comp; //Use Compare as type but the variable as the actual function
 
+    if (_size == 0)
+    {
+      std::cout << "Out of range calling segfault..." << std::endl;
+      raise (SIGSEGV);
+    }
+    _map = _map->head;
+    tmp = _map;
+    while (tmp != 0 && _comp(tmp->key_value, k) && tmp->key_value != k)
+      tmp = tmp->next;
+    if (tmp == 0) //If value not found return end
+      return (end());
+    else
+      return (const_iterator(tmp));
+  }
+
+  template<typename Key,typename T, typename Compare>
+  Map::iterator<Key, T> map<Key, T, Compare>::upper_bound(const Key &k)
+  {
+    struct __map *tmp;
+    Compare _comp; //Use Compare as type but the variable as the actual function
+
+    if (_size == 0)
+    {
+      std::cout << "Out of range calling segfault..." << std::endl;
+      raise (SIGSEGV);
+    }
     _map = _map->head;
     tmp = _map;
     while (tmp != 0 && (_comp(tmp->key_value, k) || tmp->key_value == k))
@@ -288,13 +422,34 @@ namespace ft
     if (tmp == 0) //If value not found return end
       return (end());
     else
-      return (bidirectional_iterator<Key, T>(tmp));
+      return (iterator(tmp));
+  }
+
+  template<typename Key,typename T, typename Compare>
+  const Map::iterator<Key, T> map<Key, T, Compare>::upper_bound(const Key &k) const
+  {
+    struct __map *tmp;
+    Compare _comp; //Use Compare as type but the variable as the actual function
+
+    if (_size == 0)
+    {
+      std::cout << "Out of range calling segfault..." << std::endl;
+      raise (SIGSEGV);
+    }
+    _map = _map->head;
+    tmp = _map;
+    while (tmp != 0 && (_comp(tmp->key_value, k) || tmp->key_value == k))
+      tmp = tmp->next;
+    if (tmp == 0) //If value not found return end
+      return (end());
+    else
+      return (const_iterator(tmp));
   }
 
   template<typename Key, typename T, typename Compare>
-  std::pair<bidirectional_iterator<Key, T>, bidirectional_iterator<Key, T> > map<Key, T, Compare>::equal_range(const Key &k)
+  std::pair<Map::iterator<Key, T>, Map::iterator<Key, T> > map<Key, T, Compare>::equal_range(const Key &k)
   {
-    std::pair<bidirectional_iterator<Key, T>, bidirectional_iterator<Key, T> > ret;
+    std::pair<iterator, iterator > ret;
 
     if (is_in(k)) //Return lower and upper bound in pair tuple if key_value exists
     {
@@ -310,23 +465,41 @@ namespace ft
   }
 
   template<typename Key, typename T, typename Compare>
-  bidirectional_iterator<Key, T> map<Key, T, Compare>::_insert(const Key &k, const T &value)
+  std::pair<const Map::iterator<Key, T>, const Map::iterator<Key, T> > map<Key, T, Compare>::equal_range(const Key &k) const
   {
-    struct __map<Key, T> *position;
-    struct __map<Key, T> *_new;
-    struct __map<Key, T> *tmp;
+    std::pair<const_iterator, const_iterator > ret;
+
+    if (is_in(k)) //Return lower and upper bound in pair tuple if key_value exists
+    {
+      ret.first = lower_bound(k);
+      ret.second = upper_bound(k);
+    }
+    else //Returns two same pointers to first key that goes after k (upper_bound)
+    {
+      ret.first = lower_bound(k);
+      ret.second = lower_bound(k);
+    }
+    return (ret);
+  }
+
+  template<typename Key, typename T, typename Compare>
+  Map::iterator<Key, T> map<Key, T, Compare>::_insert(const Key &k, const T &value)
+  {
+    struct __map *position;
+    struct __map *_new;
+    struct __map *tmp;
     Compare _comp; //Use Compare as type but the variable as the actual function
 
     if (_size == 0)
     {
       _size++;
-      _map = new struct __map<Key, T>;
+      _map = new struct __map;
       _map->head = _map;
       _map->prev = 0;
       _map->next = 0;
       _map->key_value = k;
       _map->element_value = value;
-      return (bidirectional_iterator<Key, T>(_map));
+      return (iterator(_map));
     }
     _map = _map->head;
     tmp = _map;
@@ -334,9 +507,9 @@ namespace ft
     {
       while (tmp->key_value != k)
         tmp = tmp->next;
-      return (bidirectional_iterator<Key, T>(tmp));
+      return (iterator(tmp));
     }
-    _new = new struct __map<Key, T>;
+    _new = new struct __map;
     while (_comp(tmp->key_value, k) && tmp->next != 0) //Insert on correct order
       tmp = tmp->next;
     if (tmp->next == 0 && _comp(tmp->key_value, k)) //If k should come last
@@ -374,13 +547,13 @@ namespace ft
       _new->element_value = value;
     }
     _size++;
-    return (bidirectional_iterator<Key, T>(_new));
+    return (iterator(_new));
   }
 
   template<typename Key, typename T, typename Compare>
   bool map<Key, T, Compare>::is_in(const Key &k) const
   {
-    struct __map<Key, T> *tmp;
+    struct __map *tmp;
 
     if (_size == 0)
       return false;
@@ -394,9 +567,9 @@ namespace ft
   }
 
   template<typename Key, typename T, typename Compare>
-  void map<Key, T, Compare>::_erase(struct __map<Key, T> *position)
+  void map<Key, T, Compare>::_erase(struct __map *position)
   {
-    if (position == 0)
+    if (_size == 0 || position == 0)
       return ;
     if (position->prev == 0) //Remove first element
     {
@@ -431,7 +604,7 @@ namespace ft
   void map<Key, T, Compare>::cpy(inputiterator first, inputiterator last)
   {
     _size++;
-    _map = new struct __map<Key, T>;
+    _map = new struct __map;
     _map->head = _map;
     _map->prev = 0;
     _map->key_value = first->first;
@@ -440,7 +613,7 @@ namespace ft
     {
       ++first;
       _size++;
-      _map->next = new struct __map<Key, T>;
+      _map->next = new struct __map;
       _map->next->head = _map->head;
       _map->next->prev = _map;
       _map = _map->next;
@@ -451,4 +624,5 @@ namespace ft
   }
 
 }//End of namespace ft
+
 #endif

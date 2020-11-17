@@ -15,24 +15,24 @@ private:
   Container _cont;
 
 public:
-  explicit queue(const Container &cont_ = Container()): _size(0), _cont(cont_) {}
-  queue(const queue &to_copy) { *this = to_copy; } //Because coplien form is demanded
-  void operator=(const queue &to_copy) { _cont = to_copy._cont; _size = to_copy._size; } //Because coplien form is demanded
-  ~queue() {} //Because coplien form is demanded
+  explicit queue(const Container &cont_ = Container()): _size(0), _cont(cont_) {} //Explicit keyword is used to block implicit conversions the compiler could make, we set our own explicit conversion to the default container constructor
+
+  //Queue has no object destructor, its adaptator object will automatically go through his destructor
+  //Queue has no object destructor, its adaptator object will automatically go through his destructor
 
   //Capacity
   bool empty() const { if (_size == 0) return true; return false; }
   unsigned int size() const { return _size; }
 
   //Element access
-  T& front() { return (_cont.front()); }
-  const T& front() const { return (_cont.front()); }
-  T& back() { return (_cont.back()); }
-  const T& back() const { return (_cont.back()); }
+  T &front() { return ( _cont.front()); }
+  const T &front() const { return ( _cont.front()); }
+  T &back() { return ( _cont.back()); }
+  const T &back() const { return ( _cont.back()); }
 
   //Modifiers
   void push(const T &value) { _cont.push_back(value); _size++; } //Inserts new element at end of list
-  void pop() { _cont.pop_front();  _size--; } //Erases elements from front of list
+  void pop() { if (_size != 0) _size--; _cont.pop_front(); } //Erases elements from front of list
 
   //Relational operators
   bool operator==(const queue<T,Container> &r) { return _cont == r._cont; } //Will call relational operators of Container class

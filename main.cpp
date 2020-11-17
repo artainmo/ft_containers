@@ -14,7 +14,7 @@ template<typename T>
 void show_list(ft::list<T> &l)
 {
   unsigned int m;
-  bidirectional_iterator<T> i = l.begin();
+  typename ft::list<T>::iterator i = l.begin();
 
   m = 0;
   while(m < l.size())
@@ -31,7 +31,7 @@ template<typename T>
 void show_list_reverse(ft::list<T> &l) //Not in reverse order but using a reverse iterator
 {
   unsigned int m;
-  reverse_bidirectional_iterator<T> i = l.rend();
+  typename ft::list<T>::reverse_iterator i = l.rend();
 
   m = 0;
   while(m < l.size())
@@ -48,7 +48,7 @@ template<typename T>
 void reverse_list(ft::list<T> &l) //Read and show list in reverse order
 {
   unsigned int m;
-  bidirectional_iterator<T> i = l.end();
+  typename ft::list<T>::iterator i = l.end();
 
   m = 0;
   while(m < l.size())
@@ -123,11 +123,14 @@ void show_vector2(ft::vector<T> &l) //Use at function instead of [] operator
   std::cout << std::endl;
 }
 
+
+//MAP
+
 template<typename Key, typename T>
 void show_map(ft::map<Key, T> &l)
 {
   unsigned int m;
-  bidirectional_iterator<Key, T> i = l.begin();
+  typename ft::map<Key, T>::iterator i = l.begin();
 
   m = 0;
   while(m < l.size())
@@ -143,7 +146,7 @@ template<typename Key, typename T>
 void show_map_reverse(ft::map<Key, T> &l) //Not in reverse order but using a reverse iterator
 {
   unsigned int m;
-  reverse_bidirectional_iterator<Key, T> i(l.rend());
+  typename ft::map<Key, T>::reverse_iterator i(l.rend());
 
   m = 0;
   while(m < l.size())
@@ -159,7 +162,7 @@ template<typename Key, typename T>
 void reverse_map(ft::map<Key, T> &l) //Read and show map in reverse order
 {
   unsigned int m;
-  bidirectional_iterator<Key, T> i = l.end();
+  typename ft::map<Key, T>::iterator i = l.end();
 
   m = 0;
   P("(Show it in reverse to see if backwards movement functions properly)");
@@ -172,7 +175,7 @@ void reverse_map(ft::map<Key, T> &l) //Read and show map in reverse order
   }
 }
 
-
+//STACK
 template<typename T>
 void show_stack(ft::stack<T> s)
 {
@@ -184,7 +187,7 @@ void show_stack(ft::stack<T> s)
   std::cout << std::endl;
 }
 
-
+//QUEUE
 template<typename T>
 void show_queue(ft::queue<T> s)
 {
@@ -196,8 +199,10 @@ void show_queue(ft::queue<T> s)
   std::cout << std::endl;
 }
 
-int main()
+int main(int argc, char **argv)
 {
+  if (std::strcmp("list", argv[1]) == 0)
+  {
   //LIST
   P("~~~~~~~LIST~~~~~~~~\n");
   //Contruction and iterators
@@ -210,7 +215,7 @@ int main()
   show_list<int>(l2);
   reverse_list<int>(l2); //To see if backwards reading works properly
   P("Create a ranged list and show its content");
-  bidirectional_iterator<int> i = l2.begin();
+  ft::list<int>::iterator i = l2.begin();
   ++i;
   ++i;
   ++i;
@@ -245,7 +250,7 @@ int main()
   P("Max size function on last list");
   P(l4.max_size());
   P("");
-  //
+
   //Element access
   P("ELEMENT ACCESS");
   P("Accessing first and last element of following list");
@@ -301,7 +306,7 @@ int main()
   P(l4.size());
   P("Inserts a range, the whole list 3, and checks new size");
   l3.assign((unsigned int)4, 9);
-  l4.insert<bidirectional_iterator<int> >(i, l3.begin(), l3.end());
+  l4.insert<ft::list<int>::iterator >(i, l3.begin(), l3.end());
   show_list<int>(l4);
   reverse_list<int>(l4);
   P(l4.size());
@@ -310,7 +315,7 @@ int main()
   show_list<int>(l4);
   reverse_list<int>(l4);
   P("Erase the whole non-5 range");
-  bidirectional_iterator<int> l = l4.begin();
+  ft::list<int>::iterator l = l4.begin();
   ++l;
   ++l;
   --i; //If you do not do this it will point on the just erased value
@@ -365,7 +370,7 @@ int main()
   show_list<int>(l4);
   P("Here we will splice a range from list 2 to 4");
   ++i; //Because the prior position got erased we have to increment it
-  bidirectional_iterator<int> m = i;
+  ft::list<int>::iterator m = i;
   ++m;
   ++m;
   ++m;
@@ -452,7 +457,7 @@ int main()
   show_list<int>(l4);
   P("");
 
-  //Mon-member function overloads
+  //Non-member function overloads
   P("Non-member function overloads");
   ft::list<int> li1((unsigned int)4,4);
   ft::list<int> li2((unsigned int)4,4);
@@ -497,8 +502,33 @@ int main()
   P("After:");
   show_list<int>(li1);
   show_list<int>(li3);
+  P("");
+
+  P("Const list and iterator");
+  const ft::list<int> cl((unsigned int)4,4);
+  ft::list<int>::const_iterator cli = cl.begin();
+  P("Const list calling size, clear and trying to change front value");
+  P(cl.size());
+  // cl.clear(); //Should create compilation error
+  // cl.front() = 9; //Should create compilation error
+  P("Const iterator showing front value and trying to change front value");
+  P(*cli);
+  // *cli = 9; //Should create compilation error
+  P("");
+
+  P("Error management");
+  ft::list<int> el;
+  P("Trying to pop and show front, back in empty container"); //Cannot be tested with empty iterator, because container cannot make iterator point on nothing
+  el.pop_front();
+  el.pop_back();
+  el.front();
+  el.back();
+  P("");
+  }
 
   //VECTOR
+  if (std::strcmp("vector", argv[1]) == 0)
+  {
   P("\n~~~~~~~VECTOR~~~~~~~~\n");
   //Contruction and iterators
   P("CONSTRUCTORS");
@@ -510,7 +540,7 @@ int main()
   ft::vector<int> v2((unsigned int)10, 5); //Indicate unsigned int is necessary otherwise it will use the templated inputiterator (int, int) function
   show_vector<int>(v2);
   P("Create a ranged vector and show its content");
-  random_access_iterator<int> vi = v2.begin();
+  ft::vector<int>::iterator vi = v2.begin();
   ++vi;
   ++vi;
   ++vi;
@@ -626,7 +656,7 @@ int main()
   vi = v2.begin();
   ++vi;
   ++vi;
-  v4.assign<random_access_iterator<int> >(vi, v2.end());
+  v4.assign<ft::vector<int>::iterator >(vi, v2.end());
   show_vector<int>(v4);
   P(v4.size());
   P("Insert element 8 at end of last vector and check new size");
@@ -658,7 +688,7 @@ int main()
   ++vi;
   ++vi;
   v3.assign((unsigned int)4, 1);
-  v4.insert<random_access_iterator<int> >(vi, v3.begin(), v3.end());
+  v4.insert<ft::vector<int>::iterator >(vi, v3.begin(), v3.end());
   show_vector<int>(v4);
   P(v4.size());
   P("Erases the first and last element");
@@ -667,7 +697,7 @@ int main()
   show_vector<int>(v4);
   P(v4.size());
   P("Erase the whole last vector besides two first and last elements");
-  random_access_iterator<int> vl = v4.begin();
+  ft::vector<int>::iterator vl = v4.begin();
   vi = v4.end();
   ++vl;
   ++vl;
@@ -743,8 +773,32 @@ int main()
   P(vi1.size());
   show_vector<int>(vi3);
   P(vi3.size());
+  P("");
+
+  P("Const vector and iterator");
+  const ft::vector<int> cv((unsigned int)4,4);
+  ft::vector<int>::const_iterator cvi = cv.begin();
+  P("Const vector calling size, clear and trying to change front value");
+  P(cv.size());
+  // cv.clear(); //Should create compilation error
+  // cv.front() = 9; //Should create compilation error
+  P("Const iterator showing front value and trying to change front value");
+  P(*cvi);
+  // *cvi = 9; //Should create compilation error
+  P("");
+
+  P("Error management");
+  ft::vector<int> ev;
+  P("Trying to pop and show front, back in empty container"); //Cannot be tested with empty iterator, because container cannot make iterator point on nothing
+  ev.pop_back();
+  ev.front();
+  ev.back();
+  P("");
+  }
 
   //Map
+  if (std::strcmp("map", argv[1]) == 0)
+  {
   P("\n~~~~~~~Map~~~~~~~~\n");
   //Contruction and iterators
   P("CONSTRUCTORS");
@@ -762,7 +816,7 @@ int main()
   show_map<int, int>(m1);
   P(m1.size());
   P("Create a ranged map based on last three elements last list and show its content");
-  bidirectional_iterator<int, int> mi = m1.begin();
+  ft::map<int, int>::iterator mi = m1.begin();
   ++mi;
   ++mi;
   ++mi;
@@ -851,12 +905,12 @@ int main()
   P("Map 3 to be inserted:");
   show_map<int, int>(m3);
   P("New map, should have 6 and 7 as new keys:");
-  m4.insert<bidirectional_iterator<int, int> >(m3.begin(), m3.end());
+  m4.insert<ft::map<int, int>::iterator >(m3.begin(), m3.end());
   show_map<int, int>(m4);
   reverse_map<int, int>(m4);
   P(m4.size());
   P("Erase a whole range only maintaining the first 4 elements"); //Use iterator range
-  bidirectional_iterator<int, int> ml = m4.begin();
+  ft::map<int, int>::iterator ml = m4.begin();
   ++ml;
   ++ml;
   ++ml;
@@ -937,7 +991,7 @@ int main()
   P("Using the equal_range function that returns a pair of iterators lower_bound and upper_bound of key 3");
   show_map<int, int>(m4);
   P("~");
-  std::pair<bidirectional_iterator<int, int>, bidirectional_iterator<int, int> > pm = m4.equal_range(1);
+  std::pair<ft::map<int, int>::iterator, ft::map<int, int>::iterator > pm = m4.equal_range(1);
   std::cout << "Key: ";
   P(pm.first->first);
   std::cout << "Value: ";
@@ -958,8 +1012,31 @@ int main()
   P(pm.second->first);
   std::cout << "Value: ";
   P(pm.second->second);
+  P("");
+
+  P("Const map and iterator");
+  const ft::map<int, int> cm(4,4);
+  ft::map<int, int>::const_iterator cmi = cm.begin();
+  P("Const map calling size, clear and trying to change front value");
+  P(cm.size());
+  // cm.clear(); //Should create compilation error
+  // cm.front() = 9; //Should create compilation error
+  P("Const iterator showing front value and trying to change front value");
+  P(*cmi);
+  // *cmi = 9; //Should create compilation error
+  P("");
+
+  P("Error management");
+  ft::map<int, int> em;
+  P("Trying to show front, back in empty container"); //Cannot be tested with empty iterator, because container cannot make iterator point on nothing
+  em.begin();
+  em.end();
+  P("");
+  }
 
   //STACK
+  if (std::strcmp("stack", argv[1]) == 0)
+  {
   P("~~~~~~~STACK~~~~~~~~\n");
   //Contruction and iterators
   P("CONSTRUCTORS");
@@ -1064,8 +1141,26 @@ int main()
   show_stack<int>(si2);
   if (si1 <= si2)
     P("YES");
+  P("");
+
+  P("Const stack");
+  const ft::stack<int> cs(si1);
+  P("Const stack calling size, pop and trying to change front value");
+  P(cs.size());
+  // cs.pop(); //Should create compilation error
+  // cs.top() = 9; //Should create compilation error
+
+  P("Error management");
+  ft::stack<int> es;
+  P("Trying to pop and show front in empty container"); //Cannot be tested with empty iterator, because container cannot make iterator point on nothing
+  es.top();
+  es.pop();
+  P("");
+  }
 
   //Queue
+  if (std::strcmp("queue", argv[1]) == 0)
+  {
   P("~~~~~~~QUEUE~~~~~~~~\n");
   //Contruction and iterators
   P("CONSTRUCTORS");
@@ -1170,6 +1265,22 @@ int main()
   show_queue<int>(qi2);
   if (qi1 <= qi2)
     P("YES");
+  P("");
 
+  P("Const queue");
+  const ft::queue<int> cq(qi1);
+  P("Const queue calling size, pop and trying to change front value");
+  P(cq.size());
+  // cq.pop(); //Should create compilation error
+  // cq.front() = 9; //Should create compilation error
+
+  P("Error management");
+  ft::queue<int> eq;
+  P("Trying to pop and show front in empty container"); //Cannot be tested with empty iterator, because container cannot make iterator point on nothing
+  eq.front();
+  eq.pop();
+  P("");
+  }
+  if (argc != 2)
+    P("Choose one of following containers; list, map, queue, stack, vector");
 }
-//

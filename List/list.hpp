@@ -5,11 +5,20 @@
 
 #include <iostream>
 #include <climits>
-#include "../iterators/bidirectional_iterator.hpp"
+#include <csignal>
+#include "list_iterator.hpp"
 
-template<typename Key, typename T> class bidirectional_iterator;
-template<typename Key, typename T> class reverse_bidirectional_iterator;
-template<typename T> struct __list;
+/*
+**SPECIAL CASES
+**When list and iterator goes out of scope, it stays in last correct position and returns that
+**Empty list returns empty iterator that does not segfault and shows nothing on std::cout
+*
+**Protect iterator from going out of scope
+**Protect iterator from empty by returning nothing
+**Return empty iterator if empty container
+*/
+
+
 
 //____NAMESPACE____
 //In each scope a name can only represent one entity, impossible to have same name variables in same scope
@@ -17,38 +26,44 @@ template<typename T> struct __list;
 //A namespace is a declarative region that provides a scope for identifiers (variables, functions,...)
 namespace ft //Declaration of the namespace ft
 {
-
+  //A list is a doubly-linked list, meaning you can iterate forward and backward on it and insert elements where you want in a fast but slow access to their elements way by using chained lists
   template<typename T>
   class list
   {
-  public:
-    //Iterator system list
-    bidirectional_iterator<T> iterator; //bidirectional meaning you can increment and decrement it
-    // const_bidirectional_iterator<T> const_iterator; //constant meaning that returned values are alays constants
-    reverse_bidirectional_iterator<T> reverse_iterator; //reverse meaning begin becomes end and end becomes begin and increment becomes decrement and decrement becomes increment
-    // const_reverse_bidirectional_iterator<T> const_reverse_iterator;
   private:
-    struct __list<T> *_list;
+    struct __list
+    {
+      struct __list *head;
+      struct __list *next;
+      struct __list *prev;
+      T value;
+    };
+    struct __list *_list;
     unsigned int _size;
 
-    void free_list();
-
   public:
+    typedef List::iterator<T> iterator;
+    typedef const List::iterator<T> const_iterator; //constant meaning that returned values are always constants, only calls constant member functions
+    typedef List::reverse_iterator<T> reverse_iterator;
+    typedef const List::reverse_iterator<T> const_reverse_iterator;
+
     list(): _size(0) {}//empty constructor
     list(unsigned int __size, T value); //fill constructor
     template<typename InputIterator>
     list(InputIterator first,InputIterator last); //Range constructor
-    list(const list<T> &to_copy) {_size = 0; *this = to_copy;} //copy constructor
-
-    ~list() { free_list(); } //Destructor
-
+    list(const list<T> &to_copy):_size(0) {*this = to_copy;} //copy constructor
     void operator=(const list<T> &to_copy); //Assignation constructor
+    ~list() { clear(); } //Destructor
 
     // Iterators
-    bidirectional_iterator<T> begin() const { bidirectional_iterator<T> ret(_list->head); return (ret); }
-    bidirectional_iterator<T> end() const;
-    reverse_bidirectional_iterator<T> rbegin();
-    reverse_bidirectional_iterator<T> rend() { return (reverse_bidirectional_iterator<T>(_list->head)); }
+    iterator begin() { iterator ret(_list->head); return (ret); }
+    const_iterator begin() const { const_iterator ret(_list->head); return (ret); }
+    iterator end();
+    const_iterator end() const;
+    reverse_iterator rbegin();
+    const_reverse_iterator rbegin() const;
+    reverse_iterator rend() { return (reverse_iterator(_list->head)); }
+    const_reverse_iterator rend() const { return (const_reverse_iterator(_list->head)); }
 
     //Capacity
     bool empty() const;
@@ -69,21 +84,21 @@ namespace ft //Declaration of the namespace ft
     void pop_front();
     void push_back(const T& value);
     void pop_back();
-    bidirectional_iterator<T> insert(bidirectional_iterator<T> position, const T &value); //single element
-    void insert(bidirectional_iterator<T> position, unsigned int n, const T &value); //fill
+    iterator insert(iterator position, const T &value); //single element
+    void insert(iterator position, unsigned int n, const T &value); //fill
     template <typename InputIterator>
-    void insert(bidirectional_iterator<T> position, InputIterator first, InputIterator last); //range
-    bidirectional_iterator<T> erase(bidirectional_iterator<T> position);
-    bidirectional_iterator<T> erase(bidirectional_iterator<T> first, bidirectional_iterator<T> last);
+    void insert(iterator position, InputIterator first, InputIterator last); //range
+    iterator erase(iterator position);
+    iterator erase(iterator first, iterator last);
     void swap(list &x);
     void resize(unsigned int n);
     void resize(unsigned int n, const T &val);
     void clear();
 
     //operations
-    void splice(bidirectional_iterator<T> position, list<T>& x); //Fill all list
-    void splice(bidirectional_iterator<T> position, list<T>& x, bidirectional_iterator<T> i); //One element
-    void splice(bidirectional_iterator<T> position, list<T>& x, bidirectional_iterator<T> first, bidirectional_iterator<T> last); //Range
+    void splice(iterator position, list<T>& x); //Fill all list
+    void splice(iterator position, list<T>& x, iterator i); //One element
+    void splice(iterator position, list<T>& x, iterator first, iterator last); //Range
     void remove(const T &value);
     template<typename Predicate>
     void remove_if(Predicate pred);
@@ -100,13 +115,18 @@ namespace ft //Declaration of the namespace ft
 
   };
 
-//Relational operators
+//Non-member function overloads
+
 template<typename T>
 bool operator==(const list<T> &l, const list<T> &r)
 {
-  bidirectional_iterator<T> l_it;
-  bidirectional_iterator<T> r_it;
+  List::iterator<T> l_it;
+  List::iterator<T> r_it;
 
+  if (l.size() == 0 and r.size() == 0)
+    return (true);
+  else if (l.size() == 0 || r.size() == 0)
+    return (false);
   l_it = l.begin();
   r_it = r.begin();
   if (l.size() != r.size())
@@ -124,9 +144,13 @@ bool operator==(const list<T> &l, const list<T> &r)
 template <typename T>
 bool operator!=(const list<T> &l, const list<T> &r)
 {
-  bidirectional_iterator<T> l_it;
-  bidirectional_iterator<T> r_it;
+  List::iterator<T> l_it;
+  List::iterator<T> r_it;
 
+  if (l.size() == 0 and r.size() == 0)
+    return (false);
+  else if (l.size() == 0 || r.size() == 0)
+    return (true);
   l_it = l.begin();
   r_it = r.begin();
   if (l.size() != r.size())
@@ -144,9 +168,15 @@ bool operator!=(const list<T> &l, const list<T> &r)
 template <typename T>
 bool operator<(const list<T> &l, const list<T> &r)
 {
-  bidirectional_iterator<T> l_it;
-  bidirectional_iterator<T> r_it;
+  List::iterator<T> l_it;
+  List::iterator<T> r_it;
 
+  if (l.size() == 0 and r.size() == 0)
+    return (false);
+  else if (l.size() == 0)
+    return (true);
+  else if (r.size() == 0)
+    return (false);
   l_it = l.begin();
   r_it = r.begin();
   while (l_it != l.end() and r_it != r.end())
@@ -170,9 +200,15 @@ bool operator<(const list<T> &l, const list<T> &r)
 template <typename T>
 bool operator<=(const list<T> &l, const list<T> &r)
 {
-  bidirectional_iterator<T> l_it;
-  bidirectional_iterator<T> r_it;
+  List::iterator<T> l_it;
+  List::iterator<T> r_it;
 
+  if (l.size() == 0 and r.size() == 0)
+    return (true);
+  else if (l.size() == 0)
+    return (true);
+  else if (r.size() == 0)
+    return (false);
   l_it = l.begin();
   r_it = r.begin();
   while (l_it != l.end() and r_it != r.end())
@@ -196,9 +232,15 @@ bool operator<=(const list<T> &l, const list<T> &r)
 template <typename T>
 bool operator>(const list<T> &l, const list<T> &r)
 {
-  bidirectional_iterator<T> l_it;
-  bidirectional_iterator<T> r_it;
+  List::iterator<T> l_it;
+  List::iterator<T> r_it;
 
+  if (l.size() == 0 and r.size() == 0)
+    return (false);
+  else if (l.size() == 0)
+    return (false);
+  else if (r.size() == 0)
+    return (true);
   l_it = l.begin();
   r_it = r.begin();
   while (l_it != l.end() and r_it != r.end())
@@ -215,16 +257,21 @@ bool operator>(const list<T> &l, const list<T> &r)
   }
   if (l.size() <= r.size())
     return (false);
-  else
-    return (true);
+  return (true);
 }
 
 template <typename T>
 bool operator>=(const list<T> &l, const list<T> &r)
 {
-  bidirectional_iterator<T> l_it;
-  bidirectional_iterator<T> r_it;
+  List::iterator<T> l_it;
+  List::iterator<T> r_it;
 
+  if (l.size() == 0 and r.size() == 0)
+    return (true);
+  else if (l.size() == 0)
+    return (false);
+  else if (r.size() == 0)
+    return (true);
   l_it = l.begin();
   r_it = r.begin();
   while (l_it != l.end() and r_it != r.end())
@@ -256,6 +303,8 @@ void swap(list<T> &x, list<T> &y)
   tmp.clear();
 }
 
+//Member functions
+
 template<typename T>
 list<T>::list(unsigned int __size, T value)
 {
@@ -272,40 +321,43 @@ list<T>::list(InputIterator first, InputIterator last)
 }
 
 template<typename T>
-void list<T>::operator=(const list &to_copy)
+void list<T>::operator=(const list &to_copy) //Deepcopy
 {
-  unsigned int i;
-  struct __list<T> *copy;
-
-  i = 0;
+  clear();
   if (to_copy.size() == 0)
     return ;
-  copy = to_copy._list;
-  _list = new struct __list<T>;
-  _list->head = _list;
-  _list->prev = 0;
-  _list->value = copy->value;
-  while(i < to_copy._size - 1)
-  {
-    _list->next = new struct __list<T>;
-    _list->next->head = _list->head;
-    _list->next->prev = _list;
-    _list = _list->next;
-    copy = copy->next;
-    _list->value = copy->value;
-    i++;
-  }
-  _list->next = 0;
-  _list = _list->head;
-  _size = to_copy._size;
-  iterator = to_copy.iterator;
+  assign<iterator>(to_copy.begin(), to_copy.end());
+  // unsigned int i;
+  // struct __list *copy;
+  //
+  // i = 0;
+  // if (to_copy.size() == 0)
+  //   return ;
+  // copy = to_copy._list;
+  // _list = new struct __list;
+  // _list->head = _list;
+  // _list->prev = 0;
+  // _list->value = copy->value;
+  // while(i < to_copy._size - 1)
+  // {
+  //   _list->next = new struct __list;
+  //   _list->next->head = _list->head;
+  //   _list->next->prev = _list;
+  //   _list = _list->next;
+  //   copy = copy->next;
+  //   _list->value = copy->value;
+  //   i++;
+  // }
+  // _list->next = 0;
+  // _list = _list->head;
+  // _size = to_copy._size;
 }
 
 template<typename T>
-void list<T>::free_list()
+void list<T>::clear()
 {
   unsigned int i;
-  struct __list<T> *tmp;
+  struct __list *tmp;
 
   i = 0;
   if (_size == 0)
@@ -318,29 +370,73 @@ void list<T>::free_list()
     delete tmp;
     i++;
   }
+  _size = 0;
 }
 
 template<typename T>
-bidirectional_iterator<T> list<T>::end() const
+List::iterator<T> list<T>::end()
 {
-  struct __list<T> *cur;
+  struct __list *cur;
 
+  if (_size == 0)
+  {
+    std::cout << "Out of range calling segfault..." << std::endl;
+    raise (SIGSEGV);
+  }
   cur = _list;
   while (cur->next != 0)
     cur = cur->next;
-  bidirectional_iterator<T> ret(cur);
+  iterator ret(cur);
   return (ret);
 }
 
 template<typename T>
-reverse_bidirectional_iterator<T> list<T>::rbegin()
+const List::iterator<T> list<T>::end() const
 {
-  struct __list<T> *cur;
+  struct __list *cur;
 
+  if (_size == 0)
+  {
+    std::cout << "Out of range calling segfault..." << std::endl;
+    raise (SIGSEGV);
+  }
   cur = _list;
   while (cur->next != 0)
     cur = cur->next;
-  return (reverse_bidirectional_iterator<T>(cur));
+  const_iterator ret(cur);
+  return (ret);
+}
+
+template<typename T>
+List::reverse_iterator<T> list<T>::rbegin()
+{
+  struct __list *cur;
+
+  if (_size == 0)
+  {
+    std::cout << "Out of range calling segfault..." << std::endl;
+    raise (SIGSEGV);
+  }
+  cur = _list;
+  while (cur->next != 0)
+    cur = cur->next;
+  return (reverse_iterator(cur));
+}
+
+template<typename T>
+const List::reverse_iterator<T> list<T>::rbegin() const
+{
+  struct __list *cur;
+
+  if (_size == 0)
+  {
+    std::cout << "Out of range calling segfault..." << std::endl;
+    raise (SIGSEGV);
+  }
+  cur = _list;
+  while (cur->next != 0)
+    cur = cur->next;
+  return (const_reverse_iterator(cur));
 }
 
 template<typename T>
@@ -361,6 +457,11 @@ unsigned int list<T>::size() const
 template<typename T>
 T &list<T>::front()
 {
+  if (_size == 0)
+  {
+    std::cout << "Out of range calling segfault..." << std::endl;
+    raise (SIGSEGV);
+  }
   _list = _list->head;
   return (_list->value);
 }
@@ -368,6 +469,11 @@ T &list<T>::front()
 template<typename T>
 const T &list<T>::front() const
 {
+  if (_size == 0)
+  {
+    std::cout << "Out of range calling segfault..." << std::endl;
+    raise (SIGSEGV);
+  }
   _list = _list->head;
   return (_list->value);
 }
@@ -375,8 +481,13 @@ const T &list<T>::front() const
 template<typename T>
 T &list<T>::back()
 {
-  struct __list<T> *cur;
+  struct __list *cur;
 
+  if (_size == 0)
+  {
+    std::cout << "Out of range calling segfault..." << std::endl;
+    raise (SIGSEGV);
+  }
   _list = _list->head;
   cur = _list;
   while (cur->next != 0)
@@ -387,8 +498,13 @@ T &list<T>::back()
 template<typename T>
 const T &list<T>::back() const
 {
-  struct __list<T> *cur;
+  struct __list *cur;
 
+  if (_size == 0)
+  {
+    std::cout << "Out of range calling segfault..." << std::endl;
+    raise (SIGSEGV);
+  }
   _list = _list->head;
   cur = _list;
   while (cur->next != 0)
@@ -401,7 +517,7 @@ template<typename InputIterator>
 void list<T>::assign(InputIterator first, InputIterator last)
 {
   clear();
-  _list = new struct __list<T>;
+  _list = new struct __list;
   _size++;
   _list->head = _list;
   _list->prev = 0;
@@ -409,7 +525,7 @@ void list<T>::assign(InputIterator first, InputIterator last)
   while (first != last)
   {
     ++first;
-    _list->next = new struct __list<T>;
+    _list->next = new struct __list;
     _size++;
     _list->next->head = _list->head;
     _list->next->prev = _list;
@@ -426,15 +542,15 @@ void list<T>::assign(unsigned int n, T value)
   unsigned int i;
 
   i = 0;
-  free_list();
+  clear();
   _size = n;
-  _list = new struct __list<T>;
+  _list = new struct __list;
   _list->head = _list;
   _list->prev = 0;
   _list->value = value;
   while(i < _size - 1)
   {
-    _list->next = new struct __list<T>;
+    _list->next = new struct __list;
     _list->next->head = _list->head;
     _list->next->prev = _list;
     _list = _list->next;
@@ -448,14 +564,14 @@ void list<T>::assign(unsigned int n, T value)
 template<typename T>
 void list<T>::push_front(const T &value)
 {
-  struct __list<T> *front;
+  struct __list *front;
 
   if (_size == 0)
   {
     assign((unsigned int)1, value);
     return ;
   }
-  front = new struct __list<T>;
+  front = new struct __list;
   _list = _list->head;
   front->value = value;
   front->head = front;
@@ -475,10 +591,13 @@ void list<T>::push_front(const T &value)
 template<typename T>
 void list<T>::pop_front()
 {
-  struct __list<T> *tmp;
+  struct __list *tmp;
 
   if (_size == 0)
-    return ;
+  {
+    std::cout << "Out of range calling segfault..." << std::endl;
+    raise (SIGSEGV);
+  }
   if (_size == 1)
   {
     clear();
@@ -509,7 +628,7 @@ void list<T>::push_back(const T& value)
   }
   while (_list->next != 0)
     _list = _list->next;
-  _list->next = new struct __list<T>;
+  _list->next = new struct __list;
   _list->next->head = _list->head;
   _list->next->prev = _list;
   _list = _list->next;
@@ -523,7 +642,10 @@ template<typename T>
 void list<T>::pop_back()
 {
   if (_size == 0)
-    return ;
+  {
+    std::cout << "Out of range calling segfault..." << std::endl;
+    raise (SIGSEGV);
+  }
   _list = _list->head;
   if (_size == 1)
   {
@@ -541,19 +663,29 @@ void list<T>::pop_back()
 }
 
 template<typename T>
-bidirectional_iterator<T> list<T>::insert(bidirectional_iterator<T> position, const T &value)
+List::iterator<T> list<T>::insert(iterator position, const T &value)
 {
-  struct __list<T> *_new;
+  struct __list *_new;
 
-  if (_list == (struct __list<T> *)position.get_list_ptr())
+  if (_size == 0)
+  {
+    std::cout << "Out of range calling segfault..." << std::endl;
+    raise (SIGSEGV);
+  }
+  if (_list == (struct __list *)position.get_list()) //get list returns pointer address
   {
     push_front(value);
     return (position);
   }
-  _new = new struct __list<T>;
+  _new = new struct __list;
   _list = _list->head;
-  while (_list->next != (struct __list<T> *)position.get_list_ptr())
+  while (_list != 0 && _list->next != (struct __list *)position.get_list())
     _list = _list->next;
+  if (_list == 0)
+  {
+    std::cout << "Out of range calling segfault..." << std::endl;
+    raise (SIGSEGV);
+  }
   _list->next->prev = _new;
   _new->head = _list->head;
   _new->next = _list->next;
@@ -567,7 +699,7 @@ bidirectional_iterator<T> list<T>::insert(bidirectional_iterator<T> position, co
 }
 
 template<typename T>
-void list<T>::insert(bidirectional_iterator<T> position, unsigned int n, const T &value)
+void list<T>::insert(iterator position, unsigned int n, const T &value)
 {
   while (n--)
   {
@@ -577,7 +709,7 @@ void list<T>::insert(bidirectional_iterator<T> position, unsigned int n, const T
 
 template<typename T>
 template <typename InputIterator>
-void list<T>::insert(bidirectional_iterator<T> position, InputIterator first, InputIterator last)
+void list<T>::insert(iterator position, InputIterator first, InputIterator last)
 {
   while (first != last)
   {
@@ -588,19 +720,24 @@ void list<T>::insert(bidirectional_iterator<T> position, InputIterator first, In
 }
 
 template<typename T>
-bidirectional_iterator<T> list<T>::erase(bidirectional_iterator<T> position)
+List::iterator<T> list<T>::erase(iterator position)
 {
-  struct __list<T> *tmp;
+  struct __list *tmp;
 
+  if (_size == 0)
+  {
+    std::cout << "Out of range calling segfault..." << std::endl;
+    raise (SIGSEGV);
+  }
   _list = _list->head;
-  if (_list == (struct __list<T> *)position.get_list_ptr())
+  if (_list == (struct __list *)position.get_list())
   {
     pop_front();
     ++position;
     return (position);
   }
   --position;
-  while (_list->next != 0 && _list != (struct __list<T> *)position.get_list_ptr() && _list != (struct __list<T> *)position.get_list_ptr())
+  while (_list->next != 0 && _list != (struct __list *)position.get_list())
     _list = _list->next;
   tmp = _list->next;
   if (tmp->next == 0)
@@ -622,7 +759,7 @@ bidirectional_iterator<T> list<T>::erase(bidirectional_iterator<T> position)
 }
 
 template<typename T>
-bidirectional_iterator<T> list<T>::erase(bidirectional_iterator<T> first, bidirectional_iterator<T> last)
+List::iterator<T> list<T>::erase(iterator first, iterator last)
 {
   while (first != last)
   {
@@ -646,14 +783,23 @@ void list<T>::swap(list &x)
 template<typename T>
 void list<T>::resize(unsigned int n)
 {
-  struct __list<T> *tmp;
+  struct __list *tmp;
 
+  if (n == 0)
+    clear();
+  if (_size == 0)
+  {
+    _list = new struct __list;
+    _list->head = _list;
+    _list->prev = 0;
+    _size = 1;
+  }
   _list->head = _list->head;
   while (_list->next != 0)
     _list = _list->next;
   while (n > _size)
   {
-    _list->next = new struct __list<T>;
+    _list->next = new struct __list;
     _size++;
     _list->next->head = _list->head;
     _list->next->prev = _list;
@@ -673,69 +819,77 @@ void list<T>::resize(unsigned int n)
 template<typename T>
 void list<T>::resize(unsigned int n, const T &val)
 {
-  struct __list<T> *tmp;
-
-  while (_list->next != 0)
-    _list = _list->next;
-  while (n > _size)
+  while (_size != n)
   {
-    _list->next = new struct __list<T>;
-    _size++;
-    _list->next->head = _list->head;
-    _list->next->prev = _list;
-    _list = _list->next;
-    _list->value = val;
+    if (n > _size)
+      push_back(val);
+    else
+      pop_back();
   }
-  while (n < _size)
-  {
-    tmp = _list;
-    _list = _list->prev;
-    delete tmp;
-    _size--;
-  }
-  _list->next = 0;
-  _list = _list->head;
+  // struct __list *tmp;
+  //
+  // // if (_size == 0)
+  //   assign((unsigned int)1, val);
+  // while (_list->next != 0)
+  //   _list = _list->next;
+  // while (n > _size)
+  // {
+  //   _list->next = new struct __list;
+  //   _size++;
+  //   _list->next->head = _list->head;
+  //   _list->next->prev = _list;
+  //   _list = _list->next;
+  //   _list->value = val;
+  // }
+  // while (n < _size)
+  // {
+  //   tmp = _list;
+  //   _list = _list->prev;
+  //   delete tmp;
+  //   _size--;
+  // }
+  // _list->next = 0;
+  // _list = _list->head;
 }
 
 template<typename T>
-void list<T>::clear()
+void list<T>::splice(iterator position, list<T> &x)
 {
-  free_list();
-  _size = 0;
-}
+    iterator begin;
+    iterator end;
 
-template<typename T>
-void list<T>::splice(bidirectional_iterator<T> position, list<T> &x)
-{
-    bidirectional_iterator<T> begin;
-    bidirectional_iterator<T> end;
-
-    insert<bidirectional_iterator<int> >(position, x.begin(), x.end());
+    if (x.empty())
+      return ;
+    insert<iterator>(position, x.begin(), x.end());
     x.clear();
     _list = _list->head;
 }
 
 template<typename T>
-void list<T>::splice(bidirectional_iterator<T> position, list<T> &x, bidirectional_iterator<T> i)
+void list<T>::splice(iterator position, list<T> &x, iterator i)
 {
   insert(position, *i);
   x.erase(i);
-  _list = _list->head;
+  if (_size != 0)
+    _list = _list->head;
 }
 
 template<typename T>
-void list<T>::splice(bidirectional_iterator<T> position, list<T>& x, bidirectional_iterator<T> first, bidirectional_iterator<T> last)
+void list<T>::splice(iterator position, list<T> &x, iterator first, iterator last)
 {
   insert(position, first, last);
   x.erase(first, last);
-  _list = _list->head;
+  if (_size != 0)
+    _list = _list->head;
 }
 
 template<typename T>
 void list<T>::remove(const T &value)
 {
-  bidirectional_iterator<T> iterator;
+  iterator iterator;
 
+  if (_size == 0)
+    return ;
   iterator = begin();
   while(iterator != end())
   {
@@ -752,8 +906,10 @@ template<typename T>
 template<typename Predicate>
 void list<T>::remove_if(Predicate pred)
 {
-  bidirectional_iterator<T> iterator;
+  iterator iterator;
 
+  if (_size == 0)
+    return ;
   iterator = begin();
   while(iterator != end())
   {
@@ -769,51 +925,57 @@ void list<T>::remove_if(Predicate pred)
 template<typename T>
 void list<T>::unique()
 {
-  bidirectional_iterator<T> iterator;
-  bidirectional_iterator<T> follow;
+  iterator iter;
+  iterator follow;
 
+  if (_size == 0)
+    return ;
   follow = begin();
-  iterator = begin();
-  ++iterator;
-  while(iterator != end())
+  iter = begin();
+  ++iter;
+  while(iter != end())
   {
-    if (*follow == *iterator)
-      iterator = erase(iterator);
+    if (*follow == *iter)
+      iter = erase(iter);
     else
-      ++iterator;
+      ++iter;
     ++follow;
   }
-  if (*follow == *iterator)
-    erase(iterator);
+  if (*follow == *iter)
+    erase(iter);
 }
 
 template<typename T>
 template <typename BinaryPredicate>
 void list<T>::unique(BinaryPredicate binary_pred)
 {
-  bidirectional_iterator<T> iterator;
-  bidirectional_iterator<T> follow;
+  iterator iter;
+  iterator follow;
 
+  if (_size == 0)
+    return ;
   follow = begin();
-  iterator = begin();
-  ++iterator;
-  while(iterator != end())
+  iter = begin();
+  ++iter;
+  while(iter != end())
   {
-    if (binary_pred(*iterator, *follow))
-      iterator = erase(iterator);
+    if (binary_pred(*iter, *follow))
+      iter = erase(iter);
     else
-      ++iterator;
+      ++iter;
     ++follow;
   }
-  if (binary_pred(*iterator, *follow))
-    erase(iterator);
+  if (binary_pred(*iter, *follow))
+    erase(iter);
 }
 
 template<typename T>
 void list<T>::merge(list<T> &x)
 {
-  bidirectional_iterator<T> iter;
+  iterator iter;
 
+  if (_size == 0 || x.get_size() == 0)
+    return ;
   iter = x.begin();
   if (&x == this)
     return ;
@@ -830,9 +992,11 @@ template<typename T>
 template <typename Compare>
 void list<T>::merge(list<T> &x, Compare comp)
 {
-  bidirectional_iterator<T> x_iter;
-  bidirectional_iterator<T> self_iter;
+  iterator x_iter;
+  iterator self_iter;
 
+  if (_size == 0 || x.get_size() == 0)
+    return ;
   x_iter = x.begin();
   self_iter = begin();
   _list = _list->head;
@@ -870,6 +1034,8 @@ void list<T>::sort()
 {
   T tmp;
 
+  if (_size == 0)
+    return ;
   _list = _list->head;
   while(_list->next != 0)
   {
@@ -892,6 +1058,8 @@ void list<T>::sort(Compare comp)
 {
   T tmp;
 
+  if (_size == 0)
+    return ;
   _list = _list->head;
   while(_list->next != 0)
   {
@@ -913,6 +1081,8 @@ void list<T>::reverse()
 {
   list<int> *_new;
 
+  if (_size == 0)
+    return ;
   _new = new list<int>;
   _list = _list->head;
   while (_list->next != 0)
