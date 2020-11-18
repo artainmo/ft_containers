@@ -14,7 +14,7 @@ template<typename T>
 void show_list(ft::list<T> &l)
 {
   unsigned int m;
-  typename ft::list<T>::iterator i = l.begin();
+  typename ft::list<T>::iterator i = l.begin(); //Typename to indicate no ambiguity by telling compiler following is a type, is necessary because object creation depends on template parameter
 
   m = 0;
   while(m < l.size())
@@ -201,6 +201,11 @@ void show_queue(ft::queue<T> s)
 
 int main(int argc, char **argv)
 {
+  if (argc != 2)
+  {
+    std::cout << "Choose between list, map, queue, stack and vector" << std::endl;
+    return 0;
+  }
   if (std::strcmp("list", argv[1]) == 0)
   {
   //LIST
@@ -1015,7 +1020,7 @@ int main(int argc, char **argv)
   P("");
 
   P("Const map and iterator");
-  const ft::map<int, int> cm(4,4);
+  const ft::map<int, int> cm(m4);
   ft::map<int, int>::const_iterator cmi = cm.begin();
   P("Const map calling size, clear and trying to change front value");
   P(cm.size());

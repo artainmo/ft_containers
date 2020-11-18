@@ -11,20 +11,23 @@
 /*
 **SPECIAL CASES
 **When list and iterator goes out of scope, it stays in last correct position and returns that
-**Empty list returns empty iterator that does not segfault and shows nothing on std::cout
+**Empty list returns empty iterator that segfault when trying to access its value
+**front back on empty container segfault
 *
-**Protect iterator from going out of scope
-**Protect iterator from empty by returning nothing
-**Return empty iterator if empty container
+**Protect iterator from going out of scope /
+**Do not protect iterator from being empty /
+**Return empty iterator if empty container in begin, rbegin, end, rend /
 */
 
 
+/*
+**____NAMESPACE____
+**In each scope a name can only represent one entity, impossible to have same name variables in same scope
+**By using namespace we can declare two variables or functions with same name, by allowing us to group named entities.
+**A namespace is a declarative region that provides a scope for identifiers (variables, functions,...)
+*/
 
-//____NAMESPACE____
-//In each scope a name can only represent one entity, impossible to have same name variables in same scope
-//By using namespace we can declare two variables or functions with same name, by allowing us to group named entities.
-//A namespace is a declarative region that provides a scope for identifiers (variables, functions,...)
-namespace ft //Declaration of the namespace ft
+namespace ft
 {
   //A list is a doubly-linked list, meaning you can iterate forward and backward on it and insert elements where you want in a fast but slow access to their elements way by using chained lists
   template<typename T>
@@ -48,31 +51,31 @@ namespace ft //Declaration of the namespace ft
     typedef const List::reverse_iterator<T> const_reverse_iterator;
 
     list(): _size(0) {}//empty constructor
-    list(unsigned int __size, T value); //fill constructor
+    list(unsigned int __size, T value): _size(0) { assign(__size, value); } //fill constructor
     template<typename InputIterator>
-    list(InputIterator first,InputIterator last); //Range constructor
-    list(const list<T> &to_copy):_size(0) {*this = to_copy;} //copy constructor
-    void operator=(const list<T> &to_copy); //Assignation constructor
+    list(InputIterator first,InputIterator last): _size(0) { assign<InputIterator>(first, last); } //Range constructor
+    list(const list<T> &to_copy): _size(0) {*this = to_copy;} //copy constructor
+    void operator=(const list<T> &to_copy) { clear(); if (to_copy.empty()) return ; assign<iterator>(to_copy.begin(), to_copy.end()); } //Assignation constructor
     ~list() { clear(); } //Destructor
 
     // Iterators
-    iterator begin() { iterator ret(_list->head); return (ret); }
-    const_iterator begin() const { const_iterator ret(_list->head); return (ret); }
+    iterator begin() { if (empty()) return iterator(); else return iterator(_list->head); }
+    const_iterator begin() const { if (empty()) return const_iterator(_list->head); else return const_iterator(_list->head); }
     iterator end();
     const_iterator end() const;
     reverse_iterator rbegin();
     const_reverse_iterator rbegin() const;
-    reverse_iterator rend() { return (reverse_iterator(_list->head)); }
-    const_reverse_iterator rend() const { return (const_reverse_iterator(_list->head)); }
+    reverse_iterator rend() { if (empty()) return reverse_iterator(); else return reverse_iterator(_list->head); }
+    const_reverse_iterator rend() const { if (empty()) return const_reverse_iterator(); else return const_reverse_iterator(_list->head); }
 
     //Capacity
-    bool empty() const;
-    unsigned int size() const;
+    bool empty() const { if (_size == 0) return true; else return false; }
+    unsigned int size() const { return (_size); }
     unsigned int max_size() const { return (UINT_MAX); } //Because the size is stored in an unsigned int, the maximum size of the list is the maximum unsigned int
 
     //Element access
-    T &front();
-    const T &front() const;
+    T &front() { _list = _list->head; return (_list->value); }
+    const T &front() const { _list = _list->head; return (_list->value); }
     T &back();
     const T &back() const;
 
@@ -304,55 +307,6 @@ void swap(list<T> &x, list<T> &y)
 }
 
 //Member functions
-
-template<typename T>
-list<T>::list(unsigned int __size, T value)
-{
-  _size = 0;
-  assign(__size, value);
-}
-
-template<typename T>
-template<typename InputIterator>
-list<T>::list(InputIterator first, InputIterator last)
-{
-  _size = 0;
-  assign<InputIterator>(first, last);
-}
-
-template<typename T>
-void list<T>::operator=(const list &to_copy) //Deepcopy
-{
-  clear();
-  if (to_copy.size() == 0)
-    return ;
-  assign<iterator>(to_copy.begin(), to_copy.end());
-  // unsigned int i;
-  // struct __list *copy;
-  //
-  // i = 0;
-  // if (to_copy.size() == 0)
-  //   return ;
-  // copy = to_copy._list;
-  // _list = new struct __list;
-  // _list->head = _list;
-  // _list->prev = 0;
-  // _list->value = copy->value;
-  // while(i < to_copy._size - 1)
-  // {
-  //   _list->next = new struct __list;
-  //   _list->next->head = _list->head;
-  //   _list->next->prev = _list;
-  //   _list = _list->next;
-  //   copy = copy->next;
-  //   _list->value = copy->value;
-  //   i++;
-  // }
-  // _list->next = 0;
-  // _list = _list->head;
-  // _size = to_copy._size;
-}
-
 template<typename T>
 void list<T>::clear()
 {
@@ -378,16 +332,12 @@ List::iterator<T> list<T>::end()
 {
   struct __list *cur;
 
-  if (_size == 0)
-  {
-    std::cout << "Out of range calling segfault..." << std::endl;
-    raise (SIGSEGV);
-  }
+  if (empty())
+    return iterator();
   cur = _list;
   while (cur->next != 0)
     cur = cur->next;
-  iterator ret(cur);
-  return (ret);
+  return iterator(cur);
 }
 
 template<typename T>
@@ -395,16 +345,12 @@ const List::iterator<T> list<T>::end() const
 {
   struct __list *cur;
 
-  if (_size == 0)
-  {
-    std::cout << "Out of range calling segfault..." << std::endl;
-    raise (SIGSEGV);
-  }
+  if (empty())
+    return const_iterator();
   cur = _list;
   while (cur->next != 0)
     cur = cur->next;
-  const_iterator ret(cur);
-  return (ret);
+  return const_iterator(cur);
 }
 
 template<typename T>
@@ -412,15 +358,12 @@ List::reverse_iterator<T> list<T>::rbegin()
 {
   struct __list *cur;
 
-  if (_size == 0)
-  {
-    std::cout << "Out of range calling segfault..." << std::endl;
-    raise (SIGSEGV);
-  }
+  if (empty())
+    return reverse_iterator();
   cur = _list;
   while (cur->next != 0)
     cur = cur->next;
-  return (reverse_iterator(cur));
+  return reverse_iterator(cur);
 }
 
 template<typename T>
@@ -428,54 +371,12 @@ const List::reverse_iterator<T> list<T>::rbegin() const
 {
   struct __list *cur;
 
-  if (_size == 0)
-  {
-    std::cout << "Out of range calling segfault..." << std::endl;
-    raise (SIGSEGV);
-  }
+  if (empty())
+    return const_reverse_iterator();
   cur = _list;
   while (cur->next != 0)
     cur = cur->next;
-  return (const_reverse_iterator(cur));
-}
-
-template<typename T>
-bool list<T>::empty() const
-{
-  if (_size == 0)
-    return true;
-  else
-    return false;
-}
-
-template<typename T>
-unsigned int list<T>::size() const
-{
-  return (_size);
-}
-
-template<typename T>
-T &list<T>::front()
-{
-  if (_size == 0)
-  {
-    std::cout << "Out of range calling segfault..." << std::endl;
-    raise (SIGSEGV);
-  }
-  _list = _list->head;
-  return (_list->value);
-}
-
-template<typename T>
-const T &list<T>::front() const
-{
-  if (_size == 0)
-  {
-    std::cout << "Out of range calling segfault..." << std::endl;
-    raise (SIGSEGV);
-  }
-  _list = _list->head;
-  return (_list->value);
+  return const_reverse_iterator(cur);
 }
 
 template<typename T>
@@ -483,11 +384,6 @@ T &list<T>::back()
 {
   struct __list *cur;
 
-  if (_size == 0)
-  {
-    std::cout << "Out of range calling segfault..." << std::endl;
-    raise (SIGSEGV);
-  }
   _list = _list->head;
   cur = _list;
   while (cur->next != 0)
@@ -500,11 +396,6 @@ const T &list<T>::back() const
 {
   struct __list *cur;
 
-  if (_size == 0)
-  {
-    std::cout << "Out of range calling segfault..." << std::endl;
-    raise (SIGSEGV);
-  }
   _list = _list->head;
   cur = _list;
   while (cur->next != 0)
@@ -974,7 +865,7 @@ void list<T>::merge(list<T> &x)
 {
   iterator iter;
 
-  if (_size == 0 || x.get_size() == 0)
+  if (_size == 0 || x.empty())
     return ;
   iter = x.begin();
   if (&x == this)
@@ -995,7 +886,7 @@ void list<T>::merge(list<T> &x, Compare comp)
   iterator x_iter;
   iterator self_iter;
 
-  if (_size == 0 || x.get_size() == 0)
+  if (_size == 0 || x.empty() == 0)
     return ;
   x_iter = x.begin();
   self_iter = begin();

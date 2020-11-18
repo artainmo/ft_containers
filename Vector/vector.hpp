@@ -15,9 +15,10 @@
 **If you make it iterate backwards too much it goes onto random memory space and ends up segfaulting
 **Error with real container -> If iterator points on vector array, and vector array gets resized allocating in new memory space, initial iterator loses what it pointed on
 **
-**Begin function should return empty iterator instead of calling segfault when container is empty
-**Unused allocated memory should be set to zeros.
-**Iterator object should be able to iterate freely, no protections
+**Begin, rbegin, end, rend functions should return empty iterator instead of calling segfault when container is empty /
+**When trying to access empty container segfaults (front, back, at, []) /
+**Unused allocated memory should be set to null, c++ automatically sets to null /
+**Iterator object should be able to iterate freely, no protections /
 */
 
 namespace ft
@@ -60,14 +61,14 @@ namespace ft
     ~vector() { clear(); }
 
     //Iterators
-    iterator begin() { iterator ret(_array); return ret; }
-    const_iterator begin() const { const_iterator ret(_array); return ret; }
-    iterator end() { iterator ret(_array + _size - 1); return ret; }
-    const_iterator end() const { const_iterator ret(_array + _size - 1); return ret; }
-    reverse_iterator rbegin() { reverse_iterator ret(_array + _size - 1); return ret; }
-    const_reverse_iterator rbegin() const { const_reverse_iterator ret(_array + _size - 1); return ret; }
-    reverse_iterator rend() { reverse_iterator ret(_array); return ret; }
-    const_reverse_iterator rend() const { const_reverse_iterator ret(_array); return ret; }
+    iterator begin() { if (empty()) return iterator(); else return iterator(_array); }
+    const_iterator begin() const { if (empty()) return const_iterator(); else return const_iterator(_array); }
+    iterator end() { if (empty()) return iterator(); else return iterator(_array + _size - 1); }
+    const_iterator end() const { if (empty()) return const_iterator(); else return const_iterator(_array + _size - 1); }
+    reverse_iterator rbegin() { if (empty()) return reverse_iterator(); else return reverse_iterator(_array + _size - 1); }
+    const_reverse_iterator rbegin() const { if (empty()) return const_reverse_iterator(); else return const_reverse_iterator(_array + _size - 1); }
+    reverse_iterator rend() { if (empty()) return reverse_iterator(); else return reverse_iterator(_array); }
+    const_reverse_iterator rend() const { if (empty()) return const_reverse_iterator(); else return const_reverse_iterator(_array); }
 
     //Capacity
     unsigned int size() const { return (_size); }
@@ -78,10 +79,10 @@ namespace ft
     void reserve(unsigned int n); //Change capacity
 
     //Element access
-    T &operator[](unsigned int n);
-    const T &operator[](unsigned int n) const;
-    T &at(unsigned int n);
-    const T &at(unsigned int n) const;
+    T &operator[](unsigned int n) { return _array[n]; }
+    const T &operator[](unsigned int n) const { return _array[n]; }
+    T &at(unsigned int n) { return _array[n]; }
+    const T &at(unsigned int n) const { return _array[n]; }
     T &front() { return _array[0]; }
     const T &front() const { return _array[0]; }
     T &back() { return _array[_size - 1]; }
@@ -264,50 +265,6 @@ namespace ft
       copy(rem);
       new_size(get_size<iterator>(rem.begin(), rem.end()));
     }
-  }
-
-  template<typename T>
-  T &vector<T>::operator[](unsigned int n)
-  {
-    if (n > _size)
-    {
-      std::cout << "Out of range calling segfault..." << std::endl;
-      raise (SIGSEGV);
-    }
-    return _array[n];
-  }
-
-  template<typename T>
-  const T &vector<T>::operator[](unsigned int n) const
-  {
-    if (n > _size)
-    {
-      std::cout << "Out of range calling segfault..." << std::endl;
-      raise (SIGSEGV);
-    }
-    return _array[n];
-  }
-
-  template<typename T>
-  T &vector<T>::at(unsigned int n)
-  {
-    if (n > _size)
-    {
-      std::cout << "Out of range calling segfault..." << std::endl;
-      raise (SIGSEGV);
-    }
-    return _array[n];
-  }
-
-  template<typename T>
-  const T &vector<T>::at(unsigned int n) const
-  {
-    if (n > _size)
-    {
-      std::cout << "Out of range calling segfault..." << std::endl;
-      raise (SIGSEGV);
-    }
-    return _array[n];
   }
 
   template<typename T>

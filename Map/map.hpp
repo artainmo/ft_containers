@@ -8,11 +8,9 @@
 
 /*
 **SPECIAL CASES
-**Empty containers do not segfault in begin(), iterator object that tries to access ->first ->second, returns uninitilized memory address with random value
-**Iterator going out of scope segfaults
-**
-**Begin should return empty iterator if container is empty
-**Do not protect iterator from going out of scope
+*
+**Begin, rbegin, end , rend should return empty iterator if container is empty /
+**Do not protect iterator from going out of scope /
 */
 
 namespace ft
@@ -66,14 +64,14 @@ namespace ft
     ~map() { clear(); };
 
     //Iterators
-    iterator begin() { return (iterator(_map->head)); }
-    const_iterator begin() const { return (const_iterator(_map->head)); }
+    iterator begin() { if (empty()) return (iterator()); return (iterator(_map->head)); }
+    const_iterator begin() const { if (empty()) return (const_iterator()); return (const_iterator(_map->head)); }
     iterator end();
     const_iterator end() const;
     reverse_iterator rbegin();
     const_reverse_iterator rbegin() const;
-    reverse_iterator rend() { return (reverse_iterator(_map->head)); }
-    const_reverse_iterator rend() const { return (const_reverse_iterator(_map->head)); }
+    reverse_iterator rend() { if (empty()) return (reverse_iterator()); return (reverse_iterator(_map->head)); }
+    const_reverse_iterator rend() const { if (empty()) return (const_reverse_iterator()); return (const_reverse_iterator(_map->head)); }
 
     //Capacity
     bool empty() const;
@@ -115,11 +113,8 @@ namespace ft
   {
     struct __map *tmp;
 
-    if (_size == 0)
-    {
-      std::cout << "Out of range calling segfault..." << std::endl;
-      raise (SIGSEGV);
-    }
+    if (empty())
+      return (iterator());
     tmp = _map->head;
     while (tmp->next != 0)
       tmp = tmp->next;
@@ -131,11 +126,8 @@ namespace ft
   {
     struct __map *tmp;
 
-    if (_size == 0)
-    {
-      std::cout << "Out of range calling segfault..." << std::endl;
-      raise (SIGSEGV);
-    }
+    if (empty())
+      return (const_iterator());
     tmp = _map->head;
     while (tmp->next != 0)
       tmp = tmp->next;
@@ -148,10 +140,7 @@ namespace ft
     struct __map *tmp;
 
     if (_size == 0)
-    {
-      std::cout << "Out of range calling segfault..." << std::endl;
-      raise (SIGSEGV);
-    }
+      return (reverse_iterator());
     tmp = _map->head;
     while (tmp->next != 0)
       tmp = tmp->next;
@@ -163,11 +152,8 @@ namespace ft
   {
     struct __map *tmp;
 
-    if (_size == 0)
-    {
-      std::cout << "Out of range calling segfault..." << std::endl;
-      raise (SIGSEGV);
-    }
+    if (empty())
+      return (const_reverse_iterator());
     tmp = _map->head;
     while (tmp->next != 0)
       tmp = tmp->next;
@@ -243,7 +229,7 @@ namespace ft
     }
     _map = _map->head;
     tmp = _map;
-    while (tmp != 0 && tmp != position.get_map()) //Get address map
+    while (tmp != 0 && tmp != (struct __map *)position.get_map()) //Get address map
       tmp = tmp->next;
     _erase(tmp);
   }
@@ -319,11 +305,8 @@ namespace ft
   {
     struct __map *tmp;
 
-    if (_size == 0)
-    {
-      std::cout << "Out of range calling segfault..." << std::endl;
-      raise (SIGSEGV);
-    }
+    if (empty())
+      return end();
     _map = _map->head;
     tmp = _map;
     while (tmp != 0 && tmp->key_value != k)
@@ -339,11 +322,8 @@ namespace ft
   {
     struct __map *tmp;
 
-    if (_size == 0)
-    {
-      std::cout << "Out of range calling segfault..." << std::endl;
-      raise (SIGSEGV);
-    }
+    if (empty())
+      return end();
     _map = _map->head;
     tmp = _map;
     while (tmp != 0 && tmp->key_value != k)
@@ -368,11 +348,8 @@ namespace ft
     struct __map *tmp;
     Compare _comp; //Use Compare as type but the variable as the actual function
 
-    if (_size == 0)
-    {
-      std::cout << "Out of range calling segfault..." << std::endl;
-      raise (SIGSEGV);
-    }
+    if (empty())
+      return end();
     _map = _map->head;
     tmp = _map;
     while (tmp != 0 && _comp(tmp->key_value, k) && tmp->key_value != k)
@@ -389,11 +366,8 @@ namespace ft
     struct __map *tmp;
     Compare _comp; //Use Compare as type but the variable as the actual function
 
-    if (_size == 0)
-    {
-      std::cout << "Out of range calling segfault..." << std::endl;
-      raise (SIGSEGV);
-    }
+    if (empty())
+      return end();
     _map = _map->head;
     tmp = _map;
     while (tmp != 0 && _comp(tmp->key_value, k) && tmp->key_value != k)
@@ -410,11 +384,8 @@ namespace ft
     struct __map *tmp;
     Compare _comp; //Use Compare as type but the variable as the actual function
 
-    if (_size == 0)
-    {
-      std::cout << "Out of range calling segfault..." << std::endl;
-      raise (SIGSEGV);
-    }
+    if (empty())
+      return end();
     _map = _map->head;
     tmp = _map;
     while (tmp != 0 && (_comp(tmp->key_value, k) || tmp->key_value == k))
@@ -431,11 +402,8 @@ namespace ft
     struct __map *tmp;
     Compare _comp; //Use Compare as type but the variable as the actual function
 
-    if (_size == 0)
-    {
-      std::cout << "Out of range calling segfault..." << std::endl;
-      raise (SIGSEGV);
-    }
+    if (empty())
+      return end();
     _map = _map->head;
     tmp = _map;
     while (tmp != 0 && (_comp(tmp->key_value, k) || tmp->key_value == k))
