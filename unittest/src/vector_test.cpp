@@ -3,7 +3,7 @@
 //MY
 
 template<typename T>
-void show_vector(ft::vector<T> &l, ofstream fd)
+void show_vector(ft::vector<T> &l, std::ofstream fd)
 {
   unsigned int m;
 
@@ -17,7 +17,7 @@ void show_vector(ft::vector<T> &l, ofstream fd)
 }
 
 template<typename T>
-void show_vector2(ft::vector<T> &l, ofstream fd) //Use at function instead of [] operator
+void show_vector2(ft::vector<T> &l, std::ofstream fd) //Use at function instead of [] operator
 {
   unsigned int m;
 
@@ -33,7 +33,7 @@ void show_vector2(ft::vector<T> &l, ofstream fd) //Use at function instead of []
 //REAL
 
 template<typename T>
-void show_vector(vector<T> &l, ofstream fd)
+void show_vector(vector<T> &l, std::ofstream fd)
 {
   unsigned int m;
 
@@ -47,7 +47,7 @@ void show_vector(vector<T> &l, ofstream fd)
 }
 
 template<typename T>
-void show_vector2(vector<T> &l, ofstream fd) //Use at function instead of [] operator
+void show_vector2(vector<T> &l, std::ofstream fd) //Use at function instead of [] operator
 {
   unsigned int m;
 
@@ -60,7 +60,7 @@ void show_vector2(vector<T> &l, ofstream fd) //Use at function instead of [] ope
   fd << std::endl;
 }
 
-void test_vector(ofstream fd_w)
+void test_vector(std::ofstream fd_w)
 {
   P("\n~~~~~~~VECTOR~~~~~~~~\n");
   //Contruction and iterators
@@ -304,13 +304,13 @@ void test_vector(ofstream fd_w)
   if (vi1 >= vi2)
     write("YES", fd_w);
   else
-    write("NO", fd_w)
+    write("NO", fd_w);
   //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   write("~38: Test whether first vector is smaller than or equal to first one", fd_w);
   if (vi1 <= vi2)
     write("YES", fd_w);
   else
-    write("NO", fd_w)
+    write("NO", fd_w);
   //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   write("~39: We will swap the content of the following two vectors, show and check size", fd_w);
   swap(vi1, vi3);

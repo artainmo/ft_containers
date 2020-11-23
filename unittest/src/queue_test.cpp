@@ -3,7 +3,7 @@
 //MY
 
 template<typename T>
-void show_queue(ft::queue<T> s, ofstream fd)
+void show_queue(ft::queue<T> s, std::ofstream fd)
 {
   while (!s.empty())
   {
@@ -16,7 +16,7 @@ void show_queue(ft::queue<T> s, ofstream fd)
 //REAL
 
 template<typename T>
-void show_queue(queue<T> s, ofstream fd)
+void show_queue(queue<T> s, std::ofstream fd)
 {
   while (!s.empty())
   {
@@ -26,7 +26,7 @@ void show_queue(queue<T> s, ofstream fd)
   std::cout << std::endl;
 }
 
-void test_queue(ofstream fd_w)
+void test_queue(std::ofstream fd_w)
 {
   P("~~~~~~~QUEUE~~~~~~~~\n");
   //Contruction and iterators

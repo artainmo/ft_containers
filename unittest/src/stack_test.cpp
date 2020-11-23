@@ -3,7 +3,7 @@
 //MY
 
 template<typename T>
-void show_stack(ft::stack<T> s, ofstream fd)
+void show_stack(ft::stack<T> s, std::ofstream fd)
 {
   while (!s.empty())
   {
@@ -16,7 +16,7 @@ void show_stack(ft::stack<T> s, ofstream fd)
 //REAL
 
 template<typename T>
-void show_stack(stack<T> s, ofstream fd)
+void show_stack(stack<T> s, std::ofstream fd)
 {
   while (!s.empty())
   {
@@ -26,7 +26,7 @@ void show_stack(stack<T> s, ofstream fd)
   fd << std::endl;
 }
 
-void test_stack(ofstream fd_w)
+void test_stack(std::ofstream fd_w)
 {
   P("~~~~~~~STACK~~~~~~~~\n");
   //Contruction and iterators

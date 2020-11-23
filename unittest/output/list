@@ -1,0 +1,368 @@
+Default constructor ################################################################################
+~~ Size: 0
+~~ Back: SEGFAULT
+~~ Front: -416
+~~ Show with begin iterator: 
+~~ Show with rbegin iterator: 
+~~ Show with end iterator: SEGFAULT
+~~ Show with rend iterator: SEGFAULT
+Fill constructor ###################################################################################
+~~ Size: 10
+~~ Back: 5
+~~ Front: 5
+~~ Show with begin iterator: 5555555555
+~~ Show with rbegin iterator: 5555555555
+~~ Show with end iterator: 5555555555
+~~ Show with rend iterator: 5555555555
+Special Fill constructor ###########################################################################
+~~ Size: 0
+~~ Back: SEGFAULT
+~~ Front: SEGFAULT
+~~ Show with begin iterator: 
+~~ Show with rbegin iterator: 
+~~ Show with end iterator: SEGFAULT
+~~ Show with rend iterator: SEGFAULT
+Range constructor ##################################################################################
+~~ Size: 7
+~~ Back: 5
+~~ Front: 5
+~~ Show with begin iterator: 5555555
+~~ Show with rbegin iterator: 5555555
+~~ Show with end iterator: 5555555
+~~ Show with rend iterator: 5555555
+Copy constructor ###################################################################################
+~~ Size: 10
+~~ Back: 5
+~~ Front: 5
+~~ Show with begin iterator: 5555555555
+~~ Show with rbegin iterator: 5555555555
+~~ Show with end iterator: 5555555555
+~~ Show with rend iterator: 5555555555
+Deep copy test: >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+~~ Size: 10
+~~ Back: 5
+~~ Front: 0
+~~ Show with begin iterator: 0555555555
+~~ Show with rbegin iterator: 5555555550
+~~ Show with end iterator: 5555555500
+~~ Show with rend iterator: 5555555555
+~~ Size: 10
+~~ Back: 0
+~~ Front: 5
+~~ Show with begin iterator: 5555555550
+~~ Show with rbegin iterator: 0555555555
+~~ Show with end iterator: 5555555555
+~~ Show with rend iterator: 5555555500
+SEGFAULT
+Empty function #####################################################################################
+Tested container: >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+~~ Size: 0
+~~ Back: SEGFAULT
+~~ Front: -416
+~~ Show with begin iterator: 
+~~ Show with rbegin iterator: 
+~~ Show with end iterator: SEGFAULT
+~~ Show with rend iterator: SEGFAULT
+Result: >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+true
+Max size function ##################################################################################
+4294967295
+Front function #####################################################################################
+Tested container: >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+~~ Size: 0
+~~ Back: SEGFAULT
+~~ Front: -416
+~~ Show with begin iterator: 
+~~ Show with rbegin iterator: 
+~~ Show with end iterator: SEGFAULT
+~~ Show with rend iterator: SEGFAULT
+Result: >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+SEGFAULT
+Back function ######################################################################################
+Tested container: >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+~~ Size: 0
+~~ Back: SEGFAULT
+~~ Front: -416
+~~ Show with begin iterator: 
+~~ Show with rbegin iterator: 
+~~ Show with end iterator: SEGFAULT
+~~ Show with rend iterator: SEGFAULT
+Result: >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+SEGFAULT
+Fill assign function ###############################################################################
+Tested container: >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+~~ Size: 0
+~~ Back: SEGFAULT
+~~ Front: -416
+~~ Show with begin iterator: 
+~~ Show with rbegin iterator: 
+~~ Show with end iterator: SEGFAULT
+~~ Show with rend iterator: SEGFAULT
+Result: >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+~~ Size: 12
+~~ Back: 7
+~~ Front: 7
+~~ Show with begin iterator: 777777777777
+~~ Show with rbegin iterator: 777777777777
+~~ Show with end iterator: 777777777777
+~~ Show with rend iterator: 777777777777
+Fill assign function 2##############################################################################
+Tested container: >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+~~ Size: 0
+~~ Back: SEGFAULT
+~~ Front: -416
+~~ Show with begin iterator: 
+~~ Show with rbegin iterator: 
+~~ Show with end iterator: SEGFAULT
+~~ Show with rend iterator: SEGFAULT
+Result: >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+~~ Size: 0
+~~ Back: SEGFAULT
+~~ Front: -416
+~~ Show with begin iterator: 
+~~ Show with rbegin iterator: 
+~~ Show with end iterator: SEGFAULT
+~~ Show with rend iterator: SEGFAULT
+Push_front function ################################################################################
+Tested container: >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+~~ Size: 0
+~~ Back: SEGFAULT
+~~ Front: -416
+~~ Show with begin iterator: 
+~~ Show with rbegin iterator: 
+~~ Show with end iterator: SEGFAULT
+~~ Show with rend iterator: SEGFAULT
+Result: >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+~~ Size: 1
+~~ Back: 7
+~~ Front: 7
+~~ Show with begin iterator: 7
+~~ Show with rbegin iterator: 7
+~~ Show with end iterator: 7
+~~ Show with rend iterator: 7
+Pop_front function #################################################################################
+Tested container: >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+~~ Size: 0
+~~ Back: SEGFAULT
+~~ Front: -416
+~~ Show with begin iterator: 
+~~ Show with rbegin iterator: 
+~~ Show with end iterator: SEGFAULT
+~~ Show with rend iterator: SEGFAULT
+Result: >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+SEGFAULT
+Push_back function #################################################################################
+Tested container: >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+~~ Size: 0
+~~ Back: SEGFAULT
+~~ Front: -416
+~~ Show with begin iterator: 
+~~ Show with rbegin iterator: 
+~~ Show with end iterator: SEGFAULT
+~~ Show with rend iterator: SEGFAULT
+Result: >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+~~ Size: 1
+~~ Back: 9
+~~ Front: 9
+~~ Show with begin iterator: 9
+~~ Show with rbegin iterator: 9
+~~ Show with end iterator: 9
+~~ Show with rend iterator: 9
+Pop_back function ##################################################################################
+Tested container: >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+~~ Size: 0
+~~ Back: SEGFAULT
+~~ Front: -416
+~~ Show with begin iterator: 
+~~ Show with rbegin iterator: 
+~~ Show with end iterator: SEGFAULT
+~~ Show with rend iterator: SEGFAULT
+Result: >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+SEGFAULT
+Insert single element function #####################################################################
+Tested container: >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+~~ Size: 0
+~~ Back: SEGFAULT
+~~ Front: -416
+~~ Show with begin iterator: 
+~~ Show with rbegin iterator: 
+~~ Show with end iterator: SEGFAULT
+~~ Show with rend iterator: SEGFAULT
+Result: >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+SEGFAULT
+Insert single element function 2####################################################################
+Tested container: >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+~~ Size: 0
+~~ Back: SEGFAULT
+~~ Front: -416
+~~ Show with begin iterator: 
+~~ Show with rbegin iterator: 
+~~ Show with end iterator: SEGFAULT
+~~ Show with rend iterator: SEGFAULT
+Result: >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+SEGFAULT
+Insert single element function 3####################################################################
+Tested container: >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+~~ Size: 0
+~~ Back: SEGFAULT
+~~ Front: -416
+~~ Show with begin iterator: 
+~~ Show with rbegin iterator: 
+~~ Show with end iterator: SEGFAULT
+~~ Show with rend iterator: SEGFAULT
+Result: >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+SEGFAULT
+Insert single element function 4####################################################################
+Tested container: >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+~~ Size: 0
+~~ Back: SEGFAULT
+~~ Front: -416
+~~ Show with begin iterator: 
+~~ Show with rbegin iterator: 
+~~ Show with end iterator: SEGFAULT
+~~ Show with rend iterator: SEGFAULT
+Result: >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+SEGFAULT
+Insert fill ########################################################################################
+Tested container: >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+~~ Size: 0
+~~ Back: SEGFAULT
+~~ Front: -416
+~~ Show with begin iterator: 
+~~ Show with rbegin iterator: 
+~~ Show with end iterator: SEGFAULT
+~~ Show with rend iterator: SEGFAULT
+Result: >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+SEGFAULT
+Insert fill 2#######################################################################################
+Tested container: >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+~~ Size: 0
+~~ Back: SEGFAULT
+~~ Front: -416
+~~ Show with begin iterator: 
+~~ Show with rbegin iterator: 
+~~ Show with end iterator: SEGFAULT
+~~ Show with rend iterator: SEGFAULT
+Result: >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+~~ Size: 0
+~~ Back: SEGFAULT
+~~ Front: 35383328
+~~ Show with begin iterator: 
+~~ Show with rbegin iterator: 
+~~ Show with end iterator: SEGFAULT
+~~ Show with rend iterator: SEGFAULT
+Insert fill 3#######################################################################################
+Tested container: >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+~~ Size: 0
+~~ Back: SEGFAULT
+~~ Front: -416
+~~ Show with begin iterator: 
+~~ Show with rbegin iterator: 
+~~ Show with end iterator: SEGFAULT
+~~ Show with rend iterator: SEGFAULT
+Result: >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+SEGFAULT
+Insert fill 4#######################################################################################
+Tested container: >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+~~ Size: 0
+~~ Back: SEGFAULT
+~~ Front: -416
+~~ Show with begin iterator: 
+~~ Show with rbegin iterator: 
+~~ Show with end iterator: SEGFAULT
+~~ Show with rend iterator: SEGFAULT
+Result: >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+SEGFAULT
+Erase single element ###############################################################################
+Tested container: >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+~~ Size: 0
+~~ Back: SEGFAULT
+~~ Front: -416
+~~ Show with begin iterator: 
+~~ Show with rbegin iterator: 
+~~ Show with end iterator: SEGFAULT
+~~ Show with rend iterator: SEGFAULT
+Result: >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+SEGFAULT
+Erase single element 2##############################################################################
+Tested container: >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+~~ Size: 0
+~~ Back: SEGFAULT
+~~ Front: -416
+~~ Show with begin iterator: 
+~~ Show with rbegin iterator: 
+~~ Show with end iterator: SEGFAULT
+~~ Show with rend iterator: SEGFAULT
+Result: >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+SEGFAULT
+Erase single element 3##############################################################################
+Tested container: >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+~~ Size: 0
+~~ Back: SEGFAULT
+~~ Front: -416
+~~ Show with begin iterator: 
+~~ Show with rbegin iterator: 
+~~ Show with end iterator: SEGFAULT
+~~ Show with rend iterator: SEGFAULT
+Result: >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+SEGFAULT
+Erase single element 4##############################################################################
+Tested container: >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+~~ Size: 0
+~~ Back: SEGFAULT
+~~ Front: -416
+~~ Show with begin iterator: 
+~~ Show with rbegin iterator: 
+~~ Show with end iterator: SEGFAULT
+~~ Show with rend iterator: SEGFAULT
+Result: >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+SEGFAULT
+Erase range ########################################################################################
+Tested container: >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+~~ Size: 0
+~~ Back: SEGFAULT
+~~ Front: -416
+~~ Show with begin iterator: 
+~~ Show with rbegin iterator: 
+~~ Show with end iterator: SEGFAULT
+~~ Show with rend iterator: SEGFAULT
+Result: >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+SEGFAULT
+Erase range 2#######################################################################################
+Tested container: >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+~~ Size: 0
+~~ Back: SEGFAULT
+~~ Front: -416
+~~ Show with begin iterator: 
+~~ Show with rbegin iterator: 
+~~ Show with end iterator: SEGFAULT
+~~ Show with rend iterator: SEGFAULT
+Result: >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+SEGFAULT
+Resize bigger ######################################################################################
+Tested container: >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+~~ Size: 0
+~~ Back: SEGFAULT
+~~ Front: -416
+~~ Show with begin iterator: 
+~~ Show with rbegin iterator: 
+~~ Show with end iterator: SEGFAULT
+~~ Show with rend iterator: SEGFAULT
+Result: >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+~~ Size: 1
+~~ Back: 9
+~~ Front: 9
+~~ Show with begin iterator: 9
+~~ Show with rbegin iterator: 9
+~~ Show with end iterator: 9
+~~ Show with rend iterator: 9
+Resize smaller #####################################################################################
+Tested container: >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+~~ Size: 0
+~~ Back: SEGFAULT
+~~ Front: -416
+~~ Show with begin iterator: 
+~~ Show with rbegin iterator: 
+~~ Show with end iterator: SEGFAULT
+~~ Show with rend iterator: SEGFAULT
+Result: >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>

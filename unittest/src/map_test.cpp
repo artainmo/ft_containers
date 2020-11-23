@@ -3,7 +3,7 @@
 //MY
 
 template<typename Key, typename T>
-void show_map(ft::map<Key, T> &l, ofstream fd)
+void show_map(ft::map<Key, T> &l, std::ofstream fd)
 {
   unsigned int m;
   typename ft::map<Key, T>::iterator i = l.begin();
@@ -19,7 +19,7 @@ void show_map(ft::map<Key, T> &l, ofstream fd)
 }
 
 template<typename Key, typename T>
-void show_map_reverse(ft::map<Key, T> &l, ofstream fd) //Not in reverse order but using a reverse iterator
+void show_map_reverse(ft::map<Key, T> &l, std::ofstream fd) //Not in reverse order but using a reverse iterator
 {
   unsigned int m;
   typename ft::map<Key, T>::reverse_iterator i(l.rend());
@@ -35,7 +35,7 @@ void show_map_reverse(ft::map<Key, T> &l, ofstream fd) //Not in reverse order bu
 }
 
 template<typename Key, typename T>
-void reverse_map(ft::map<Key, T> &l, ofstream fd) //Read and show map in reverse order
+void reverse_map(ft::map<Key, T> &l, std::ofstream fd) //Read and show map in reverse order
 {
   unsigned int m;
   typename ft::map<Key, T>::iterator i = l.end();
@@ -53,7 +53,7 @@ void reverse_map(ft::map<Key, T> &l, ofstream fd) //Read and show map in reverse
 //REAL
 
 template<typename Key, typename T>
-void show_map(map<Key, T> &l, ofstream fd)
+void show_map(map<Key, T> &l, std::ofstream fd)
 {
   unsigned int m;
   typename ft::map<Key, T>::iterator i = l.begin();
@@ -69,7 +69,7 @@ void show_map(map<Key, T> &l, ofstream fd)
 }
 
 template<typename Key, typename T>
-void show_map_reverse(map<Key, T> &l, ofstream fd) //Not in reverse order but using a reverse iterator
+void show_map_reverse(map<Key, T> &l, std::ofstream fd) //Not in reverse order but using a reverse iterator
 {
   unsigned int m;
   typename map<Key, T>::reverse_iterator i(l.rend());
@@ -85,7 +85,7 @@ void show_map_reverse(map<Key, T> &l, ofstream fd) //Not in reverse order but us
 }
 
 template<typename Key, typename T>
-void reverse_map(map<Key, T> &l, ofstream fd) //Read and show map in reverse order
+void reverse_map(map<Key, T> &l, std::ofstream fd) //Read and show map in reverse order
 {
   unsigned int m;
   typename map<Key, T>::iterator i = l.end();
@@ -100,7 +100,7 @@ void reverse_map(map<Key, T> &l, ofstream fd) //Read and show map in reverse ord
   }
 }
 
-void test_map(ofstream fd_w)
+void test_map(std::ofstream fd_w)
 {
   write("\n~~~~~~~Map~~~~~~~~\n", fd_w);
   write("CONSTRUCTORS", fd_w);
