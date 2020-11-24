@@ -1,4 +1,4 @@
-COMPILE = clang++ -Wall -Wextra -Werror -ferror-limit=5  main.cpp src/check_answer.cpp -o container
+COMPILE = clang++ -Wall -Wextra -Werror -ferror-limit=5  main.cpp src/utils.cpp -o container
 
 all:
 	$(COMPILE)

@@ -32,8 +32,12 @@
 
 /*
 **Too much tests are done and cause computer to crash,
-**solution is to not check in the end but after each test and only write errors to files, max 100errors before quiting
+**solution is to not check in the end but after each test and only write errors to files, max number errors before quiting
+**Temp files are used, if program blocks and ctrl-c is used to quit program, tmp files won't be deleted and can be viewed to debug
 */
+
+int G_ERROR_LIMIT = 1;
+//MAX 200 or computer crash risk
 
 int main(int argc, char **argv)
 {
@@ -49,13 +53,17 @@ int main(int argc, char **argv)
   std::remove("output/stack");
   std::remove("output/vector");
   std::remove("output/real");
+  std::remove("output/tmp_my");
+  std::remove("output/tmp_real");
 
+
+  signal(SIGQUIT, sigquit);
+  signal(SIGSEGV, segfault);
+  signal(SIGABRT, sigabort);
   if (std::strcmp("list", argv[1]) == 0)
   {
-;
-
-    std::cout << "\033[1m\033[33m" << "!!Starting tests...!!" << std::endl;
-    list_test<ft::list<int>, lstd::list<int>, int>();
+    std::cout << "\033[1m\033[33m" << "!!Starting tests for list container...!!" << std::endl;
+    list_test<ft::list<int>, std::list<int>, int>();
     // list_test<ft::list<char>, char>(fd_w);
 
     // std::cout << "\033[1m\033[33m" << "!!Showing results...!!" << std::endl;
@@ -106,4 +114,7 @@ int main(int argc, char **argv)
   //   fd_w.close();
   //   fd_r.close();
   // }
+
+  std::remove("output/tmp_my");
+  std::remove("output/tmp_real");
 }
