@@ -1,4 +1,4 @@
-COMPILE = clang++ -Wall -Wextra -Werror -ferror-limit=5  main.cpp src/utils.cpp -o container
+COMPILE = clang++ -Wall -Wextra -Werror -ferror-limit=5 -lpthread main.cpp src/utils.cpp -o container
 
 all:
 	$(COMPILE)
@@ -26,6 +26,6 @@ clean:
 	rm -f output/list output/vector output/map output/queue output/stack output/real
 
 fclean: clean
-		rm -f container const_container
+		rm -f container const_container a.out
 
 re: fclean all

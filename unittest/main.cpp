@@ -36,7 +36,13 @@
 **Temp files are used, if program blocks and ctrl-c is used to quit program, tmp files won't be deleted and can be viewed to debug
 */
 
-int G_ERROR_LIMIT = 1;
+/*
+**Do not test max size as you can have different answer than real one. You must be able to explain, your own implementation of it.
+**Infinite loop results can be checked in output/tmp_my and output/tmp_real
+*/
+
+int G_ERROR_LIMIT = 10;
+pthread_mutex_t *g_dup = new pthread_mutex_t;
 //MAX 200 or computer crash risk
 
 int main(int argc, char **argv)
@@ -114,7 +120,7 @@ int main(int argc, char **argv)
   //   fd_w.close();
   //   fd_r.close();
   // }
-
+  delete g_dup;
   std::remove("output/tmp_my");
   std::remove("output/tmp_real");
 }

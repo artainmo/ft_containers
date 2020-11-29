@@ -7,18 +7,21 @@ template<typename T>
 struct s_functions_ptr
 {
   void (*function_pointer)();
+  int num;
 };
 
 template<typename T>
 struct s_functions_ptr1
 {
   void (*function_pointer)(T &ob);
+  int num;
 };
 
 template<typename T>
 struct s_functions_ptr2
 {
   void (*function_pointer)(T &ob, T &ob2);
+  int num;
 };
 
 template<typename T>
@@ -30,17 +33,17 @@ bool remove_if_test(T x)
 }
 
 template<typename T>
-bool unique_test(T x, T x2)
+bool unique_test(T x, T follow)
 {
-  if (x - 1 == x2)
-    return true;
-  return false;
+  if (x > follow)
+    return false;
+  return true;
 }
 
 template<typename T>
 bool merge_test(T x, T x2)
 {
-  if (x > x2)
+  if (x < x2)
     return true;
   return false;
 }
@@ -124,7 +127,7 @@ void show_list_rend(T &l)
 template<typename T>
 void access(T &l) //All the subtests indicated with ~~
 {
-  struct s_functions_ptr1<T> func[7] = {{get_size<T>}, {get_front<T>}, {get_back<T>}, {show_list_begin<T>}, {show_list_rbegin<T>}, {show_list_end<T>}, {show_list_rend<T>}};
+  struct s_functions_ptr1<T> func[7] = {{get_size<T>, 0}, {get_front<T>, 0}, {get_back<T>, 0}, {show_list_begin<T>, 0}, {show_list_rbegin<T>, 0}, {show_list_end<T>, 0}, {show_list_rend<T>, 0}};
 
   for (int i = 0; i < 7; i++)
   {
@@ -222,12 +225,12 @@ void empty(T &l)
     std::cout << "true" << std::endl;
 }
 
-template<typename T>
-void max_size(T &l)
-{
-  std::cout << std::setfill ('#') << std::setw (100) << std::left << "Max size function " << std::endl;
-  std::cout << l.max_size() << std::endl;
-}
+// template<typename T> //Own answer can differ from real list answer so do not test
+// void max_size(T &l)
+// {
+//   std::cout << std::setfill ('#') << std::setw (100) << std::left << "Max size function " << std::endl;
+//   std::cout << l.max_size() << std::endl;
+// }
 
 template<typename T>
 void front(T &l)
@@ -280,14 +283,16 @@ void range_assign2(T &l, T &l2)
   std::cout << std::setfill ('>') << std::setw (50) << std::left << "Tested container: " << std::endl;
   access<T>(l);
   access<T>(l2);
+  if (l2.size() == 1 || l2.size() == 2) //Undefined behavior, out of range iterator points on random value in real
+    return ;
   typename T::iterator i = l2.begin();
   ++i;
   ++i;
   typename T::iterator i2 = l2.end();
   --i2;
   --i2;
-  std::cout << "~~~ Iterator 1: " << *i <<  std::endl;
-  std::cout << "~~~ Iterator 2: " << *i2 << std::endl;
+  std::cout << "Iterator 1: " << *i << std::endl;
+  std::cout << "Iterator 2: " << *i2 << std::endl;
   std::cout << std::setfill ('>') << std::setw (50) << std::left << "Result: " << std::endl;
   if (l2.size() > 3) //Undefined behavior if first iterator comes after second one
     l.assign(i, i2);
@@ -354,18 +359,18 @@ void pop_back(T &l)
   access<T>(l);
 }
 
-template<typename T>
-void insert_single_element4(T &l)
-{
-  std::cout << std::setfill ('#') << std::setw (100) << std::left << "Insert single element function 4" << std::endl;
-  std::cout << std::setfill ('>') << std::setw (50) << std::left << "Tested container: " << std::endl;
-  access<T>(l);
-  std::cout << std::setfill ('>') << std::setw (50) << std::left << "Result: " << std::endl;
-  T tmp((unsigned int)1,1);
-  typename T::iterator i = tmp.begin();
-  l.insert(i, 3);
-  access<T>(l);
-}
+// template<typename T>
+// void insert_single_element4(T &l) //Undefined behavior
+// {
+//   std::cout << std::setfill ('#') << std::setw (100) << std::left << "Insert single element function 4" << std::endl;
+//   std::cout << std::setfill ('>') << std::setw (50) << std::left << "Tested container: " << std::endl;
+//   access<T>(l);
+//   std::cout << std::setfill ('>') << std::setw (50) << std::left << "Result: " << std::endl;
+//   T tmp((unsigned int)1,1);
+//   typename T::iterator i = tmp.end();
+//   l.insert(i, 1);
+//   access<T>(l);
+// }
 
 template<typename T>
 void insert_single_element3(T &l)
@@ -374,7 +379,7 @@ void insert_single_element3(T &l)
   std::cout << std::setfill ('>') << std::setw (50) << std::left << "Tested container: " << std::endl;
   access<T>(l);
   std::cout << std::setfill ('>') << std::setw (50) << std::left << "Result: " << std::endl;
-  l.insert(l.end(), 3);
+  std::cout << "return: " << *(l.insert(l.end(), 3)) << std::endl;
   access<T>(l);
 }
 
@@ -385,7 +390,7 @@ void insert_single_element2(T &l)
   std::cout << std::setfill ('>') << std::setw (50) << std::left << "Tested container: " << std::endl;
   access<T>(l);
   std::cout << std::setfill ('>') << std::setw (50) << std::left << "Result: " << std::endl;
-  l.insert(l.begin(), 0);
+  std::cout << "return: " << *(l.insert(l.begin(), 0)) << std::endl;
   access<T>(l);
 }
 
@@ -398,25 +403,24 @@ void insert_single_element(T &l)
   typename T::iterator i = l.end();
   --i;
   --i;
-  std::cout << "Iterator 1:" << *i << std::endl;
+  std::cout << "Iterator 1: " << *i << std::endl;
   std::cout << std::setfill ('>') << std::setw (50) << std::left << "Result: " << std::endl;
-  l.insert(i, 3);
+  std::cout << "return: " << *(l.insert(i, 3)) << std::endl;
   access<T>(l);
 }
 
-template<typename T>
-void insert_fill4(T &l)
-{
-  std::cout << std::setfill ('#') << std::setw (100) << std::left << "Insert fill 4" << std::endl;
-  std::cout << std::setfill ('>') << std::setw (50) << std::left << "Tested container: " << std::endl;
-  access<T>(l);
-  std::cout << std::setfill ('>') << std::setw (50) << std::left << "Result: " << std::endl;
-  T tmp((unsigned int)1,1);
-  typename T::iterator i = tmp.begin();
-  l.insert(i, (unsigned int)3, 4);
-  access<T>(l);
-  access<T>(l);
-}
+// template<typename T>
+// void insert_fill4(T &l) //Undefined behavior
+// {
+//   std::cout << std::setfill ('#') << std::setw (100) << std::left << "Insert fill 4" << std::endl;
+//   std::cout << std::setfill ('>') << std::setw (50) << std::left << "Tested container: " << std::endl;
+//   access<T>(l);
+//   std::cout << std::setfill ('>') << std::setw (50) << std::left << "Result: " << std::endl;
+//   T tmp((unsigned int)1,1);
+//   typename T::iterator i = tmp.begin();
+//   l.insert(i, (unsigned int)3, 4);
+//   access<T>(l);
+// }
 
 template<typename T>
 void insert_fill3(T &l)
@@ -449,7 +453,7 @@ void insert_fill(T &l)
   typename T::iterator i = l.end();
   --i;
   --i;
-  std::cout << "Iterator 1:" << *i << std::endl;
+  std::cout << "Iterator 1: " << *i << std::endl;
   std::cout << std::setfill ('>') << std::setw (50) << std::left << "Result: " << std::endl;
   l.insert(i,  (unsigned int)3, 4);
   access<T>(l);
@@ -462,6 +466,8 @@ void insert_range3(T &l, T &l2)
   std::cout << std::setfill ('>') << std::setw (50) << std::left << "Tested containers: " << std::endl;
   access<T>(l);
   access<T>(l2);
+  if (l2.size() == 2 || l2.size() == 1)
+    return ;
   typename T::iterator m = l2.end();
   --m;
   --m;
@@ -469,10 +475,13 @@ void insert_range3(T &l, T &l2)
   typename T::iterator k = l2.begin();
   ++k;
   ++k;
-  std::cout << "Iterator 1:" << *m << std::endl;
-  std::cout << "Iterator 2:" << *k << std::endl;
+  std::cout << "Iterator 1: " << *m << std::endl;
+  std::cout << "Iterator 2: " << *k << std::endl;
   std::cout << std::setfill ('>') << std::setw (50) << std::left << "Result: " << std::endl;
-  l.template insert<typename T::iterator >(l.begin(), k, m); //When the name of a member template specialization appears after . or -> in a postfix-expression, or after nested-name-specifier in a qualified-id, and the postfix-expression or qualified-id explicitly depends on a template-parameter, the member template name must be prefixed by the keyword template. Otherwise the name is assumed to name a non-template.
+  if (l2.size() > 4) //Undefined behavior if k comes after m
+    l.template insert<typename T::iterator >(l.begin(), k, m); //When the name of a member template specialization appears after . or -> in a postfix-expression, or after nested-name-specifier in a qualified-id, and the postfix-expression or qualified-id explicitly depends on a template-parameter, the member template name must be prefixed by the keyword template. Otherwise the name is assumed to name a non-template.
+  else
+    l.template insert<typename T::iterator >(l.begin(), m, k);
   access<T>(l);
   access<T>(l2);
 }
@@ -500,36 +509,37 @@ void insert_range(T &l, T &l2)
   typename T::iterator i = l.begin();
   ++i;
   ++i;
-  std::cout << "Iterator 1:" << *i << std::endl;
+  if (l.size() != 2) //Out of scope iterator undefined value
+    std::cout << "Iterator 1: " << *i << std::endl;
   std::cout << std::setfill ('>') << std::setw (50) << std::left << "Result: " << std::endl;
   l.template insert<typename T::iterator >(i, l2.begin(), l2.end()); //When the name of a member template specialization appears after . or -> in a postfix-expression, or after nested-name-specifier in a qualified-id, and the postfix-expression or qualified-id explicitly depends on a template-parameter, the member template name must be prefixed by the keyword template. Otherwise the name is assumed to name a non-template.
   access<T>(l);
   access<T>(l2);
 }
 
-template<typename T>
-void erase_single_element4(T &l)
-{
-  std::cout << std::setfill ('#') << std::setw (100) << std::left << "Erase single element 4" << std::endl;
-  std::cout << std::setfill ('>') << std::setw (50) << std::left << "Tested container: " << std::endl;
-  access<T>(l);
-  std::cout << std::setfill ('>') << std::setw (50) << std::left << "Result: " << std::endl;
-  T tmp((unsigned int)1,1);
-  typename T::iterator i = tmp.begin();
-  l.erase(i);
-  access<T>(l);
-}
+// template<typename T> //Undefined behavior, reduces size by one without erasing any element, returning the iterator it received as paramter
+// void erase_single_element4(T &l)
+// {
+//   std::cout << std::setfill ('#') << std::setw (100) << std::left << "Erase single element 4" << std::endl;
+//   std::cout << std::setfill ('>') << std::setw (50) << std::left << "Tested container: " << std::endl;
+//   access<T>(l);
+//   std::cout << std::setfill ('>') << std::setw (50) << std::left << "Result: " << std::endl;
+//   T tmp((unsigned int)1,1);
+//   typename T::iterator i = tmp.begin();
+//   std::cout << "return: " << *(l.erase(i)) << std::endl;
+//   access<T>(l);
+// }
 
-template<typename T>
-void erase_single_element3(T &l)
-{
-  std::cout << std::setfill ('#') << std::setw (100) << std::left << "Erase single element 3" << std::endl;
-  std::cout << std::setfill ('>') << std::setw (50) << std::left << "Tested container: " << std::endl;
-  access<T>(l);
-  std::cout << std::setfill ('>') << std::setw (50) << std::left << "Result: " << std::endl;
-  l.erase(l.begin());
-  access<T>(l);
-}
+// template<typename T>
+// void erase_single_element3(T &l) //Undefined bahavior SIGABORT
+// {
+//   std::cout << std::setfill ('#') << std::setw (100) << std::left << "Erase single element 3" << std::endl;
+//   std::cout << std::setfill ('>') << std::setw (50) << std::left << "Tested container: " << std::endl;
+//   access<T>(l);
+//   std::cout << std::setfill ('>') << std::setw (50) << std::left << "Result: " << std::endl;
+//   l.erase(l.end());
+//   access<T>(l);
+// }
 
 template<typename T>
 void erase_single_element2(T &l)
@@ -538,7 +548,7 @@ void erase_single_element2(T &l)
   std::cout << std::setfill ('>') << std::setw (50) << std::left << "Tested container: " << std::endl;
   access<T>(l);
   std::cout << std::setfill ('>') << std::setw (50) << std::left << "Result: " << std::endl;
-  l.erase(l.end());
+  std::cout << "return: " << *(l.erase(l.begin())) << std::endl;
   access<T>(l);
 }
 
@@ -548,12 +558,19 @@ void erase_single_element(T &l)
   std::cout << std::setfill ('#') << std::setw (100) << std::left << "Erase single element " << std::endl;
   std::cout << std::setfill ('>') << std::setw (50) << std::left << "Tested container: " << std::endl;
   access<T>(l);
+  if (l.size() < 3) //Out of scope iterator undefined behavior, sigabort
+    return ;
   typename T::iterator i = l.begin();
   ++i;
   ++i;
-  std::cout << "Iterator 1:" << *i << std::endl;
+  typename T::iterator check = i;
+  ++check;
+  std::cout << "Iterator 1: " << *i << std::endl;
   std::cout << std::setfill ('>') << std::setw (50) << std::left << "Result: " << std::endl;
-  l.erase(i);
+  if (check != l.end()) //Return value is undefined when iterator points on back, because goes out of scope and returns random value
+    std::cout << "return: " << *(l.erase(i)) << std::endl;
+  else
+    l.erase(i);
   access<T>(l);
 }
 
@@ -569,10 +586,16 @@ void erase_range2(T &l)
   typename T::iterator k = l.end();
   --k;
   --k;
-  std::cout << "Iterator 1:" << *m << std::endl;
-  std::cout << "Iterator 2:" << *k << std::endl;
+  if (l.size() > 3) //Undefined value if out of scope iterator
+  {
+    std::cout << "Iterator 1: " << *m << std::endl;
+    std::cout << "Iterator 2: " << *k << std::endl;
+  }
   std::cout << std::setfill ('>') << std::setw (50) << std::left << "Result: " << std::endl;
-  l.erase(m, k);
+  if (l.size() > 3) //Undefined behavior if unordered
+    std::cout << "return: " << *(l.erase(m, k)) << std::endl;
+  else
+    std::cout << "return: " << *(l.erase(k, m)) << std::endl;
   access<T>(l);
 }
 
@@ -583,7 +606,7 @@ void erase_range(T &l)
   std::cout << std::setfill ('>') << std::setw (50) << std::left << "Tested container: " << std::endl;
   access<T>(l);
   std::cout << std::setfill ('>') << std::setw (50) << std::left << "Result: " << std::endl;
-  l.erase(l.begin(), l.end());
+  std::cout << "return: " << *(l.erase(l.begin(), l.end())) << std::endl;
   access<T>(l);
 }
 
@@ -633,7 +656,7 @@ void resize_bigger(T &l)
   std::cout << std::setfill ('>') << std::setw (50) << std::left << "Tested container: " << std::endl;
   access<T>(l);
   std::cout << std::setfill ('>') << std::setw (50) << std::left << "Result: " << std::endl;
-  l.resize(65535); //Size_t minimum upper limit
+  l.resize(65); //Size_t minimum upper limit is 65535
   access<T>(l);
 }
 
@@ -672,7 +695,8 @@ void splice_list3(T &l, T &l2)
   typename T::iterator i = l.begin();
   ++i;
   ++i;
-  std::cout << "Iterator 1:" << *i << std::endl;
+  if (l.size() != 2) //Out of range iterator undefined value
+    std::cout << "Iterator 1: " << *i << std::endl;
   std::cout << std::setfill ('>') << std::setw (50) << std::left << "Result: " << std::endl;
   l.splice(i, l2);
   access<T>(l);
@@ -742,18 +766,22 @@ void splice_single_element2(T &l, T &l2)
   std::cout << std::setfill ('>') << std::setw (50) << std::left << "Tested containers: " << std::endl;
   access<T>(l);
   access<T>(l2);
-  typename T::iterator i = l2.end();
+  if (l2.size() == 0) // !!REAL COMPLETE BUG!!
+    return ;
+  typename T::iterator i = l.end();
   --i;
   --i;
   --i;
-  typename T::iterator k = l.end();
+  typename T::iterator k = l2.end();
   --k;
   --k;
   --k;
+  if (l2.size() == 2 || l2.size() == 1) //undefined behavior
+    return ;
   std::cout << "~~~Iterator 1: "<< *i<< std::endl;
   std::cout << "~~~Iterator 2: "<< *k<< std::endl;
   std::cout << std::setfill ('>') << std::setw (50) << std::left << "Result: " << std::endl;
-  l.splice(k, l2, i);
+  l.splice(i, l2, k);
   access<T>(l);
   access<T>(l2);
 }
@@ -765,31 +793,23 @@ void splice_single_element(T &l, T &l2)
   std::cout << std::setfill ('>') << std::setw (50) << std::left << "Tested containers: " << std::endl;
   access<T>(l);
   access<T>(l2);
-  typename T::iterator i = l2.begin();
+  if (l2.size() == 0) // !!REAL COMPLETE BUG!!
+    return ;
+  typename T::iterator i = l.begin();
   ++i;
   ++i;
-  typename T::iterator k = l.begin();
+  typename T::iterator k = l2.begin();
   ++k;
   ++k;
-  std::cout << "~~~Iterator 1: "<< *i<< std::endl;
-  std::cout << "~~~Iterator 2: "<< *k<< std::endl;
-  std::cout << std::setfill ('>') << std::setw (50) << std::left << "Result: " << std::endl;
-  l.splice(k, l2, i);
-  access<T>(l);
-  access<T>(l2);
-}
-
-template<typename T>
-void splice_range4(T &l, T &l2)
-{
-  std::cout << std::setfill ('#') << std::setw (100) << std::left << "Splice range 4" << std::endl;
-  std::cout << std::setfill ('>') << std::setw (50) << std::left << "Tested containers: " << std::endl;
-  access<T>(l);
-  access<T>(l2);
-  std::cout << std::setfill ('>') << std::setw (50) << std::left << "Result: " << std::endl;
-  T tmp((unsigned int)1,1);
-  typename T::iterator tmpi = tmp.begin();
-  l.splice(tmpi, l2, l2.begin(), l2.end());
+  if (l2.size() == 2 || l2.size() == 1) //undefined behavior when iterator goes out of scope
+    return ;
+  if (l.size() != 2) //Out of range iterator undefined value
+  {
+    std::cout << "~~~Iterator 1: "<< *i<< std::endl;
+    std::cout << "~~~Iterator 2: "<< *k<< std::endl;
+    std::cout << std::setfill ('>') << std::setw (50) << std::left << "Result: " << std::endl;
+  }
+  l.splice(i, l2, k);
   access<T>(l);
   access<T>(l2);
 }
@@ -801,15 +821,15 @@ void splice_range3(T &l, T &l2)
   std::cout << std::setfill ('>') << std::setw (50) << std::left << "Tested containers: " << std::endl;
   access<T>(l);
   access<T>(l2);
+
   typename T::iterator i = l2.end();
-  --i;
-  --i;
   --i;
   typename T::iterator k = l2.begin();
   ++k;
-  ++k;
-  std::cout << "~~~Iterator 1: "<< *i<< std::endl;
-  std::cout << "~~~Iterator 2: "<< *k<< std::endl;
+  if (l2.size() == 1) //Undefined behavior
+    return ;
+  std::cout << "~~~Iterator 1: "<< *k<< std::endl;
+  std::cout << "~~~Iterator 2: "<< *i<< std::endl;
   std::cout << std::setfill ('>') << std::setw (50) << std::left << "Result: " << std::endl;
   l.splice(l.begin(), l2, k, i);
   access<T>(l);
@@ -877,7 +897,7 @@ void remove_if(T &l)
 template<typename T>
 void unique(T &l)
 {
-  std::cout << std::setfill ('#') << std::setw (100) << std::left << "Duplicate function default " << std::endl;
+  std::cout << std::setfill ('#') << std::setw (100) << std::left << "Unique function default " << std::endl;
   std::cout << std::setfill ('>') << std::setw (50) << std::left << "Tested container: " << std::endl;
   access<T>(l);
   std::cout << std::setfill ('>') << std::setw (50) << std::left << "Result: " << std::endl;
@@ -888,7 +908,7 @@ void unique(T &l)
 template<typename T, typename T2>
 void unique_if(T &l)
 {
-  std::cout << std::setfill ('#') << std::setw (100) << std::left << "Duplicate function function parameter " << std::endl;
+  std::cout << std::setfill ('#') << std::setw (100) << std::left << "Unique function function parameter " << std::endl;
   std::cout << std::setfill ('>') << std::setw (50) << std::left << "Tested container: " << std::endl;
   access<T>(l);
   std::cout << std::setfill ('>') << std::setw (50) << std::left << "Result: " << std::endl;
@@ -901,6 +921,8 @@ void merge(T &l, T &l2)
 {
   std::cout << std::setfill ('#') << std::setw (100) << std::left << "Merge function default " << std::endl;
   std::cout << std::setfill ('>') << std::setw (50) << std::left << "Tested containers: " << std::endl;
+  l.sort(); //Both containers should already be ordered or undefined behavior
+  l2.sort();
   access<T>(l);
   access<T>(l2);
   std::cout << std::setfill ('>') << std::setw (50) << std::left << "Result: " << std::endl;
@@ -915,6 +937,8 @@ void merge_if(T &l, T &l2)
 {
   std::cout << std::setfill ('#') << std::setw (100) << std::left << "Merge function function parameter " << std::endl;
   std::cout << std::setfill ('>') << std::setw (50) << std::left << "Tested containers: " << std::endl;
+  l.sort(); //Both containers should already be ordered or undefined behavior
+  l2.sort();
   access<T>(l);
   access<T>(l2);
   std::cout << std::setfill ('>') << std::setw (50) << std::left << "Result: " << std::endl;
@@ -926,7 +950,7 @@ void merge_if(T &l, T &l2)
 template<typename T>
 void sort(T &l)
 {
-  std::cout << std::setfill ('#') << std::setw (100) << std::left << "Sort function " << std::endl;
+  std::cout << std::setfill ('#') << std::setw (100) << std::left << "Sort function default" << std::endl;
   std::cout << std::setfill ('>') << std::setw (50) << std::left << "Tested container: " << std::endl;
   access<T>(l);
   std::cout << std::setfill ('>') << std::setw (50) << std::left << "Result: " << std::endl;
@@ -937,7 +961,7 @@ void sort(T &l)
 template<typename T, typename T2>
 void sort_if(T &l)
 {
-  std::cout << std::setfill ('#') << std::setw (100) << std::left << "Sort function " << std::endl;
+  std::cout << std::setfill ('#') << std::setw (100) << std::left << "Sort function function argument" << std::endl;
   std::cout << std::setfill ('>') << std::setw (50) << std::left << "Tested container: " << std::endl;
   access<T>(l);
   std::cout << std::setfill ('>') << std::setw (50) << std::left << "Result: " << std::endl;

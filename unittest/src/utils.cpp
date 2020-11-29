@@ -4,7 +4,18 @@ void segfault( int signum ) { std::cout << "SEGFAULT" << std::endl; exit(signum)
 void sigabort( int signum ) { std::cout << "SIGABORT" << std::endl; exit(signum); } //Catch sigaborts and write in correct fd
 void sigquit(int sig) { sig = 0; exit(sig); } //SIGQUIT send from childprocess to stop program does not return error code
 
-static int S_ERROR_COUNT = 0; //Lifestime end is not scope but whole program as assigned in static memory
+int G_ERROR_COUNT = 0; //Lifetime end is not scope but whole program as assigned in static memory
+int G_LINE = 0; //By knowing how much lines/tests you went through you can view your progress
+
+std::string itoa(int num) //c++ has no itoa!! Only c++11 has itoa equivalent
+{
+  std::string s;
+  std::stringstream out;
+
+  out << num;
+  s = out.str();
+  return s;
+}
 
 void check_answer(std::ifstream &fd_r, std::ifstream &fd_r_r, std::ofstream &output_my, std::ofstream &output_real) //Check all lines takes the test name and compares following test output
 {
@@ -17,8 +28,9 @@ void check_answer(std::ifstream &fd_r, std::ifstream &fd_r_r, std::ofstream &out
   //Take file input tmp_my and tmp_real into string objects
   while(getline(fd_r_r, tmp_real))
   {
+    G_LINE++;
     getline(fd_r, tmp_me);
-    if (tmp_real.compare(tmp_me) == 0)
+    if (std::strcmp(tmp_real.c_str(), tmp_me.c_str()) == 0) //c++ string compare function bizarre bug returning errors once we start writing in output fds, c strcmp does not bug
     {
       std::cout << "\033[1m\033[32m" << "<>" << " "; //Use green color code
       fflush(stdout);
@@ -41,16 +53,19 @@ void check_answer(std::ifstream &fd_r, std::ifstream &fd_r_r, std::ofstream &out
 
   if (error != 0) //Write errors to output files and check error limit
   {
-    S_ERROR_COUNT++;
-    if (S_ERROR_COUNT > G_ERROR_LIMIT)
-    {
-      std::cerr << "\033[34m" << "\n\nERROR LIMIT OF " << G_ERROR_LIMIT << " ATTAINED\n"<< std::endl;
-      std::remove("output/tmp_my");
-      std::remove("output/tmp_real");
-      kill(0, SIGQUIT);
-    }
+    G_ERROR_COUNT++;
     output_my << me << std::endl;
     output_real << real << std::endl;
+    if (G_ERROR_COUNT == G_ERROR_LIMIT)
+    {
+      std::cout << "\033[34m" << "\n\nERROR LIMIT OF " << G_ERROR_LIMIT << " ATTAINED AFTER "<< G_LINE << " TESTS" << std::endl;
+      fflush(stdout);
+      std::remove("output/tmp_my");
+      std::remove("output/tmp_real");
+      pthread_mutex_unlock(g_dup);
+      delete g_dup;
+      kill(0, SIGQUIT);
+    }
   }
 }
 
