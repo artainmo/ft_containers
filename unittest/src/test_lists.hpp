@@ -154,18 +154,8 @@ T *container_object_creation()
   return my_elems;
 }
 
-template<typename T, typename R>
-struct thread_arg
-{
-  int num;
-  T *my_elems;
-  R *real_elems;
-  std::ofstream &output_my;
-  std::ofstream &output_real;
-};
-
 template<typename T, typename R, typename T2>
-void *pthread_start(void *args)
+void *pthread_start2(void *args)
 {
   struct thread_arg<T, R> *arg;
   arg = (struct thread_arg<T, R> *)args;
@@ -174,8 +164,23 @@ void *pthread_start(void *args)
   std::ofstream fd_w_r(std::string("output/tmp_real"));
   std::ifstream fd_r_r(std::string("output/tmp_real"));
 
+  tests<T, R, T2>(arg->my_elems[arg->num1], arg->my_elems[arg->num2], arg->real_elems[arg->num1], arg->real_elems[arg->num2], fd_w, fd_r, fd_w_r, fd_r_r, arg->output_my, arg->output_real);
+  return 0;
+}
+
+template<typename T, typename R, typename T2>
+void *pthread_start(void *args)
+{
+  struct thread_arg<T, R> *arg;
+  arg = (struct thread_arg<T, R> *)args;
+  pthread_t id;
+
   for (int l = 0; l < 8; l++)
-    tests<T, R, T2>(arg->my_elems[arg->num], arg->my_elems[l], arg->real_elems[arg->num], arg->real_elems[l], fd_w, fd_r, fd_w_r, fd_r_r, arg->output_my, arg->output_real);
+  {
+    arg->num2 = l;
+    pthread_create(&id, NULL, pthread_start2<T, R, T2>, args);
+    pthread_join(id, NULL); //Waits for just created thread to end before continuing, using new threads fastens forks
+  }
   return 0;
 }
 
@@ -228,14 +233,14 @@ void list_test()
   R *real_elems = container_object_creation<R>();
   std::cout << "\033[1m\033[30m" << "End of container object creation\n" << std::endl;
 
-  struct thread_arg<T, R> args = { 0, my_elems, real_elems, output_my, output_real};
+  struct thread_arg<T, R> args = { 0, 0, my_elems, real_elems, output_my, output_real};
   pthread_t id;
 
   std::cout << "\033[35m" << "Functions tests:" << std::endl;
   dup2(dev_null, 2); //Redirect stderr to dev/null (a file that discards input) => avoid non-catchable "malloc not allocated error" output in stdin
   for (int i = 0; i < 8; i++) //Do all tests
   {
-    args.num = i;
+    args.num1 = i;
     pthread_create(&id, NULL, pthread_start<T, R, T2>, &args);
     pthread_join(id, NULL); //Waits for just created thread to end before continuing, using new threads fastens forks
   }

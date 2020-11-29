@@ -24,6 +24,17 @@ struct s_functions_ptr2
   int num;
 };
 
+template<typename T, typename R>
+struct thread_arg
+{
+  int num1;
+  int num2;
+  T *my_elems;
+  R *real_elems;
+  std::ofstream &output_my;
+  std::ofstream &output_real;
+};
+
 template<typename T>
 bool remove_if_test(T x)
 {
