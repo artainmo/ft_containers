@@ -31,7 +31,6 @@
 extern int G_ERROR_LIMIT;
 extern int G_ERROR_COUNT;
 extern int G_LINE;
-extern pthread_mutex_t *g_dup;
 
 void check_answer(std::ifstream &fd_r, std::ifstream &fd_r_r, std::ofstream &output_my, std::ofstream &output_real);
 

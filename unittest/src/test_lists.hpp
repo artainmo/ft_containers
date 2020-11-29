@@ -61,7 +61,6 @@ void tests(T l, T l2, R lr, R lr2, std::ofstream &fd_w, std::ifstream &fd_r, std
 
   for (unsigned int i = 0; i < 57 ; i++)
   {
-    pthread_mutex_lock(g_dup);
     if (i < 31) //Functions with one parameter
     {
       std::cout << "\033[30m" << real_func1[i].num << ' ';
@@ -79,7 +78,6 @@ void tests(T l, T l2, R lr, R lr2, std::ofstream &fd_w, std::ifstream &fd_r, std
       std::cout.rdbuf(fd_1); //Reset stream 1
     }
     check_answer(fd_r, fd_r_r, output_my, output_real);
-    pthread_mutex_unlock(g_dup);
   }
 }
 
@@ -171,10 +169,10 @@ void *pthread_start(void *args)
 {
   struct thread_arg<T, R> *arg;
   arg = (struct thread_arg<T, R> *)args;
-  std::ofstream fd_w(std::string("output/tmp_my").append(itoa(arg->num)));
-  std::ifstream fd_r(std::string("output/tmp_my").append(itoa(arg->num)));
-  std::ofstream fd_w_r(std::string("output/tmp_real").append(itoa(arg->num)));
-  std::ifstream fd_r_r(std::string("output/tmp_real").append(itoa(arg->num)));
+  std::ofstream fd_w(std::string("output/tmp_my"));
+  std::ifstream fd_r(std::string("output/tmp_my"));
+  std::ofstream fd_w_r(std::string("output/tmp_real"));
+  std::ifstream fd_r_r(std::string("output/tmp_real"));
 
   for (int l = 0; l < 8; l++)
     tests<T, R, T2>(arg->my_elems[arg->num], arg->my_elems[l], arg->real_elems[arg->num], arg->real_elems[l], fd_w, fd_r, fd_w_r, fd_r_r, arg->output_my, arg->output_real);
@@ -184,8 +182,6 @@ void *pthread_start(void *args)
 template<typename T, typename R, typename T2>
 void list_test()
 {
-  pthread_mutex_init(g_dup, NULL);
-
   //Create fds to output files
   std::ofstream fd_w("output/tmp_my");
   std::ifstream fd_r("output/tmp_my");
@@ -241,8 +237,8 @@ void list_test()
   {
     args.num = i;
     pthread_create(&id, NULL, pthread_start<T, R, T2>, &args);
+    pthread_join(id, NULL); //Waits for just created thread to end before continuing, using new threads fastens forks
   }
-  pthread_join(id, NULL);
   dup2(2, fd_2); //Reset stderr
   std::cout << "\033[35m" << "\nEnd functions tests\n" << std::endl;
   fflush(stdout);
@@ -259,7 +255,6 @@ void list_test()
   output_real.close();
   close(fd_2);
   close(dev_null);
-  pthread_mutex_unlock(g_dup);
 }
 
 #endif

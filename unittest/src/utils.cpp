@@ -62,8 +62,6 @@ void check_answer(std::ifstream &fd_r, std::ifstream &fd_r_r, std::ofstream &out
       fflush(stdout);
       std::remove("output/tmp_my");
       std::remove("output/tmp_real");
-      pthread_mutex_unlock(g_dup);
-      delete g_dup;
       kill(0, SIGQUIT);
     }
   }

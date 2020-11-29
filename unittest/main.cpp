@@ -41,8 +41,13 @@
 **Infinite loop results can be checked in output/tmp_my and output/tmp_real
 */
 
+/*
+**Threads used with the failed idea of increasing the programs speed, failed due to impossibility to write to multiple fds at the same time
+**But in the end threads increased program speed a lot by increasing the speed of fork.
+** Fork gets slower as parent process uses more memory both stack and heap memory, due to its copying feature, using threads detaches from parent process and speeds up the forks
+*/
+
 int G_ERROR_LIMIT = 10;
-pthread_mutex_t *g_dup = new pthread_mutex_t;
 //MAX 200 or computer crash risk
 
 int main(int argc, char **argv)
@@ -120,7 +125,6 @@ int main(int argc, char **argv)
   //   fd_w.close();
   //   fd_r.close();
   // }
-  delete g_dup;
   std::remove("output/tmp_my");
   std::remove("output/tmp_real");
 }
