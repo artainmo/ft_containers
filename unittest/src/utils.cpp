@@ -1,5 +1,7 @@
 #include "../main.hpp"
 
+std::ostream &operator<<(std::ostream &ostream, const Complex &c) { return (ostream << c._n); }
+
 void segfault( int signum ) { std::cout << "SEGFAULT" << std::endl; exit(signum); } //Catch segfaults and write in correct fd
 void sigabort( int signum ) { std::cout << "SIGABORT" << std::endl; exit(signum); } //Catch sigaborts and write in correct fd
 void sigquit(int sig) { sig = 0; exit(sig); } //SIGQUIT send from childprocess to stop program does not return error code
@@ -56,17 +58,25 @@ void check_answer(std::ifstream &fd_r, std::ifstream &fd_r_r, std::ofstream &out
     G_ERROR_COUNT++;
     output_my << me << std::endl;
     output_real << real << std::endl;
-    if (G_ERROR_COUNT == G_ERROR_LIMIT)
+    if (G_ERROR_COUNT >= G_ERROR_LIMIT)
     {
       int dev_null = open("/dev/null", O_CREAT | O_WRONLY);
-      std::cout << "\033[34m" << "\n\nERROR LIMIT OF " << G_ERROR_LIMIT << " ATTAINED AFTER "<< G_LINE << " TESTS" << std::endl;
-      fflush(stdout);
+      feedback();
       dup2(dev_null, 1); //Bizarre bug whereby continues writing numbers after error message, resolved
       std::remove("output/tmp_my");
       std::remove("output/tmp_real");
       kill(0, SIGQUIT);
     }
   }
+}
+
+void feedback()
+{
+  std::cout << "\033[34m" << G_ERROR_COUNT << " ERRORS ATTAINED ON "<< G_LINE << " TESTS" << std::endl;
+  fflush(stdout);
+  float correct_answers = G_LINE - G_ERROR_COUNT;
+  std::cout << "\033[34m" << "------> " << std::setprecision(3) << (correct_answers / G_TOTAL_TESTS) * 100 << "%" << std::endl;
+  fflush(stdout);
 }
 
 // std::string set_number(unsigned int x)

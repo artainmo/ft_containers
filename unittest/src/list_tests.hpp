@@ -4,6 +4,121 @@
 #include "../main.hpp"
 
 template<typename T>
+T *container_object_creation3()
+{
+  T *my_elems = new T[2];
+
+  T l1((unsigned int)10, Complex(19)); //Long same values
+  std::cout << "\033[30m" << "2 ";
+
+  T l2;
+  l2.push_back(Complex(19));
+  l2.push_back(Complex(42));
+  l2.push_back(Complex(16));
+  l2.push_back(Complex(53));
+  std::cout << "\033[30m" << "3 ";
+
+  my_elems[0] = l1;
+  my_elems[1] = l2;
+
+  return my_elems;
+}
+
+template<typename T>
+T *container_object_creation2()
+{
+  T *my_elems = new T[2];
+
+  T l1((unsigned int)10, std::string("19")); //Long same values
+  std::cout << "\033[30m" << "2 ";
+
+  T l2;
+  l2.push_back(std::string("19"));
+  l2.push_back(std::string("yes"));
+  l2.push_back(std::string("21"));
+  l2.push_back(std::string("no"));
+  std::cout << "\033[30m" << "3 ";
+
+  my_elems[0] = l1;
+  my_elems[1] = l2;
+
+  return my_elems;
+}
+
+template<typename T>
+T *container_object_creation1()
+{
+  T *my_elems = new T[8];
+
+  T l1; //Empty
+  std::cout << "\033[30m" << "1 ";
+
+  T l2((unsigned int)10, 5); //Long same values
+  std::cout << "\033[30m" << "2 ";
+
+  T l3; // 4 values, same front and end
+  l3.push_back(1);
+  l3.push_back(4);
+  l3.push_back(3);
+  l3.push_back(1);
+  std::cout << "\033[30m" << "3 ";
+
+  T l4; //3 values
+  l4.push_back(0);
+  l4.push_back(3);
+  l4.push_back(7);
+  std::cout << "\033[30m" << "7 ";
+
+  T l5; //2 values
+  l5.push_back(5);
+  l5.push_back(6);
+
+  T l6; //1 value
+  l6.push_back(7);
+
+  T l7; //Small to big 5 values
+  std::cout << "\033[30m" << "9 ";
+  l7.push_back(0);
+  std::cout << "\033[30m" << "10 ";
+  l7.push_back(1);
+  std::cout << "\033[30m" << "11 ";
+  l7.push_back(2);
+  std::cout << "\033[30m" << "12 ";
+  l7.push_back(3);
+  std::cout << "\033[30m" << "13 ";
+  l7.push_back(4);
+  std::cout << "\033[30m" << "14 ";
+  l7.push_back(5);
+  std::cout << "\033[30m" << "15 ";
+
+  T l8; //Big to small 5 values
+  std::cout << "\033[30m" << "23 ";
+  l8.push_back(5);
+  std::cout << "\033[30m" << "24 ";
+  l8.push_back(4);
+  std::cout << "\033[30m" << "25 ";
+  l8.push_back(3);
+  std::cout << "\033[30m" << "26 ";
+  l8.push_back(2);
+  std::cout << "\033[30m" << "27 ";
+  l8.push_back(1);
+  std::cout << "\033[30m" << "28 ";
+  l8.push_back(0);
+  std::cout << "\033[30m" << "29 ";
+
+  my_elems[0] = l7;
+  my_elems[1] = l8;
+  my_elems[2] = l3;
+  my_elems[3] = l4;
+  my_elems[4] = l5;
+  my_elems[5] = l6;
+  my_elems[6] = l1;
+  my_elems[7] = l2;
+
+  return my_elems;
+}
+
+template<typename T>
 struct s_functions_ptr
 {
   void (*function_pointer)();
@@ -33,6 +148,7 @@ struct thread_arg
   R *real_elems;
   std::ofstream &output_my;
   std::ofstream &output_real;
+  int test_lenght;
 };
 
 template<typename T>
@@ -250,7 +366,7 @@ void front(T &l)
   std::cout << std::setfill ('>') << std::setw (50) << std::left << "Tested container: " << std::endl;
   access<T>(l);
   std::cout << std::setfill ('>') << std::setw (50) << std::left << "Result: " << std::endl;
-  l.front() = 0; //If this line causes compilation error review your code
+  l.front() = 0; //If this line causes compilation error review your code const problem
   access<T>(l);
 }
 
@@ -261,7 +377,7 @@ void back(T &l)
   std::cout << std::setfill ('>') << std::setw (50) << std::left << "Tested container: " << std::endl;
   access<T>(l);
   std::cout << std::setfill ('>') << std::setw (50) << std::left << "Result: " << std::endl;
-  l.back() = 0; //If this line causes compilation error review your code
+  l.back() = 0; //If this line causes compilation error review your code const problem
   access<T>(l);
 }
 
@@ -342,6 +458,8 @@ void pop_front(T &l)
 {
   std::cout << std::setfill ('#') << std::setw (100) << std::left << "Pop_front function " << std::endl;
   std::cout << std::setfill ('>') << std::setw (50) << std::left << "Tested container: " << std::endl;
+  if (l.size() == 0) //Undefined behavior sigabort
+    return ;
   access<T>(l);
   std::cout << std::setfill ('>') << std::setw (50) << std::left << "Result: " << std::endl;
   l.pop_front();
@@ -364,6 +482,8 @@ void pop_back(T &l)
 {
   std::cout << std::setfill ('#') << std::setw (100) << std::left << "Pop_back function " << std::endl;
   std::cout << std::setfill ('>') << std::setw (50) << std::left << "Tested container: " << std::endl;
+  if (l.size() == 0) //Undefined behavior sigabort
+    return ;
   access<T>(l);
   std::cout << std::setfill ('>') << std::setw (50) << std::left << "Result: " << std::endl;
   l.pop_back();
@@ -411,6 +531,8 @@ void insert_single_element(T &l)
   std::cout << std::setfill ('#') << std::setw (100) << std::left << "Insert single element function " << std::endl;
   std::cout << std::setfill ('>') << std::setw (50) << std::left << "Tested container: " << std::endl;
   access<T>(l);
+  if (l.size() == 1) //Undefined behavior iterator out of scope
+    return ;
   typename T::iterator i = l.end();
   --i;
   --i;
@@ -461,6 +583,8 @@ void insert_fill(T &l)
   std::cout << std::setfill ('#') << std::setw (100) << std::left << "Insert fill " << std::endl;
   std::cout << std::setfill ('>') << std::setw (50) << std::left << "Tested container: " << std::endl;
   access<T>(l);
+  if (l.size() == 1)
+    return ;
   typename T::iterator i = l.end();
   --i;
   --i;
@@ -517,6 +641,8 @@ void insert_range(T &l, T &l2)
   std::cout << std::setfill ('>') << std::setw (50) << std::left << "Tested containers: " << std::endl;
   access<T>(l);
   access<T>(l2);
+  if (l.size() == 1) //Out of scope iterator undefined behavior
+    return ;
   typename T::iterator i = l.begin();
   ++i;
   ++i;
@@ -557,6 +683,8 @@ void erase_single_element2(T &l)
 {
   std::cout << std::setfill ('#') << std::setw (100) << std::left << "Erase single element 2" << std::endl;
   std::cout << std::setfill ('>') << std::setw (50) << std::left << "Tested container: " << std::endl;
+  if (l.size() == 0) //Undefined behavior sigabort
+    return ;
   access<T>(l);
   std::cout << std::setfill ('>') << std::setw (50) << std::left << "Result: " << std::endl;
   std::cout << "return: " << *(l.erase(l.begin())) << std::endl;
@@ -591,6 +719,8 @@ void erase_range2(T &l)
   std::cout << std::setfill ('#') << std::setw (100) << std::left << "Erase range 2" << std::endl;
   std::cout << std::setfill ('>') << std::setw (50) << std::left << "Tested container: " << std::endl;
   access<T>(l);
+  if (l.size() == 1) //Undefined bahavior sigabort
+    return ;
   typename T::iterator m = l.begin();
   ++m;
   ++m;
@@ -703,6 +833,8 @@ void splice_list3(T &l, T &l2)
   std::cout << std::setfill ('>') << std::setw (50) << std::left << "Tested containers: " << std::endl;
   access<T>(l);
   access<T>(l2);
+  if (l.size() == 1) //Undefined behavior out of scope iterator
+    return ;
   typename T::iterator i = l.begin();
   ++i;
   ++i;
@@ -787,7 +919,7 @@ void splice_single_element2(T &l, T &l2)
   --k;
   --k;
   --k;
-  if (l2.size() == 2 || l2.size() == 1) //undefined behavior
+  if (l2.size() == 2 || l2.size() == 1 || l.size() == 2) //undefined behavior
     return ;
   std::cout << "~~~Iterator 1: "<< *i<< std::endl;
   std::cout << "~~~Iterator 2: "<< *k<< std::endl;
@@ -804,7 +936,7 @@ void splice_single_element(T &l, T &l2)
   std::cout << std::setfill ('>') << std::setw (50) << std::left << "Tested containers: " << std::endl;
   access<T>(l);
   access<T>(l2);
-  if (l2.size() == 0) // !!REAL COMPLETE BUG!!
+  if (l2.size() == 0 || l.size() == 1) // !!== 0 REAL COMPLETE BUG!! //Undefined bahavior out of scope iterator
     return ;
   typename T::iterator i = l.begin();
   ++i;
@@ -854,6 +986,8 @@ void splice_range2(T &l, T &l2)
   std::cout << std::setfill ('>') << std::setw (50) << std::left << "Tested containers: " << std::endl;
   access<T>(l);
   access<T>(l2);
+  if (l.size() == 2) //Undefined behavior out of scope iterator
+    return ;
   typename T::iterator i = l.end();
   --i;
   --i;
@@ -872,10 +1006,13 @@ void splice_range(T &l, T &l2)
   std::cout << std::setfill ('>') << std::setw (50) << std::left << "Tested containers: " << std::endl;
   access<T>(l);
   access<T>(l2);
+  if (l.size() == 1) //Out of scope iterator undefined behavior
+    return ;
   typename T::iterator i = l.begin();
   ++i;
   ++i;
-  std::cout << "~~~Iterator 1: "<< *i<< std::endl;
+  if (l.size() != 2) //Out of scope iterator random value
+    std::cout << "~~~Iterator 1: "<< *i<< std::endl;
   std::cout << std::setfill ('>') << std::setw (50) << std::left << "Result: " << std::endl;
   l.splice(i, l2, l2.begin(), l2.end());
   access<T>(l);
@@ -1086,6 +1223,50 @@ void bigger_than_equal(T &l, T &l2)
     std::cout << "YES" << std::endl;
   else
     std::cout << "NO" << std::endl;
+}
+
+template<typename T, typename T2>
+void iterator_tests(T &l, T &l2) //Test non-const functions, make sure no compilation error, plus value change takes place
+{
+  std::cout << std::setfill ('#') << std::setw (100) << std::left << "Iterator tests " << std::endl;
+  std::cout << std::setfill ('>') << std::setw (50) << std::left << "Compared containers: " << std::endl;
+  access<T>(l);
+  access<T>(l2);
+  if (l.size() == 0 || l.size() == 1)
+    return ;
+  std::cout << std::setfill ('>') << std::setw (50) << std::left << "Result: " << std::endl;
+  typename T::iterator i = l.begin();
+  ++i;
+  typename T::iterator k = l2.end();
+  --k;
+  T2 test;
+
+  if (i == i)
+    std::cout << "YES" << std::endl;
+  else
+    std::cout << "NO" << std::endl;
+
+  if (i == k)
+    std::cout << "YES" << std::endl;
+  else
+    std::cout << "NO" << std::endl;
+
+  if (i != i)
+    std::cout << "YES" << std::endl;
+  else
+    std::cout << "NO" << std::endl;
+
+  if (i != k)
+    std::cout << "YES" << std::endl;
+  else
+    std::cout << "NO" << std::endl;
+
+  test = *i;
+  test = 10; //If this causes compilation error review your code const problem
+  std::cout << *i << std::endl;
+
+  *k = 10; //If this causes compilation error review your code const problem
+  std::cout << *k << std::endl;
 }
 
 #endif
