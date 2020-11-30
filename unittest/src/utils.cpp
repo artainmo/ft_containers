@@ -1,7 +1,5 @@
 #include "../main.hpp"
 
-std::ostream &operator<<(std::ostream &ostream, const Complex &c) { return (ostream << c._n); }
-
 void segfault( int signum ) { std::cout << "SEGFAULT" << std::endl; exit(signum); } //Catch segfaults and write in correct fd
 void sigabort( int signum ) { std::cout << "SIGABORT" << std::endl; exit(signum); } //Catch sigaborts and write in correct fd
 void sigquit(int sig) { sig = 0; exit(sig); } //SIGQUIT send from childprocess to stop program does not return error code

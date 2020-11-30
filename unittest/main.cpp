@@ -44,7 +44,7 @@
 int G_ERROR_LIMIT = 1;
 //MAX 200 or potential computer crash risk
 
-float G_TOTAL_TESTS = 80854.000000;
+float G_TOTAL_TESTS = 162535.000000;
 
 
 template<typename T, typename R, typename T2>
