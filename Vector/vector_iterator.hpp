@@ -29,14 +29,14 @@ public:
   T &operator->() { return (*iter); }
   const T &operator->() const { return (*iter); }
   void operator*=(T value) { *iter = value; }
-  T &operator[](const unsigned int &r) { return (iter + r); }
-  const T &operator[](const unsigned int &r) const { return (iter + r); }
+  T &operator[](const size_t &r) { return (iter + r); }
+  const T &operator[](const size_t &r) const { return (iter + r); }
   virtual T &operator++() { iter++; return (*iter); }
   virtual T &operator--() { iter--; return (*iter); }
-  virtual T &operator+(const unsigned int &r) { iter += r; return (*iter); }
-  virtual T &operator-(const unsigned int &r) { iter -= r; return (*iter); }
-  virtual T &operator+=(const unsigned int &r) { iter += r; return (*iter); }
-  virtual T &operator-=(const unsigned int &r) { iter -= r; return (*iter); }
+  virtual T &operator+(const size_t &r) { iter += r; return (*iter); }
+  virtual T &operator-(const size_t &r) { iter -= r; return (*iter); }
+  virtual T &operator+=(const size_t &r) { iter += r; return (*iter); }
+  virtual T &operator-=(const size_t &r) { iter -= r; return (*iter); }
 };
 
 template<typename T>
@@ -52,13 +52,13 @@ public:
 
   const T &operator--() const { iterator<T>::iter++; return (*iterator<T>::iter); }
 
-  const T &operator+(const unsigned int &r) const { iterator<T>::iter -= r; return (*iterator<T>::iter); }
+  const T &operator+(const size_t &r) const { iterator<T>::iter -= r; return (*iterator<T>::iter); }
 
-  const T &operator-(const unsigned int &r) const { iterator<T>::iter += r; return (*iterator<T>::iter); }
+  const T &operator-(const size_t &r) const { iterator<T>::iter += r; return (*iterator<T>::iter); }
 
-  const T &operator+=(const unsigned int &r) const { iterator<T>::iter -= r; return (*iterator<T>::iter); }
+  const T &operator+=(const size_t &r) const { iterator<T>::iter -= r; return (*iterator<T>::iter); }
 
-  const T &operator-=(const unsigned int &r) const { iterator<T>::iter += r; return (*iterator<T>::iter); }
+  const T &operator-=(const size_t &r) const { iterator<T>::iter += r; return (*iterator<T>::iter); }
 };
 }
 #endif

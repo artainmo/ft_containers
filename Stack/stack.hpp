@@ -16,7 +16,7 @@ namespace ft
   {
   private:
     Container _cont;
-    unsigned int _size;
+    size_t _size;
 
   public:
     explicit stack(const Container &cont_ = Container()): _cont(cont_), _size(0) {} //Constructs an adaptor object, adaptor because the object contruction depends on the template parameter //Container() will call the default constructor of the container type
@@ -32,7 +32,7 @@ namespace ft
 
     //Capacity
     bool empty() const { if (_size == 0) return true; return false; }
-    unsigned int size() const { return _size; }
+    size_t size() const { return _size; }
 
     //Element access
     T &top() { return _cont.back(); }

@@ -11,7 +11,7 @@ template<typename T, typename Container = ft::list<T> > //List is used as defaul
 class queue //Similar to stack, big difference is that queue works with FIFO(first in first out), elements are inserted from its back but are popped or erased from the front
 {
 private:
-  unsigned int _size;
+  size_t _size;
   Container _cont;
 
 public:
@@ -22,7 +22,7 @@ public:
 
   //Capacity
   bool empty() const { if (_size == 0) return true; return false; }
-  unsigned int size() const { return _size; }
+  size_t size() const { return _size; }
 
   //Element access
   T &front() { return ( _cont.front()); }

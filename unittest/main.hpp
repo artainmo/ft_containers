@@ -8,21 +8,6 @@
 #include "../Stack/stack.hpp"
 #include "../Queue/queue.hpp"
 
-class Complex { //Complex type, does not have a default initializer
-public:
-  int _n;
-  Complex( int n ) : _n( n ) {}
-
-  bool operator==( Complex const & rhs ) { return (this->_n == rhs._n); }
-  bool operator!=( Complex const & rhs ) { return (this->_n != rhs._n); }
-  bool operator>( Complex const & rhs ) { return (this->_n > rhs._n); }
-  bool operator<( Complex const & rhs ) { return (this->_n < rhs._n); }
-  bool operator>=( Complex const & rhs ) { return (this->_n >= rhs._n); }
-  bool operator<=( Complex const & rhs ) { return (this->_n <= rhs._n); }
-};
-
-std::ostream &operator<<(std::ostream &ostream, const Complex &c);
-
 //Real containers
 #include <list>
 #include <vector>

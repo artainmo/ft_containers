@@ -1,22 +1,17 @@
 #ifndef LIST_HPP
 #define LIST_HPP
 
-#define P(x) std::cout << x << std::endl
-
 #include <iostream>
-#include <climits>
 #include <csignal>
+#include <limits>
 #include "list_iterator.hpp"
 
 /*
-**SPECIAL CASES
-**When list and iterator goes out of scope, it stays in last correct position and returns that
-**Empty list returns empty iterator that segfault when trying to access its value
-**front back on empty container segfault
-*
-**Protect iterator from going out of scope /
-**Do not protect iterator from being empty /
-**Return empty iterator if empty container in begin, rbegin, end, rend /
+**FUNCTIONALITY DETAILS
+**Empty container always contains a minimum of 1 end struct (unfortunately by misunderstanding I have two basis structs)
+**Iterator end returns size (if constructor object cannot accept size like std::string it segfaults)
+**Iterator begin-- goes backward and equals to end
+**Iterator end++ goes backwards and equal to begin()
 */
 
 
@@ -42,7 +37,11 @@ namespace ft
       T value;
     };
     struct __list *_list;
-    unsigned int _size;
+    size_t _size;
+
+    void ending_empty_container(); //Empty container should always at least contain two empty structs one for begin and one for end
+    int check_if_in(const list<T> &x, List::iterator<T> find) const;
+    List::iterator<T> empty_begin() const { return iterator(_list->head); } //Returns empty begin struct, to protect from iterator input that point on it
 
   public:
     typedef List::iterator<T> iterator;
@@ -50,52 +49,52 @@ namespace ft
     typedef List::reverse_iterator<T> reverse_iterator;
     typedef const List::reverse_iterator<T> const_reverse_iterator;
 
-    list(): _size(0) {}//empty constructor
-    list(unsigned int __size, T value): _size(0) { assign(__size, value); } //fill constructor
+    list(): _size(0) { ending_empty_container(); } //empty/default constructor
+    list(size_t __size, T value): _size(0) { ending_empty_container(); assign(__size, value); } //fill constructor
     template<typename InputIterator>
-    list(InputIterator first,InputIterator last): _size(0) { assign<InputIterator>(first, last); } //Range constructor
-    list(const list<T> &to_copy): _size(0) {*this = to_copy;} //copy constructor
-    void operator=(const list<T> &to_copy) { clear(); if (to_copy.empty()) return ; assign<iterator>(to_copy.begin(), to_copy.end()); } //Assignation constructor
-    ~list() { clear(); } //Destructor
+    list(InputIterator first,InputIterator last): _size(0) { ending_empty_container(); assign<InputIterator>(first, last); } //Range constructor
+    list(const list<T> &to_copy): _size(0) { *this = to_copy;} //copy constructor
+    void operator=(const list<T> &to_copy) { ending_empty_container(); clear(); if (to_copy.empty()) return ; assign<iterator>(to_copy.begin(), to_copy.end()); } //Assignation constructor
+    ~list() { clear(); delete _list->next; delete _list; } //Destructor
 
     // Iterators
-    iterator begin() { if (empty()) return iterator(); else return iterator(_list->head); }
-    const_iterator begin() const { if (empty()) return const_iterator(_list->head); else return const_iterator(_list->head); }
+    iterator begin() { return iterator(_list->head->next); }
+    const_iterator begin() const { return const_iterator(_list->head->next); }
     iterator end();
     const_iterator end() const;
     reverse_iterator rbegin();
     const_reverse_iterator rbegin() const;
-    reverse_iterator rend() { if (empty()) return reverse_iterator(); else return reverse_iterator(_list->head); }
-    const_reverse_iterator rend() const { if (empty()) return const_reverse_iterator(); else return const_reverse_iterator(_list->head); }
+    reverse_iterator rend() { return const_reverse_iterator(_list->head); }
+    const_reverse_iterator rend() const { return const_reverse_iterator(_list->head); }
 
     //Capacity
     bool empty() const { if (_size == 0) return true; else return false; }
-    unsigned int size() const { return (_size); }
-    unsigned int max_size() const { return (UINT_MAX); } //Because the size is stored in an unsigned int, the maximum size of the list is the maximum unsigned int
+    size_t size() const { return (_size); }
+    size_t max_size() const { return std::numeric_limits<size_t>::max(); } //Because the size is stored in a size_t, https://en.cppreference.com/w/cpp/container/list/max_size
 
     //Element access
-    T &front() { _list = _list->head; return (_list->value); }
-    const T &front() const { _list = _list->head; return (_list->value); }
+    T &front() { return (_list->head->next->value); }
+    const T &front() const { return (_list->head->next->value); }
     T &back();
     const T &back() const;
 
     //Modifiers
     template<typename InputIterator>
     void assign(InputIterator first, InputIterator last); //Range
-    void assign(unsigned int n, T value); //fill
+    void assign(size_t n, T value); //fill
     void push_front (const T &value);
     void pop_front();
     void push_back(const T& value);
     void pop_back();
     iterator insert(iterator position, const T &value); //single element
-    void insert(iterator position, unsigned int n, const T &value); //fill
+    void insert(iterator position, size_t n, const T &value); //fill
     template <typename InputIterator>
     void insert(iterator position, InputIterator first, InputIterator last); //range
     iterator erase(iterator position);
     iterator erase(iterator first, iterator last);
     void swap(list &x);
-    void resize(unsigned int n);
-    void resize(unsigned int n, const T &val);
+    void resize(size_t n);
+    void resize(size_t n, const T &val);
     void clear();
 
     //operations
@@ -296,35 +295,23 @@ bool operator>=(const list<T> &l, const list<T> &r)
 }
 
 template <typename T>
-void swap(list<T> &x, list<T> &y)
-{
-  list<T> tmp;
-
-  tmp = x;
-  x = y;
-  y = tmp;
-  tmp.clear();
-}
+void swap(list<T> &x, list<T> &y) { x.swap(y); }
 
 //Member functions
 template<typename T>
 void list<T>::clear()
 {
-  unsigned int i;
   struct __list *tmp;
 
-  i = 0;
-  if (_size == 0)
-    return ;
   _list = _list->head;
-  while (i < _size - 1 && _list != 0)
+  while (_list != 0)
   {
     tmp = _list;
     _list = _list->next;
     delete tmp;
-    i++;
   }
   _size = 0;
+  ending_empty_container();
 }
 
 template<typename T>
@@ -332,8 +319,6 @@ List::iterator<T> list<T>::end()
 {
   struct __list *cur;
 
-  if (empty())
-    return iterator();
   cur = _list;
   while (cur->next != 0)
     cur = cur->next;
@@ -345,8 +330,6 @@ const List::iterator<T> list<T>::end() const
 {
   struct __list *cur;
 
-  if (empty())
-    return const_iterator();
   cur = _list;
   while (cur->next != 0)
     cur = cur->next;
@@ -358,10 +341,11 @@ List::reverse_iterator<T> list<T>::rbegin()
 {
   struct __list *cur;
 
-  if (empty())
-    return reverse_iterator();
+  if (_size == 0)
+      return reverse_iterator(_list->next);
+  _list = _list->head;
   cur = _list;
-  while (cur->next != 0)
+  while (cur->next->next != 0)
     cur = cur->next;
   return reverse_iterator(cur);
 }
@@ -371,12 +355,13 @@ const List::reverse_iterator<T> list<T>::rbegin() const
 {
   struct __list *cur;
 
-  if (empty())
-    return const_reverse_iterator();
+  if (_size == 0)
+      return reverse_iterator(_list->next);
+  _list = _list->head;
   cur = _list;
-  while (cur->next != 0)
+  while (cur->next->next != 0)
     cur = cur->next;
-  return const_reverse_iterator(cur);
+  return reverse_iterator(cur);
 }
 
 template<typename T>
@@ -386,7 +371,9 @@ T &list<T>::back()
 
   _list = _list->head;
   cur = _list;
-  while (cur->next != 0)
+  if (_size == 0)
+    return (cur->value);
+  while (cur->next->next != 0)
     cur = cur->next;
   return (cur->value);
 }
@@ -398,7 +385,9 @@ const T &list<T>::back() const
 
   _list = _list->head;
   cur = _list;
-  while (cur->next != 0)
+  if (_size == 0)
+    return (cur->value);
+  while (cur->next->next != 0)
     cur = cur->next;
   return (cur->value);
 }
@@ -408,48 +397,23 @@ template<typename InputIterator>
 void list<T>::assign(InputIterator first, InputIterator last)
 {
   clear();
-  _list = new struct __list;
-  _size++;
-  _list->head = _list;
-  _list->prev = 0;
-  _list->value = *first;
+  if (first == last)
+    return ;
   while (first != last)
   {
+    push_back(*first);
     ++first;
-    _list->next = new struct __list;
-    _size++;
-    _list->next->head = _list->head;
-    _list->next->prev = _list;
-    _list = _list->next;
-    _list->value = *first;
   }
-  _list->next = 0;
-  _list = _list->head;
 }
 
 template<typename T>
-void list<T>::assign(unsigned int n, T value)
+void list<T>::assign(size_t n, T value)
 {
-  unsigned int i;
-
-  i = 0;
   clear();
-  _size = n;
-  _list = new struct __list;
-  _list->head = _list;
-  _list->prev = 0;
-  _list->value = value;
-  while(i < _size - 1)
-  {
-    _list->next = new struct __list;
-    _list->next->head = _list->head;
-    _list->next->prev = _list;
-    _list = _list->next;
-    _list->value = value;
-    i++;
-  }
-  _list->next = 0;
-  _list = _list->head;
+  if (n == 0)
+    return ;
+  while (n--)
+    push_back(value);
 }
 
 template<typename T>
@@ -457,25 +421,14 @@ void list<T>::push_front(const T &value)
 {
   struct __list *front;
 
-  if (_size == 0)
-  {
-    assign((unsigned int)1, value);
-    return ;
-  }
+  _list = _list->head;
   front = new struct __list;
-  _list = _list->head;
+  front->next = _list->next;
+  _list->next->prev = front;
+  front->head = _list;
   front->value = value;
-  front->head = front;
-  front->prev = 0;
-  front->next = _list;
-  _list->prev = front;
-  _list->head = front;
-  while (_list->next != 0)
-  {
-    _list->next->head = _list->head;
-    _list = _list->next;
-  }
-  _list = _list->head;
+  front->prev = _list;
+  _list->next = front;
   _size++;
 }
 
@@ -485,46 +438,30 @@ void list<T>::pop_front()
   struct __list *tmp;
 
   if (_size == 0)
-  {
-    std::cout << "Out of range calling segfault..." << std::endl;
-    raise (SIGSEGV);
-  }
-  if (_size == 1)
-  {
-    clear();
     return ;
-  }
   _list = _list->head;
-  tmp = _list;
-  _list = _list->next;
+  tmp = _list->next;
+  _list->next = tmp->next;
+  tmp->next->prev = _list;
   delete tmp;
-  _list->prev = 0;
-  _list->head = _list;
-  while (_list->next != 0)
-  {
-    _list->next->head = _list->head;
-    _list = _list->next;
-  }
-  _list = _list->head;
   _size--;
 }
 
 template<typename T>
-void list<T>::push_back(const T& value)
+void list<T>::push_back(const T &value)
 {
-  if (_size == 0)
-  {
-    assign((unsigned int)1, value);
-    return ;
-  }
+  struct __list *tmp;
+
+  _list = _list->head;
   while (_list->next != 0)
     _list = _list->next;
-  _list->next = new struct __list;
-  _list->next->head = _list->head;
-  _list->next->prev = _list;
-  _list = _list->next;
-  _list->value = value;
-  _list->next = 0;
+  tmp = _list->prev;
+  _list->prev = new struct __list;
+  _list->prev->head = _list->head;
+  _list->prev->next = _list;
+  _list->prev->prev = tmp;
+  _list->prev->value = value;
+  tmp->next = _list->prev;
   _list = _list->head;
   _size++;
 }
@@ -532,24 +469,17 @@ void list<T>::push_back(const T& value)
 template<typename T>
 void list<T>::pop_back()
 {
+  struct __list *tmp;
+
+  _list = _list->head;
   if (_size == 0)
-  {
-    std::cout << "Out of range calling segfault..." << std::endl;
-    raise (SIGSEGV);
-  }
-  _list = _list->head;
-  if (_size == 1)
-  {
-    clear();
     return ;
-  }
-  else if(_size == 0)
-    return ;
-  while (_list->next->next != 0)
+  while (_list->next != 0)
     _list = _list->next;
-  delete _list->next;
-  _list->next = 0;
-  _list = _list->head;
+  tmp = _list->prev;
+  tmp->prev->next = _list;
+  _list->prev = tmp->prev;
+  delete tmp;
   _size--;
 }
 
@@ -557,45 +487,31 @@ template<typename T>
 List::iterator<T> list<T>::insert(iterator position, const T &value)
 {
   struct __list *_new;
+  struct __list *tmp;
+  iterator i = begin();
 
-  if (_size == 0)
-  {
-    std::cout << "Out of range calling segfault..." << std::endl;
-    raise (SIGSEGV);
-  }
-  if (_list == (struct __list *)position.get_list()) //get list returns pointer address
-  {
-    push_front(value);
-    return (position);
-  }
+  while (i != end() && i != position)
+    ++i;
+  if (i == end() && i != position) //position not found, undefined behavior return position
+    return position;
   _new = new struct __list;
-  _list = _list->head;
-  while (_list != 0 && _list->next != (struct __list *)position.get_list())
-    _list = _list->next;
-  if (_list == 0)
-  {
-    std::cout << "Out of range calling segfault..." << std::endl;
-    raise (SIGSEGV);
-  }
-  _list->next->prev = _new;
-  _new->head = _list->head;
-  _new->next = _list->next;
-  _new->prev = _list;
+  tmp = (struct __list *)i.get_list(); //get list returns pointer address
+  _new->head = tmp->head;
+  _new->next = tmp;
+  _new->prev = tmp->prev;
   _new->value = value;
-  _list->next = _new;
-  _list = _list->head;
+  tmp->prev->next = _new;
+  tmp->prev = _new;
   _size++;
   --position;
   return (position);
 }
 
 template<typename T>
-void list<T>::insert(iterator position, unsigned int n, const T &value)
+void list<T>::insert(iterator position, size_t n, const T &value)
 {
   while (n--)
-  {
     insert(position, value);
-  }
 }
 
 template<typename T>
@@ -607,45 +523,24 @@ void list<T>::insert(iterator position, InputIterator first, InputIterator last)
     insert(position, *first);
     ++first;
   }
-  insert(position, *first);
 }
 
 template<typename T>
 List::iterator<T> list<T>::erase(iterator position)
 {
+  iterator i = begin();
   struct __list *tmp;
 
-  if (_size == 0)
-  {
-    std::cout << "Out of range calling segfault..." << std::endl;
-    raise (SIGSEGV);
-  }
-  _list = _list->head;
-  if (_list == (struct __list *)position.get_list())
-  {
-    pop_front();
-    ++position;
+  while (i != end() && i != position)
+    ++i;
+  if (i == end()) //position not found and end cannot be erased, undefined behavior return position
     return (position);
-  }
-  --position;
-  while (_list->next != 0 && _list != (struct __list *)position.get_list())
-    _list = _list->next;
-  tmp = _list->next;
-  if (tmp->next == 0)
-  {
-    pop_back();
-    return (position);
-  }
-  if (_list->next != 0)
-  {
-    _list->next = _list->next->next;
-    if (_list->next != 0)
-      _list->next->prev = _list;
-  }
+  ++position;
+  tmp = (struct __list *)i.get_list();
+  tmp->prev->next = tmp->next;
+  tmp->next->prev = tmp->prev;
   delete tmp;
   _size--;
-  _list = _list->head;
-  ++position;
   return (position);
 }
 
@@ -653,63 +548,39 @@ template<typename T>
 List::iterator<T> list<T>::erase(iterator first, iterator last)
 {
   while (first != last)
-  {
     first = erase(first);
-  }
-  erase(first);
   return (last);
 }
 
 template<typename T>
 void list<T>::swap(list &x)
 {
-  list<T> *tmp = new list<T>;
+  list<T> tmp;
 
-  *tmp = *this;
+  tmp = *this;
   *this = x;
-  x = *tmp;
-  delete tmp;
+  x = tmp;
 }
 
 template<typename T>
-void list<T>::resize(unsigned int n)
+void list<T>::resize(size_t n)
 {
-  struct __list *tmp;
-
-  if (n == 0)
+  if (n <= 0)
     clear();
-  if (_size == 0)
+  while (_size != n)
   {
-    _list = new struct __list;
-    _list->head = _list;
-    _list->prev = 0;
-    _size = 1;
+    if (n > _size)
+      push_back(0);
+    else
+      pop_back();
   }
-  _list->head = _list->head;
-  while (_list->next != 0)
-    _list = _list->next;
-  while (n > _size)
-  {
-    _list->next = new struct __list;
-    _size++;
-    _list->next->head = _list->head;
-    _list->next->prev = _list;
-    _list = _list->next;
-  }
-  while (n < _size)
-  {
-    tmp = _list;
-    _list = _list->prev;
-    delete tmp;
-    _size--;
-  }
-  _list->next = 0;
-  _list = _list->head;
 }
 
 template<typename T>
-void list<T>::resize(unsigned int n, const T &val)
+void list<T>::resize(size_t n, const T &val)
 {
+  if (n <= 0)
+    clear();
   while (_size != n)
   {
     if (n > _size)
@@ -717,30 +588,6 @@ void list<T>::resize(unsigned int n, const T &val)
     else
       pop_back();
   }
-  // struct __list *tmp;
-  //
-  // // if (_size == 0)
-  //   assign((unsigned int)1, val);
-  // while (_list->next != 0)
-  //   _list = _list->next;
-  // while (n > _size)
-  // {
-  //   _list->next = new struct __list;
-  //   _size++;
-  //   _list->next->head = _list->head;
-  //   _list->next->prev = _list;
-  //   _list = _list->next;
-  //   _list->value = val;
-  // }
-  // while (n < _size)
-  // {
-  //   tmp = _list;
-  //   _list = _list->prev;
-  //   delete tmp;
-  //   _size--;
-  // }
-  // _list->next = 0;
-  // _list = _list->head;
 }
 
 template<typename T>
@@ -753,16 +600,15 @@ void list<T>::splice(iterator position, list<T> &x)
       return ;
     insert<iterator>(position, x.begin(), x.end());
     x.clear();
-    _list = _list->head;
 }
 
 template<typename T>
 void list<T>::splice(iterator position, list<T> &x, iterator i)
 {
-  insert(position, *i);
+  if (check_if_in(*this, position) == 0 || check_if_in(x, i) != 1) //position = end() can be inserted but cannot be erased
+    return ;
+  insert(position, *i); //If element not found, do nothing
   x.erase(i);
-  if (_size != 0)
-    _list = _list->head;
 }
 
 template<typename T>
@@ -770,60 +616,50 @@ void list<T>::splice(iterator position, list<T> &x, iterator first, iterator las
 {
   insert(position, first, last);
   x.erase(first, last);
-  if (_size != 0)
-    _list = _list->head;
 }
 
 template<typename T>
 void list<T>::remove(const T &value)
 {
-  iterator iterator;
+  iterator i = begin();
 
   if (_size == 0)
     return ;
-  iterator = begin();
-  while(iterator != end())
+  while(i != end())
   {
-    if (*iterator == value)
-      iterator = erase(iterator);
+    if (*i == value)
+      i = erase(i);
     else
-      ++iterator;
+      ++i;
   }
-  if (*iterator == value)
-     erase(iterator);
 }
 
 template<typename T>
 template<typename Predicate>
 void list<T>::remove_if(Predicate pred)
 {
-  iterator iterator;
+  iterator i = begin();
 
   if (_size == 0)
     return ;
-  iterator = begin();
-  while(iterator != end())
+  while(i != end())
   {
-    if (pred(*iterator))
-      iterator = erase(iterator);
+    if (pred(*i))
+      i = erase(i);
     else
-      ++iterator;
+      ++i;
   }
-  if (pred(*iterator))
-     erase(iterator);
 }
 
 template<typename T>
 void list<T>::unique()
 {
-  iterator iter;
-  iterator follow;
-
-  if (_size == 0)
-    return ;
-  follow = begin();
-  iter = begin();
+  iterator iter = begin();
   ++iter;
+  iterator follow = begin();
+
+  if (_size == 0 || _size == 1)
+    return ;
   while(iter != end())
   {
     if (*follow == *iter)
@@ -832,42 +668,39 @@ void list<T>::unique()
       ++iter;
     ++follow;
   }
-  if (*follow == *iter)
-    erase(iter);
 }
 
 template<typename T>
 template <typename BinaryPredicate>
 void list<T>::unique(BinaryPredicate binary_pred)
 {
-  iterator iter;
-  iterator follow;
-
-  if (_size == 0)
-    return ;
-  follow = begin();
-  iter = begin();
+  iterator iter = begin();
   ++iter;
+  iterator follow = begin();
+
+  if (_size == 0 || _size == 1)
+    return ;
   while(iter != end())
   {
-    if (binary_pred(*iter, *follow))
-      iter = erase(iter);
-    else
-      ++iter;
+    if (binary_pred(*follow, *iter)) //Seems counterintuitive but gives similar result as real
+    {
+      erase(iter);
+      unique(binary_pred);
+      return ;
+    }
+    ++iter;
     ++follow;
   }
-  if (binary_pred(*iter, *follow))
-    erase(iter);
 }
 
 template<typename T>
 void list<T>::merge(list<T> &x)
 {
-  iterator iter;
+  iterator iter = x.begin();
+  T tmp = back();
 
-  if (_size == 0 || x.empty())
+  if (x.empty())
     return ;
-  iter = x.begin();
   if (&x == this)
     return ;
   while(iter != x.end())
@@ -875,7 +708,8 @@ void list<T>::merge(list<T> &x)
     push_back(*iter);
     ++iter;
   }
-  push_back(*iter);
+  if (tmp > x.front())
+    sort();
   x.clear();
 }
 
@@ -883,108 +717,123 @@ template<typename T>
 template <typename Compare>
 void list<T>::merge(list<T> &x, Compare comp)
 {
-  iterator x_iter;
-  iterator self_iter;
+  iterator iter = x.begin();
+  T tmp = back();
 
-  if (_size == 0 || x.empty() == 0)
+  if (x.empty())
     return ;
-  x_iter = x.begin();
-  self_iter = begin();
-  _list = _list->head;
   if (&x == this)
     return ;
-  while(self_iter != end() and x_iter != x.end())
+  while(iter != x.end())
   {
-    if (comp(*x_iter, *self_iter))
-    {
-      insert(self_iter, *x_iter);
-      ++x_iter;
-    }
-    else
-      ++self_iter;
+    push_back(*iter);
+    ++iter;
   }
-  if (self_iter == end())
-  {
-    if (comp(*x_iter, *self_iter))
-    {
-      insert(self_iter, *x_iter);
-      if (x_iter != x.end())
-        ++x_iter;
-    }
-  }
-  while(x_iter != x.end())
-  {
-    push_back(*x_iter);
-    ++x_iter;
-  }
+  if (comp(x.front(), tmp))
+    sort(comp);
   x.clear();
 }
 
 template<typename T>
 void list<T>::sort()
 {
+  iterator iter = begin();
+  ++iter;
+  iterator follow = begin();
   T tmp;
 
-  if (_size == 0)
+  if (_size == 0 || _size == 1)
     return ;
-  _list = _list->head;
-  while(_list->next != 0)
+  while(iter != end())
   {
-    if (_list->next->value < _list->value)
+    if (*follow > *iter)
     {
-      tmp = _list->value;
-      _list->value = _list->next->value;
-      _list->next->value = tmp;
-      _list = _list->head;
+      tmp = *follow;
+      *follow = *iter;
+      *iter = tmp;
+      sort();
+      return ;
     }
-    else
-      _list = _list->next;
+    ++iter;
+    ++follow;
   }
-  _list = _list->head;
 }
 
 template<typename T>
 template <typename Compare>
 void list<T>::sort(Compare comp)
 {
+  iterator iter = begin();
+  ++iter;
+  iterator follow = begin();
   T tmp;
 
-  if (_size == 0)
+  if (_size == 0 || _size == 1)
     return ;
-  _list = _list->head;
-  while(_list->next != 0)
+  while(iter != end())
   {
-    if (comp(_list->next->value, _list->value))
+    if (comp(*iter, *follow))
     {
-      tmp = _list->value;
-      _list->value = _list->next->value;
-      _list->next->value = tmp;
-      _list = _list->head;
+      tmp = *follow;
+      *follow = *iter;
+      *iter = tmp;
+      sort(comp);
+      return ;
     }
-    else
-      _list = _list->next;
+    ++iter;
+    ++follow;
   }
-  _list = _list->head;
 }
 
 template<typename T>
 void list<T>::reverse()
 {
-  list<int> *_new;
+  list<T> *_new;
 
-  if (_size == 0)
+  if (_size == 0  || _size == 1)
     return ;
-  _new = new list<int>;
-  _list = _list->head;
+  _new = new list<T>;
+  _list = _list->head->next;
   while (_list->next != 0)
   {
     _new->push_front(_list->value);
     _list = _list->next;
   }
-  _new->push_front(_list->value);
   *this = *_new;
   delete _new;
 }
+
+template<typename T>
+void list<T>::ending_empty_container()
+{
+  _list = new struct __list;
+  struct __list *end = new struct __list;
+  _list->next = end;
+  _list->prev = 0;
+  _list->value = T(0);
+  _list->head = _list;
+  end->next = 0;
+  end->prev = _list;
+  end->value = T(0);
+  end->head = _list;
+  return ;
+ }
+
+ template<typename T>
+ int list<T>::check_if_in(const list<T> &x, List::iterator<T> find) const//Checks if position exists inside list, if not return 0, if yes return 1, if equal to end() return 2
+ {
+   iterator i = x.begin();
+
+   if (find == x.end())
+    return 2;
+   while (i != x.end())
+   {
+     if (i == find)
+      return 1;
+     ++i;
+   }
+   return 0;
+ }
 
 } //End of the namespace scope
 #endif

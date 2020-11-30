@@ -28,7 +28,7 @@ namespace ft
       Key key_value;
     };
     struct __map *_map;
-    unsigned int _size;
+    size_t _size;
 
     class value_compare //Not necessary to use, but asked to do and return in vlue_comp function
     {
@@ -75,8 +75,8 @@ namespace ft
 
     //Capacity
     bool empty() const;
-    unsigned int size() const { return (_size); }
-    unsigned int max_size() const { return (UINT_MAX); } //Because size is stored inside an unsigned int max size is the max unsigned int
+    size_t size() const { return (_size); }
+    size_t max_size() const { return std::numeric_limits<size_t>::max(); } //Because the size is stored in a size_t, https://en.cppreference.com/w/cpp/container/list/max_size
 
     //Element access
     T &operator[](const Key& k);
@@ -87,7 +87,7 @@ namespace ft
     template<typename inputiterator>
     void insert(inputiterator first, inputiterator last);
     void erase(iterator position);
-    unsigned int erase(const Key &k);
+    size_t erase(const Key &k);
     void erase(iterator first, iterator last);
     void swap(map &x);
     void clear();
@@ -99,7 +99,7 @@ namespace ft
     //Operations
     iterator find(const Key &k);
     const_iterator find(const Key &k) const;
-    unsigned int count(const Key &k) const;
+    size_t count(const Key &k) const;
     iterator lower_bound(const Key &k);
     const_iterator lower_bound(const Key &k) const;
     iterator upper_bound(const Key &k);
@@ -235,7 +235,7 @@ namespace ft
   }
 
   template<typename Key, typename T, typename Compare>
-  unsigned int map<Key, T, Compare>::erase(const Key &k) //Returns number of erased elements
+  size_t map<Key, T, Compare>::erase(const Key &k) //Returns number of erased elements
   {
     struct __map *tmp;
 
@@ -335,7 +335,7 @@ namespace ft
   }
 
   template<typename Key, typename T, typename Compare>
-  unsigned int map<Key, T, Compare>::count(const Key &k) const //Number of occurences of a key value, in map all key values are unique so maximum 1
+  size_t map<Key, T, Compare>::count(const Key &k) const //Number of occurences of a key value, in map all key values are unique so maximum 1
   {
     if (is_in(k) == true)
       return (1);

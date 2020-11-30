@@ -94,8 +94,6 @@ int main(int argc, char **argv)
 
     call_tests<ft::list<int>, std::list<int>, int>("int", 8, container_object_creation1<ft::list<int> >, container_object_creation1<std::list<int> >);
     call_tests<ft::list<char>, std::list<char>, char>("char", 8, container_object_creation1<ft::list<char> >, container_object_creation1<std::list<char> >);
-    // call_tests<ft::list<std::string>, std::list<std::string>, std::string>("std::string", 8, container_object_creation2<ft::list<std::string> >, container_object_creation2<std::list<std::string> >);
-    // call_tests<ft::list<Complex>, std::list<Complex>, Complex>("Complex", 8, container_object_creation3<ft::list<Complex> >, container_object_creation3<std::list<Complex> >);
     feedback();
     std::cout << "\033[1m\033[33m" << "~~~~!!End tests for list container!!~~~~" << std::endl;
   }

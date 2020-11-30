@@ -4,48 +4,6 @@
 #include "../main.hpp"
 
 template<typename T>
-T *container_object_creation3()
-{
-  T *my_elems = new T[2];
-
-  T l1((unsigned int)10, Complex(19)); //Long same values
-  std::cout << "\033[30m" << "2 ";
-
-  T l2;
-  l2.push_back(Complex(19));
-  l2.push_back(Complex(42));
-  l2.push_back(Complex(16));
-  l2.push_back(Complex(53));
-  std::cout << "\033[30m" << "3 ";
-
-  my_elems[0] = l1;
-  my_elems[1] = l2;
-
-  return my_elems;
-}
-
-template<typename T>
-T *container_object_creation2()
-{
-  T *my_elems = new T[2];
-
-  T l1((unsigned int)10, std::string("19")); //Long same values
-  std::cout << "\033[30m" << "2 ";
-
-  T l2;
-  l2.push_back(std::string("19"));
-  l2.push_back(std::string("yes"));
-  l2.push_back(std::string("21"));
-  l2.push_back(std::string("no"));
-  std::cout << "\033[30m" << "3 ";
-
-  my_elems[0] = l1;
-  my_elems[1] = l2;
-
-  return my_elems;
-}
-
-template<typename T>
 T *container_object_creation1()
 {
   T *my_elems = new T[8];

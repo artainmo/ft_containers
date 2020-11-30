@@ -28,6 +28,29 @@ protected:
   };
   struct __list *_list;
 
+  void go_to_start()
+  {
+    while (_list->prev->prev != 0)
+      _list = _list->prev;
+  }
+  void go_to_end()
+  {
+    while (_list->next != 0)
+      _list = _list->next;
+  }
+  size_t ft_strlen() const
+  {
+    struct __list *tmp = _list;
+    size_t lenght = 0;
+
+    while (tmp->prev->prev != 0)
+    {
+      lenght++;
+      tmp = tmp->prev;
+    }
+    return lenght;
+  }
+
 public:
   iterator(): _list(nullptr) {}
   iterator(const iterator<T> &to_copy) { *this = to_copy; }
@@ -39,11 +62,38 @@ public:
 
   bool operator==(const iterator &r) const { if (_list != r.get_list()) return false; else return true; }
   bool operator!=(const iterator &r) const { if (_list != r.get_list()) return true; else return false; }
-  T &operator*() { return (_list->value); }
-  const T &operator*() const { return (_list->value); }
+  T &operator*()
+  {
+    if (_list->next == 0)
+      _list->value = ft_strlen();
+    return (_list->value);
+  }
+  T &operator*() const
+  {
+    if (_list->next == 0)
+      return T(ft_strlen());
+    return (_list->value);
+  }
   void operator*=(T value) { _list->value = value; }
-  virtual T &operator++() { if (_list->next != 0) _list = _list->next; return (_list->value); }
-  virtual T &operator--() { if (_list->prev != 0) _list = _list->prev; return (_list->value); }
+  virtual void operator++()
+  {
+    if (_list->next == 0)
+    {
+      go_to_start();
+      return ;
+    }
+    _list = _list->next;
+  }
+
+  virtual void operator--()
+  {
+    if (_list->prev->prev == 0)
+    {
+      go_to_end();
+      return ;
+    }
+    _list = _list->prev;
+  }
 
   //*++ and *-- increment and decrement the value returned by *
 };
@@ -58,18 +108,24 @@ public:
   reverse_iterator(void *list_):iterator<T>(list_) {}
   virtual ~reverse_iterator() {}
 
-  T &operator++()
+  void operator++()
   {
-    if (iterator<T>::_list->prev != 0)
-      iterator<T>::_list = iterator<T>::_list->prev;
-    return (iterator<T>::_list->value);
+    if (iterator<T>::_list->prev->prev == 0)
+    {
+      iterator<T>::go_to_end();
+      return ;
+    }
+    iterator<T>::_list = iterator<T>::_list->prev;
   }
 
-  T &operator--()
+  void operator--()
   {
-    if (iterator<T>::_list->next != 0)
-      iterator<T>::_list = iterator<T>::_list->next;
-    return (iterator<T>::_list->value);
+    if (iterator<T>::_list->next == 0)
+    {
+      iterator<T>::go_to_start();
+      return ;
+    }
+    iterator<T>::_list = iterator<T>::_list->next;
   }
 
 };

@@ -27,22 +27,22 @@ namespace ft
   class vector //Is like an array but with a dynamic size. Each time size changes vector copies old array into new array with added element, so it is slow in adding elements but it is fast in accessing elements
   {
   private:
-    unsigned int _size_left;
-    static const unsigned int _buffer_storage = 10;
-    unsigned int _total_buffer_storage;
+    size_t _size_left;
+    static const size_t _buffer_storage = 10;
+    size_t _total_buffer_storage;
 
-    unsigned int _size;
+    size_t _size;
     T *_array;
 
-    void realloc(unsigned int size);
+    void realloc(size_t size);
     template<typename inputiterator>
-    unsigned int get_size(inputiterator first, inputiterator last);
+    size_t get_size(inputiterator first, inputiterator last);
     template<typename inputiterator>
     void copy(inputiterator first, inputiterator last); //Copy with clear and reallocation
     void copy(const vector<T> &cpy); //Copy withouth reallocating
     T &copy(); //Send a copy of the array
-    void new_size(unsigned int size);
-    void reserve2(unsigned int n);
+    void new_size(size_t size);
+    void reserve2(size_t n);
 
   public:
     //Iterators
@@ -53,7 +53,7 @@ namespace ft
 
     //Constructors
     vector() { realloc(0); } //Realloc is own function that uses new keyword
-    vector(unsigned int n, const T &value) { assign(n, value); }
+    vector(size_t n, const T &value) { assign(n, value); }
     template<typename inputiterator>
     vector(inputiterator first, inputiterator last) { assign(first, last); } //If you do not take as a reference you will lose the values contained in it!!
     vector(const vector<T> &to_copy) {*this = to_copy;}
@@ -71,18 +71,18 @@ namespace ft
     const_reverse_iterator rend() const { if (empty()) return const_reverse_iterator(); else return const_reverse_iterator(_array); }
 
     //Capacity
-    unsigned int size() const { return (_size); }
-    unsigned int max_size() const { return (UINT_MAX); } //Because the size is stored in an unsigned int, the maximum size of the list is the maximum unsigned int
-    void resize(unsigned int n, const T &value); //Change size
-    unsigned int capacity() const { return (_total_buffer_storage); }
+    size_t size() const { return (_size); }
+    size_t max_size() const { return std::numeric_limits<size_t>::max(); } //Because the size is stored in a size_t, https://en.cppreference.com/w/cpp/container/list/max_size
+    void resize(size_t n, const T &value); //Change size
+    size_t capacity() const { return (_total_buffer_storage); }
     bool empty() const;
-    void reserve(unsigned int n); //Change capacity
+    void reserve(size_t n); //Change capacity
 
     //Element access
-    T &operator[](unsigned int n) { return _array[n]; }
-    const T &operator[](unsigned int n) const { return _array[n]; }
-    T &at(unsigned int n) { return _array[n]; }
-    const T &at(unsigned int n) const { return _array[n]; }
+    T &operator[](size_t n) { return _array[n]; }
+    const T &operator[](size_t n) const { return _array[n]; }
+    T &at(size_t n) { return _array[n]; }
+    const T &at(size_t n) const { return _array[n]; }
     T &front() { return _array[0]; }
     const T &front() const { return _array[0]; }
     T &back() { return _array[_size - 1]; }
@@ -91,11 +91,11 @@ namespace ft
     //Modifiers
     template<typename inputiterator>
     void assign(inputiterator first, inputiterator last) { realloc(0); copy(first, last); }
-    void assign(unsigned int n, const T &value);
+    void assign(size_t n, const T &value);
     void push_back(const T &value);
     void pop_back();
     iterator insert(iterator position, const T &value);
-    void insert(iterator position, unsigned int n, const T &value);
+    void insert(iterator position, size_t n, const T &value);
     template<typename inputiterator>
     void insert(iterator position, inputiterator first, inputiterator last);
     iterator erase(iterator position);
@@ -227,7 +227,7 @@ namespace ft
   }
 
   template<typename T>
-  void vector<T>::resize(unsigned int n, const T &value)
+  void vector<T>::resize(size_t n, const T &value)
   {
     while (_size != n)
     {
@@ -248,10 +248,10 @@ namespace ft
   }
 
   template<typename T>
-  void vector<T>::reserve(unsigned int n)
+  void vector<T>::reserve(size_t n)
   {
     float times;
-    unsigned int storage;
+    size_t storage;
     vector<T> rem;
 
     if (n >= _total_buffer_storage)
@@ -268,7 +268,7 @@ namespace ft
   }
 
   template<typename T>
-  void vector<T>::assign(unsigned int n, const T &value)
+  void vector<T>::assign(size_t n, const T &value)
   {
     realloc(0);
     clear();
@@ -281,7 +281,7 @@ namespace ft
   template<typename T>
   void vector<T>::push_back(const T &value)
   {
-    unsigned int rem;
+    size_t rem;
 
     rem = _size;
     reserve2(_size + 1);
@@ -326,7 +326,7 @@ namespace ft
   }
 
   template<typename T>
-  void vector<T>::insert(iterator position, unsigned int n, const T &value)
+  void vector<T>::insert(iterator position, size_t n, const T &value)
   {
     while (n)
     {
@@ -407,17 +407,17 @@ namespace ft
 
 
   template<typename T>
-  void vector<T>::new_size(unsigned int size)
+  void vector<T>::new_size(size_t size)
   {
     _size = size;
     _size_left = _total_buffer_storage - _size;
   }
 
   template<typename T>
-  void vector<T>::realloc(unsigned int size)
+  void vector<T>::realloc(size_t size)
   {
     float times;
-    unsigned int storage;
+    size_t storage;
 
     size += 1;
     times = ceil((float)size / (float)_buffer_storage);
@@ -429,9 +429,9 @@ namespace ft
 
   template<typename T>
   template<typename inputiterator>
-  unsigned int vector<T>::get_size(inputiterator first, inputiterator last)
+  size_t vector<T>::get_size(inputiterator first, inputiterator last)
   {
-    unsigned int counter;
+    size_t counter;
 
     counter = 1;
     while (first != last)
@@ -493,7 +493,7 @@ namespace ft
   }
 
   template<typename T>
-  void vector<T>::reserve2(unsigned int n)
+  void vector<T>::reserve2(size_t n)
   {
     vector<T> rem;
 
