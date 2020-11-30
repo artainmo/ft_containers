@@ -6,9 +6,6 @@ void segfault( int signum ) { std::cout << "SEGFAULT" << std::endl; exit(signum)
 void sigabort( int signum ) { std::cout << "SIGABORT" << std::endl; exit(signum); } //Catch sigaborts and write in correct fd
 void sigquit(int sig) { sig = 0; exit(sig); } //SIGQUIT send from childprocess to stop program does not return error code
 
-int G_ERROR_COUNT = 0; //Lifetime end is not scope but whole program as assigned in static memory
-int G_LINE = 0; //By knowing how much lines/tests you went through you can view your progress
-
 std::string itoa(int num) //c++ has no itoa!! Only c++11 has itoa equivalent
 {
   std::string s;
@@ -18,6 +15,9 @@ std::string itoa(int num) //c++ has no itoa!! Only c++11 has itoa equivalent
   s = out.str();
   return s;
 }
+
+int G_ERROR_COUNT = 0; //Lifetime end is not scope but whole program as assigned in static memory
+int G_LINE = 0; //By knowing how much lines/tests you went through you can view your progress
 
 void check_answer(std::ifstream &fd_r, std::ifstream &fd_r_r, std::ofstream &output_my, std::ofstream &output_real) //Check all lines takes the test name and compares following test output
 {

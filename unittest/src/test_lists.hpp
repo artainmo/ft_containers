@@ -43,23 +43,23 @@ void tests(T l, T l2, R lr, R lr2, std::ofstream &fd_w, std::ifstream &fd_r, std
   {insert_fill<T>, 13}, {insert_fill2<T>, 14}, {insert_fill3<T>, 15}, {erase_single_element<T>, 16}, {erase_single_element2<T>, 17}, \
   {erase_range<T>, 18}, {erase_range2<T>, 19}, {resize_bigger<T>, 20}, {resize_smaller<T>, 21}, {resize_range_bigger<T>, 22}, {resize_range_smaller<T>, 23}, \
   {clear<T>, 24}, {remove<T>, 25}, {remove_if<T, T2>, 26}, {unique<T>, 27}, {unique_if<T, T2>, 28}, {sort<T>, 29}, {sort_if<T, T2>, 30}, {reverse<T>, 31}};
-  struct s_functions_ptr2<T> my_func2[27] = {{assignation_operator<T, T2>, 32}, {range_assign<T>, 33}, {range_assign2<T>, 34}, {insert_range<T>, 35}, {insert_range2<T>, 36}, \
+  struct s_functions_ptr2<T> my_func2[26] = {{assignation_operator<T, T2>, 32}, {range_assign<T>, 33}, {range_assign2<T>, 34}, {insert_range<T>, 35}, {insert_range2<T>, 36}, \
   {insert_range3<T>, 37}, {swap_member_function<T>, 38}, {splice_list<T>, 39}, {splice_list2<T>, 40}, {splice_list3<T>, 41}, \
   {splice_single_element<T>, 42}, {splice_single_element2<T>, 43}, {splice_single_element3<T>, 44}, {splice_single_element4<T>, 45}, {splice_range<T>, 46}, {splice_range2<T>, 47}, \
   {splice_range3<T>, 48}, {merge<T>, 49}, {merge_if<T, T2>, 50}, {swap_non_member_function<T>, 51}, {equal<T>, 52}, {non_equal<T>, 53}, \
-  {smaller_than<T>, 54}, {smaller_than_equal<T>, 55}, {bigger_than<T>, 56}, {bigger_than_equal<T>, 57}, {iterator_tests<T, T2>, 58}};
+  {smaller_than<T>, 54}, {smaller_than_equal<T>, 55}, {bigger_than<T>, 56}, {bigger_than_equal<T>, 57}};
   struct s_functions_ptr1<R> real_func1[31] = {{empty<R>, 1}, {front<R>, 2}, {back<R>, 3}, {fill_assign<R>, 4}, {fill_assign2<R>, 5}, {push_front<R>, 6}, \
   {pop_front<R>, 7}, {push_back<R>, 8}, {pop_back<R>, 9}, {insert_single_element<R>, 10}, {insert_single_element2<R>, 11}, {insert_single_element3<R>, 12}, \
   {insert_fill<R>, 13}, {insert_fill2<R>, 14}, {insert_fill3<R>, 15}, {erase_single_element<R>, 16}, {erase_single_element2<R>, 17}, \
   {erase_range<R>, 18}, {erase_range2<R>, 19}, {resize_bigger<R>, 20}, {resize_smaller<R>, 21}, {resize_range_bigger<R>, 22}, {resize_range_smaller<R>, 23}, \
   {clear<R>, 24}, {remove<R>, 25}, {remove_if<R, T2>, 26}, {unique<R>, 27}, {unique_if<R, T2>, 28}, {sort<R>, 29}, {sort_if<R, T2>, 30}, {reverse<R>, 31}};
-  struct s_functions_ptr2<R> real_func2[27] = {{assignation_operator<R, T2>, 32}, {range_assign<R>, 33}, {range_assign2<R>, 34}, {insert_range<R>, 35}, {insert_range2<R>, 36}, \
+  struct s_functions_ptr2<R> real_func2[26] = {{assignation_operator<R, T2>, 32}, {range_assign<R>, 33}, {range_assign2<R>, 34}, {insert_range<R>, 35}, {insert_range2<R>, 36}, \
   {insert_range3<R>, 37}, {swap_member_function<R>, 38}, {splice_list<R>, 39}, {splice_list2<R>, 40}, {splice_list3<R>, 41}, \
   {splice_single_element<R>, 42}, {splice_single_element2<R>, 43}, {splice_single_element3<R>, 44}, {splice_single_element4<R>, 45}, {splice_range<R>, 46}, {splice_range2<R>, 47}, \
   {splice_range3<R>, 48}, {merge<R>, 49}, {merge_if<R, T2>, 50}, {swap_non_member_function<R>, 51}, {equal<R>, 52}, {non_equal<R>, 53}, \
-  {smaller_than<R>, 54}, {smaller_than_equal<R>, 55}, {bigger_than<R>, 56}, {bigger_than_equal<R>, 57}, {iterator_tests<R, T2>, 58}};
+  {smaller_than<R>, 54}, {smaller_than_equal<R>, 55}, {bigger_than<R>, 56}, {bigger_than_equal<R>, 57}};
 
-  for (unsigned int i = 0; i < 58 ; i++)
+  for (unsigned int i = 0; i < 57 ; i++)
   {
     if (i < 31) //Functions with one parameter
     {
@@ -116,7 +116,7 @@ void *pthread_start(void *args)
 }
 
 template<typename T, typename R, typename T2>
-void list_test(T *my_elems, R *real_elems, int test_lenght)
+void list_basis_tests()
 {
   //Create fds to output files
   std::ofstream fd_w("output/tmp_my");
@@ -128,16 +128,14 @@ void list_test(T *my_elems, R *real_elems, int test_lenght)
 
   //Create streambuffers to redirect output
   std::streambuf *fd_1 = std::cout.rdbuf();
-  int fd_2 = dup(2);
-  int dev_null = open("/dev/null", O_CREAT | O_WRONLY); // /dev/null Discards all data written to it, open and dup are used instead of c++ cerr object because it does not work...
   std::streambuf *fd_my = fd_w.rdbuf();
   std::streambuf *fd_real = fd_w_r.rdbuf();
 
-  struct s_functions_ptr<T> my_func[5] = {{default_constructor<T>, 1}, {fill_constructor<T>, 2}, {special_fill_constructor<T>, 3}, {range_constructor<T>, 4}, {copy_constructor<T, T2>, 5}};
-  struct s_functions_ptr<T> real_func[5] = {{default_constructor<R>, 1}, {fill_constructor<R>, 2}, {special_fill_constructor<R>, 3}, {range_constructor<R>, 4}, {copy_constructor<R, T2>, 5}};
+  struct s_functions_ptr<T> my_func[7] = {{default_constructor<T>, 1}, {fill_constructor<T>, 2}, {special_fill_constructor<T>, 3}, {range_constructor<T>, 4}, {copy_constructor<T, T2>, 5}, {iterator_tests1<T, T2>, 6}, {iterator_tests2<T>, 7}};
+  struct s_functions_ptr<T> real_func[7] = {{default_constructor<R>, 1}, {fill_constructor<R>, 2}, {special_fill_constructor<R>, 3}, {range_constructor<R>, 4}, {copy_constructor<R, T2>, 5}, {iterator_tests1<R, T2>, 6}, {iterator_tests2<R>, 7}};
 
-  std::cout << "\033[35m" << "\nConstructors tests:" << std::endl;
-  for (int i = 0; i < 5; i++)
+  std::cout << "\033[35m" << "\nConstructors and iterators basis tests:" << std::endl;
+  for (int i = 0; i < 7; i++)
   {
     pid_t pid = fork();
 
@@ -155,12 +153,29 @@ void list_test(T *my_elems, R *real_elems, int test_lenght)
     wait(NULL);
     check_answer(fd_r, fd_r_r, output_my, output_real);
   }
-  std::cout << "\033[35m" << "\nEnd constructors tests\n" << std::endl;
+  std::cout << "\033[35m" << "\nEnd constructors and iterators basis tests\n" << std::endl;
 
-  std::cout << "\033[1m\033[30m" << "Container object creation you:" << std::endl;
-  std::cout << "\033[1m\033[30m" << "End of container object creation\n" << std::endl;
-  std::cout << "\033[1m\033[30m" << "Container object creation real:" << std::endl;
-  std::cout << "\033[1m\033[30m" << "End of container object creation\n" << std::endl;
+  fd_w.close();
+  fd_w_r.close();
+  fd_r.close();
+  fd_r_r.close();
+  output_my.close();
+  output_real.close();
+}
+
+template<typename T, typename R, typename T2>
+void list_test(T *my_elems, R *real_elems, int test_lenght)
+{
+  //Create fds to output files
+  std::ofstream fd_w("output/tmp_my");
+  std::ifstream fd_r("output/tmp_my");
+  std::ofstream fd_w_r("output/tmp_real");
+  std::ifstream fd_r_r("output/tmp_real");
+  std::ofstream output_my("output/list");
+  std::ofstream output_real("output/real");
+
+  int fd_2 = dup(2);
+  int dev_null = open("/dev/null", O_CREAT | O_WRONLY); // /dev/null Discards all data written to it, open and dup are used instead of c++ cerr object because it does not work...
 
   struct thread_arg<T, R> args = { 0, 0, my_elems, real_elems, output_my, output_real, test_lenght};
   pthread_t id;

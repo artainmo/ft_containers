@@ -46,6 +46,21 @@ int G_ERROR_LIMIT = 1;
 
 float G_TOTAL_TESTS = 80854.000000;
 
+
+template<typename T, typename R, typename T2>
+void call_tests(std::string type, int test_lenght, T* (*function_pointer)(), R* (*function_pointer2)())
+{
+  std::cout << "\033[1m\033[33m" << "!!Starting tests for list<" << type << "> container...!!" << std::endl;
+  std::cout << "\033[1m\033[30m" << "\nContainer object creation you:" << std::endl;
+  T *my_elems1 = function_pointer();
+  std::cout << "\033[1m\033[30m" << "End of container object creation\n" << std::endl;
+  std::cout << "\033[1m\033[30m" << "Container object creation real:" << std::endl;
+  R *real_elems1 = function_pointer2();
+  std::cout << "\033[1m\033[30m" << "End of container object creation\n" << std::endl;
+  list_test<T, R, T2>(my_elems1, real_elems1, test_lenght);
+  std::cout << "\033[1m\033[33m" << "\n!!End list<"<< type << "> container tests...!!" << std::endl;
+}
+
 int main(int argc, char **argv)
 {
   if (argc < 2 || argc > 3)
@@ -74,35 +89,15 @@ int main(int argc, char **argv)
   signal(SIGABRT, sigabort);
   if (std::strcmp("list", argv[1]) == 0)
   {
-    std::cout << "\033[1m\033[33m" << "!!Starting tests for list<int> container...!!" << std::endl;
-    ft::list<int> *my_elems1 = container_object_creation1<ft::list<int> >();
-    std::list<int> *real_elems1 = container_object_creation1<std::list<int> >();
-    list_test<ft::list<int>, std::list<int>, int>(my_elems1, real_elems1, 8);
-    delete my_elems1;
-    delete real_elems1;
-    std::cout << "\033[1m\033[33m" << "\n!!End list<int> container tests...!!" << std::endl;
-    std::cout << "\033[1m\033[33m" << "\n!!Starting tests for list<char> container...!!" << std::endl;
-    ft::list<char> *my_elems2 = container_object_creation1<ft::list<char> >();
-    std::list<char> *real_elems2 = container_object_creation1<std::list<char> >();
-    list_test<ft::list<char>, std::list<char>, char>(my_elems2, real_elems2, 8);
-    delete my_elems2;
-    delete real_elems2;
-    std::cout << "\033[1m\033[33m" << "\n!!End list<char> container tests...!!" << std::endl;
-    std::cout << "\033[1m\033[33m" << "\n!!Starting tests for list<std::string> container...!!" << std::endl;
-    ft::list<std::string> *my_elems3 = container_object_creation2<ft::list<std::string> >();
-    std::list<std::string> *real_elems3 = container_object_creation2<std::list<std::string> >();
-    list_test<ft::list<std::string>, std::list<std::string>, std::string>(my_elems3, real_elems3, 2); //!!!
-    delete my_elems3;
-    delete real_elems3;
-    std::cout << "\033[1m\033[33m" << "\n!!End list<std::string> container tests...!!" << std::endl;
-    std::cout << "\033[1m\033[33m" << "\n!!Starting tests for list<Complex> container...!!" << std::endl;
-    ft::list<Complex> *my_elems4 = container_object_creation2<ft::list<Complex> >();
-    std::list<Complex> *real_elems4 = container_object_creation2<std::list<Complex> >();
-    list_test<ft::list<Complex>, std::list<Complex>, Complex>(my_elems4, real_elems4, 2); //!!!
-    delete my_elems4;
-    delete real_elems4;
-    std::cout << "\033[1m\033[33m" << "\n!!End list<Complex> container tests...!!" << std::endl;
+    std::cout << "\033[1m\033[33m" << "~~~~!!Starting tests for list container...!!~~~~" << std::endl;
+    list_basis_tests<ft::list<int>, std::list<int>, int>();
+
+    call_tests<ft::list<int>, std::list<int>, int>("int", 8, container_object_creation1<ft::list<int> >, container_object_creation1<std::list<int> >);
+    call_tests<ft::list<char>, std::list<char>, char>("char", 8, container_object_creation1<ft::list<char> >, container_object_creation1<std::list<char> >);
+    // call_tests<ft::list<std::string>, std::list<std::string>, std::string>("std::string", 8, container_object_creation2<ft::list<std::string> >, container_object_creation2<std::list<std::string> >);
+    // call_tests<ft::list<Complex>, std::list<Complex>, Complex>("Complex", 8, container_object_creation3<ft::list<Complex> >, container_object_creation3<std::list<Complex> >);
     feedback();
+    std::cout << "\033[1m\033[33m" << "~~~~!!End tests for list container!!~~~~" << std::endl;
   }
   // else if (std::strcmp("vector", argv[1]) == 0)
   // {
