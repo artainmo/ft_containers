@@ -48,17 +48,17 @@ float G_TOTAL_TESTS = 162535.000000;
 
 
 template<typename T, typename R, typename T2>
-void call_tests(std::string type, int test_lenght, T* (*function_pointer)(), R* (*function_pointer2)())
+void call_tests(std::string type, std::string cont, int test_lenght, T* (*function_pointer)(), R* (*function_pointer2)(), void (function_pointer3)(T *, R *, int))
 {
-  std::cout << "\033[1m\033[33m" << "!!Starting tests for list<" << type << "> container...!!" << std::endl;
+  std::cout << "\033[1m\033[33m" << "!!Starting tests for " << cont << "<" << type << "> container...!!" << std::endl;
   std::cout << "\033[1m\033[30m" << "\nContainer object creation you:" << std::endl;
   T *my_elems1 = function_pointer();
   std::cout << "\033[1m\033[30m" << "End of container object creation\n" << std::endl;
   std::cout << "\033[1m\033[30m" << "Container object creation real:" << std::endl;
   R *real_elems1 = function_pointer2();
   std::cout << "\033[1m\033[30m" << "End of container object creation\n" << std::endl;
-  list_test<T, R, T2>(my_elems1, real_elems1, test_lenght);
-  std::cout << "\033[1m\033[33m" << "\n!!End list<"<< type << "> container tests...!!" << std::endl;
+  function_pointer3(my_elems1, real_elems1, test_lenght);
+  std::cout << "\033[1m\033[33m" << "\n!!End " << cont << "<"<< type << "> container tests...!!" << std::endl;
 }
 
 int main(int argc, char **argv)
@@ -92,10 +92,20 @@ int main(int argc, char **argv)
     std::cout << "\033[1m\033[33m" << "~~~~!!Starting tests for list container...!!~~~~" << std::endl;
     list_basis_tests<ft::list<int>, std::list<int>, int>();
 
-    call_tests<ft::list<int>, std::list<int>, int>("int", 8, container_object_creation1<ft::list<int> >, container_object_creation1<std::list<int> >);
-    call_tests<ft::list<char>, std::list<char>, char>("char", 8, container_object_creation1<ft::list<char> >, container_object_creation1<std::list<char> >);
+    call_tests<ft::list<int>, std::list<int>, int>("int", "list", 8, list_container_object_creation1<ft::list<int> >, container_object_creation1<std::list<int> >, list_test<ft::list<int>, std::list<int>, int>);
+    call_tests<ft::list<char>, std::list<char>, char>("char", "list", 8, list_container_object_creation1<ft::list<char> >, container_object_creation1<std::list<char> >, list_test<ft::list<char>, std::list<char>, char>);
     feedback();
     std::cout << "\033[1m\033[33m" << "~~~~!!End tests for list container!!~~~~" << std::endl;
+  }
+  else if (std::strcmp("map", argv[1]) == 0)
+  {
+    std::cout << "\033[1m\033[33m" << "~~~~!!Starting tests for map container...!!~~~~" << std::endl;
+    map_basis_tests<ft::map<int, int>, std::map<int, int>, int, int>();
+
+    call_tests<ft::map<int, int>, std::map<int, int>("int", "map", 7, map_container_object_creation1<ft::map<int, int> >, map_container_object_creation1<std::map<int, int> >, map_test<ft::map<int, int>, std::map<int, int>, int , int>);
+    call_tests<ft::map<char, char>, std::map<char, char>("char", "map", 7, container_object_creation1<ft::map<char, char> >, container_object_creation1<std::map<char, char> >, map_test<ft::map<char, char>, std::map<char, char>, char , char>);
+    feedback();
+    std::cout << "\033[1m\033[33m" << "~~~~!!End tests for map container!!~~~~" << std::endl;
   }
   // else if (std::strcmp("vector", argv[1]) == 0)
   // {
@@ -103,16 +113,6 @@ int main(int argc, char **argv)
   //   std::ifstream fd_r("output/vector");
   //   test_vector(fd_w);
   //   test_real_vector(fd_w_r);
-  //   check_answer(fd_r, fd_r_r);
-  //   fd_w.close();
-  //   fd_r.close();
-  // }
-  // else if (std::strcmp("map", argv[1]) == 0)
-  // {
-  //   std::ofstream fd_w("output/map");
-  //   std::ifstream fd_r("output/map");
-  //   test_map(fd_w);
-  //   test_real_map(fd_w_r);
   //   check_answer(fd_r, fd_r_r);
   //   fd_w.close();
   //   fd_r.close();

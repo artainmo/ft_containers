@@ -4,60 +4,30 @@
 #include "../main.hpp"
 #include "list_tests.hpp"
 
-template<typename T>
-void safe_space_test(s_functions_ptr1<T> func[31], unsigned int i, T &l, std::ofstream &fd)
-{
-  pid_t pid = fork(); //vfork is faster than fork, the parent process automatically waits for child process because they share the same stack memory
-  std::streambuf *sfd = fd.rdbuf();
-
-  if (pid == 0)
-  {
-    std::cout.rdbuf(sfd);  //Redirect cout or stream 1 to file
-    func[i].function_pointer(l); //Call real
-    exit(0);
-  }
-  wait(NULL);
-}
-
-template<typename T>
-void safe_space_test(s_functions_ptr2<T> func[26], unsigned int i, T &l, T &l2, std::ofstream &fd)
-{
-  pid_t pid = fork();
-  std::streambuf *sfd = fd.rdbuf();
-
-  if (pid == 0)
-  {
-    std::cout.rdbuf(sfd);  //Redirect cout or stream 1 to file
-    func[i].function_pointer(l, l2); //Call real
-    exit(0);
-  }
-  wait(NULL);
-}
-
 template<typename T, typename R, typename T2>
 void tests(T l, T l2, R lr, R lr2, std::ofstream &fd_w, std::ifstream &fd_r, std::ofstream &fd_w_r, std::ifstream &fd_r_r, std::ofstream &output_my, std::ofstream &output_real)
 {
   std::streambuf *fd_1 = std::cout.rdbuf();
-  struct s_functions_ptr1<T> my_func1[31] = {{empty<T>, 1}, {front<T>, 2}, {back<T>, 3}, {fill_assign<T>, 4}, {fill_assign2<T>, 5}, {push_front<T>, 6}, \
-  {pop_front<T>, 7}, {push_back<T>, 8}, {pop_back<T>, 9}, {insert_single_element<T>, 10}, {insert_single_element2<T>, 11}, {insert_single_element3<T>, 12}, \
-  {insert_fill<T>, 13}, {insert_fill2<T>, 14}, {insert_fill3<T>, 15}, {erase_single_element<T>, 16}, {erase_single_element2<T>, 17}, \
-  {erase_range<T>, 18}, {erase_range2<T>, 19}, {resize_bigger<T>, 20}, {resize_smaller<T>, 21}, {resize_range_bigger<T>, 22}, {resize_range_smaller<T>, 23}, \
-  {clear<T>, 24}, {remove<T>, 25}, {remove_if<T, T2>, 26}, {unique<T>, 27}, {unique_if<T, T2>, 28}, {sort<T>, 29}, {sort_if<T, T2>, 30}, {reverse<T>, 31}};
-  struct s_functions_ptr2<T> my_func2[26] = {{assignation_operator<T, T2>, 32}, {range_assign<T>, 33}, {range_assign2<T>, 34}, {insert_range<T>, 35}, {insert_range2<T>, 36}, \
-  {insert_range3<T>, 37}, {swap_member_function<T>, 38}, {splice_list<T>, 39}, {splice_list2<T>, 40}, {splice_list3<T>, 41}, \
-  {splice_single_element<T>, 42}, {splice_single_element2<T>, 43}, {splice_single_element3<T>, 44}, {splice_single_element4<T>, 45}, {splice_range<T>, 46}, {splice_range2<T>, 47}, \
-  {splice_range3<T>, 48}, {merge<T>, 49}, {merge_if<T, T2>, 50}, {swap_non_member_function<T>, 51}, {equal<T>, 52}, {non_equal<T>, 53}, \
-  {smaller_than<T>, 54}, {smaller_than_equal<T>, 55}, {bigger_than<T>, 56}, {bigger_than_equal<T>, 57}};
-  struct s_functions_ptr1<R> real_func1[31] = {{empty<R>, 1}, {front<R>, 2}, {back<R>, 3}, {fill_assign<R>, 4}, {fill_assign2<R>, 5}, {push_front<R>, 6}, \
-  {pop_front<R>, 7}, {push_back<R>, 8}, {pop_back<R>, 9}, {insert_single_element<R>, 10}, {insert_single_element2<R>, 11}, {insert_single_element3<R>, 12}, \
-  {insert_fill<R>, 13}, {insert_fill2<R>, 14}, {insert_fill3<R>, 15}, {erase_single_element<R>, 16}, {erase_single_element2<R>, 17}, \
-  {erase_range<R>, 18}, {erase_range2<R>, 19}, {resize_bigger<R>, 20}, {resize_smaller<R>, 21}, {resize_range_bigger<R>, 22}, {resize_range_smaller<R>, 23}, \
-  {clear<R>, 24}, {remove<R>, 25}, {remove_if<R, T2>, 26}, {unique<R>, 27}, {unique_if<R, T2>, 28}, {sort<R>, 29}, {sort_if<R, T2>, 30}, {reverse<R>, 31}};
-  struct s_functions_ptr2<R> real_func2[26] = {{assignation_operator<R, T2>, 32}, {range_assign<R>, 33}, {range_assign2<R>, 34}, {insert_range<R>, 35}, {insert_range2<R>, 36}, \
-  {insert_range3<R>, 37}, {swap_member_function<R>, 38}, {splice_list<R>, 39}, {splice_list2<R>, 40}, {splice_list3<R>, 41}, \
-  {splice_single_element<R>, 42}, {splice_single_element2<R>, 43}, {splice_single_element3<R>, 44}, {splice_single_element4<R>, 45}, {splice_range<R>, 46}, {splice_range2<R>, 47}, \
-  {splice_range3<R>, 48}, {merge<R>, 49}, {merge_if<R, T2>, 50}, {swap_non_member_function<R>, 51}, {equal<R>, 52}, {non_equal<R>, 53}, \
-  {smaller_than<R>, 54}, {smaller_than_equal<R>, 55}, {bigger_than<R>, 56}, {bigger_than_equal<R>, 57}};
+  struct s_functions_ptr1<T> my_func1[31] = {{lempty<T>, 1}, {lfront<T>, 2}, {lback<T>, 3}, {lfill_assign<T>, 4}, {lfill_assign2<T>, 5}, {lpush_front<T>, 6}, \
+  {lpop_front<T>, 7}, {lpush_back<T>, 8}, {lpop_back<T>, 9}, {linsert_single_element<T>, 10}, {linsert_single_element2<T>, 11}, {linsert_single_element3<T>, 12}, \
+  {linsert_fill<T>, 13}, {linsert_fill2<T>, 14}, {linsert_fill3<T>, 15}, {lerase_single_element<T>, 16}, {lerase_single_element2<T>, 17}, \
+  {lerase_range<T>, 18}, {lerase_range2<T>, 19}, {lresize_bigger<T>, 20}, {lresize_smaller<T>, 21}, {lresize_range_bigger<T>, 22}, {lresize_range_smaller<T>, 23}, \
+  {lclear<T>, 24}, {lremove<T>, 25}, {lremove_if<T, T2>, 26}, {lunique<T>, 27}, {lunique_if<T, T2>, 28}, {lsort<T>, 29}, {lsort_if<T, T2>, 30}, {lreverse<T>, 31}};
+  struct s_functions_ptr2<T> my_func2[26] = {{lassignation_operator<T, T2>, 32}, {lrange_assign<T>, 33}, {lrange_assign2<T>, 34}, {linsert_range<T>, 35}, {linsert_range2<T>, 36}, \
+  {linsert_range3<T>, 37}, {lswap_member_function<T>, 38}, {lsplice_list<T>, 39}, {lsplice_list2<T>, 40}, {lsplice_list3<T>, 41}, \
+  {lsplice_single_element<T>, 42}, {lsplice_single_element2<T>, 43}, {lsplice_single_element3<T>, 44}, {lsplice_single_element4<T>, 45}, {lsplice_range<T>, 46}, {lsplice_range2<T>, 47}, \
+  {lsplice_range3<T>, 48}, {lmerge<T>, 49}, {lmerge_if<T, T2>, 50}, {lswap_non_member_function<T>, 51}, {lequal<T>, 52}, {lnon_equal<T>, 53}, \
+  {lsmaller_than<T>, 54}, {lsmaller_than_equal<T>, 55}, {lbigger_than<T>, 56}, {lbigger_than_equal<T>, 57}};
+  struct s_functions_ptr1<R> real_func1[31] = {{lempty<R>, 1}, {lfront<R>, 2}, {lback<R>, 3}, {lfill_assign<R>, 4}, {lfill_assign2<R>, 5}, {lpush_front<R>, 6}, \
+  {lpop_front<R>, 7}, {lpush_back<R>, 8}, {lpop_back<R>, 9}, {linsert_single_element<R>, 10}, {linsert_single_element2<R>, 11}, {linsert_single_element3<R>, 12}, \
+  {linsert_fill<R>, 13}, {linsert_fill2<R>, 14}, {linsert_fill3<R>, 15}, {lerase_single_element<R>, 16}, {lerase_single_element2<R>, 17}, \
+  {lerase_range<R>, 18}, {lerase_range2<R>, 19}, {lresize_bigger<R>, 20}, {lresize_smaller<R>, 21}, {lresize_range_bigger<R>, 22}, {lresize_range_smaller<R>, 23}, \
+  {lclear<R>, 24}, {lremove<R>, 25}, {lremove_if<R, T2>, 26}, {lunique<R>, 27}, {lunique_if<R, T2>, 28}, {lsort<R>, 29}, {lsort_if<R, T2>, 30}, {lreverse<R>, 31}};
+  struct s_functions_ptr2<R> real_func2[26] = {{lassignation_operator<R, T2>, 32}, {lrange_assign<R>, 33}, {lrange_assign2<R>, 34}, {linsert_range<R>, 35}, {linsert_range2<R>, 36}, \
+  {linsert_range3<R>, 37}, {lswap_member_function<R>, 38}, {lsplice_list<R>, 39}, {lsplice_list2<R>, 40}, {lsplice_list3<R>, 41}, \
+  {lsplice_single_element<R>, 42}, {lsplice_single_element2<R>, 43}, {lsplice_single_element3<R>, 44}, {lsplice_single_element4<R>, 45}, {lsplice_range<R>, 46}, {lsplice_range2<R>, 47}, \
+  {lsplice_range3<R>, 48}, {lmerge<R>, 49}, {lmerge_if<R, T2>, 50}, {lswap_non_member_function<R>, 51}, {lequal<R>, 52}, {lnon_equal<R>, 53}, \
+  {lsmaller_than<R>, 54}, {lsmaller_than_equal<R>, 55}, {lbigger_than<R>, 56}, {lbigger_than_equal<R>, 57}};
 
   for (unsigned int i = 0; i < 57 ; i++)
   {
@@ -131,8 +101,8 @@ void list_basis_tests()
   std::streambuf *fd_my = fd_w.rdbuf();
   std::streambuf *fd_real = fd_w_r.rdbuf();
 
-  struct s_functions_ptr<T> my_func[7] = {{default_constructor<T>, 1}, {fill_constructor<T>, 2}, {special_fill_constructor<T>, 3}, {range_constructor<T>, 4}, {copy_constructor<T, T2>, 5}, {iterator_tests1<T, T2>, 6}, {iterator_tests2<T>, 7}};
-  struct s_functions_ptr<T> real_func[7] = {{default_constructor<R>, 1}, {fill_constructor<R>, 2}, {special_fill_constructor<R>, 3}, {range_constructor<R>, 4}, {copy_constructor<R, T2>, 5}, {iterator_tests1<R, T2>, 6}, {iterator_tests2<R>, 7}};
+  struct s_functions_ptr<T> my_func[7] = {{ldefault_constructor<T>, 1}, {lfill_constructor<T>, 2}, {lspecial_fill_constructor<T>, 3}, {lrange_constructor<T>, 4}, {lcopy_constructor<T, T2>, 5}, {literator_tests1<T, T2>, 6}, {literator_tests2<T>, 7}};
+  struct s_functions_ptr<T> real_func[7] = {{ldefault_constructor<R>, 1}, {lfill_constructor<R>, 2}, {lspecial_fill_constructor<R>, 3}, {lrange_constructor<R>, 4}, {lcopy_constructor<R, T2>, 5}, {literator_tests1<R, T2>, 6}, {literator_tests2<R>, 7}};
 
   std::cout << "\033[35m" << "\nConstructors and iterators basis tests:" << std::endl;
   for (int i = 0; i < 7; i++)
