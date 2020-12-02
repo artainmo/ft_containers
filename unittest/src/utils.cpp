@@ -70,10 +70,22 @@ void check_answer(std::ifstream &fd_r, std::ifstream &fd_r_r, std::ofstream &out
 
 void feedback()
 {
+  float total;
+
+  if (G_LIST == 1)
+    total = LIST_TOTAL_TESTS;
+  if (G_MAP == 1)
+    total = MAP_TOTAL_TESTS;
+  if (G_QUEUE == 1)
+    total = QUEUE_TOTAL_TESTS;
+  if (G_STACK == 1)
+    total = STACK_TOTAL_TESTS;
+  if (G_VECTOR == 1)
+    total = VECTOR_TOTAL_TESTS;
   std::cout << "\033[34m" << G_ERROR_COUNT << " ERRORS ATTAINED ON "<< G_LINE << " TESTS" << std::endl;
   fflush(stdout);
   float correct_answers = G_LINE - G_ERROR_COUNT;
-  std::cout << "\033[34m" << "------> " << std::setprecision(3) << (correct_answers / G_TOTAL_TESTS) * 100 << "%" << std::endl;
+  std::cout << "\033[34m" << "------> " << std::setprecision(3) << (correct_answers / total) * 100 << "%" << std::endl;
   fflush(stdout);
 }
 

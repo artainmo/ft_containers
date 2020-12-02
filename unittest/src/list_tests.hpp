@@ -4,9 +4,10 @@
 #include "../main.hpp"
 
 template<typename T>
-T *list_container_object_creation1()
+T *list_container_object_creation1(unsigned int &lenght)
 {
   T *my_elems = new T[8];
+  lenght = 8;
 
   T l1; //Empty
   std::cout << "\033[30m" << "1 ";
@@ -1125,6 +1126,52 @@ void literator_tests1()
 
   *k = 10; //If this causes compilation error review your code const problem
   std::cout << *k << std::endl;
+}
+
+template<typename T, typename T2>
+struct s_functions_ptr<T> *list_basic_func(unsigned int &lenght)
+{
+  struct s_functions_ptr<T> func[7] = {{ldefault_constructor<T>, 1}, {lfill_constructor<T>, 2}, {lspecial_fill_constructor<T>, 3}, \
+  {lrange_constructor<T>, 4}, {lcopy_constructor<T, T2>, 5}, {literator_tests1<T, T2>, 6}, {literator_tests2<T>, 7}};
+  struct s_functions_ptr<T> *ret = new struct s_functions_ptr<T>[7];
+
+  lenght = 7;
+  for (unsigned int i = 0; i < lenght; i++)
+    ret[i] = func[i];
+  return ret;
+}
+
+
+template<typename T, typename T2>
+struct s_functions_ptr1<T> *list_func1(unsigned int &lenght)
+{
+  struct s_functions_ptr1<T> func1[31] = {{lempty<T>, 1}, {lfront<T>, 2}, {lback<T>, 3}, {lfill_assign<T>, 4}, {lfill_assign2<T>, 5}, {lpush_front<T>, 6}, \
+  {lpop_front<T>, 7}, {lpush_back<T>, 8}, {lpop_back<T>, 9}, {linsert_single_element<T>, 10}, {linsert_single_element2<T>, 11}, {linsert_single_element3<T>, 12}, \
+  {linsert_fill<T>, 13}, {linsert_fill2<T>, 14}, {linsert_fill3<T>, 15}, {lerase_single_element<T>, 16}, {lerase_single_element2<T>, 17}, \
+  {lerase_range<T>, 18}, {lerase_range2<T>, 19}, {lresize_bigger<T>, 20}, {lresize_smaller<T>, 21}, {lresize_range_bigger<T>, 22}, {lresize_range_smaller<T>, 23}, \
+  {lclear<T>, 24}, {lremove<T>, 25}, {lremove_if<T, T2>, 26}, {lunique<T>, 27}, {lunique_if<T, T2>, 28}, {lsort<T>, 29}, {lsort_if<T, T2>, 30}, {lreverse<T>, 31}};
+  struct s_functions_ptr1<T> *ret = new struct s_functions_ptr1<T>[31];
+
+  lenght = 31;
+  for (unsigned int i = 0; i < lenght; i++)
+    ret[i] = func1[i];
+  return ret;
+}
+
+template<typename T, typename T2>
+struct s_functions_ptr2<T> *list_func2(unsigned int &lenght)
+{
+  struct s_functions_ptr2<T> func2[26] = {{lassignation_operator<T, T2>, 32}, {lrange_assign<T>, 33}, {lrange_assign2<T>, 34}, {linsert_range<T>, 35}, {linsert_range2<T>, 36}, \
+  {linsert_range3<T>, 37}, {lswap_member_function<T>, 38}, {lsplice_list<T>, 39}, {lsplice_list2<T>, 40}, {lsplice_list3<T>, 41}, \
+  {lsplice_single_element<T>, 42}, {lsplice_single_element2<T>, 43}, {lsplice_single_element3<T>, 44}, {lsplice_single_element4<T>, 45}, {lsplice_range<T>, 46}, {lsplice_range2<T>, 47}, \
+  {lsplice_range3<T>, 48}, {lmerge<T>, 49}, {lmerge_if<T, T2>, 50}, {lswap_non_member_function<T>, 51}, {lequal<T>, 52}, {lnon_equal<T>, 53}, \
+  {lsmaller_than<T>, 54}, {lsmaller_than_equal<T>, 55}, {lbigger_than<T>, 56}, {lbigger_than_equal<T>, 57}};
+  struct s_functions_ptr2<T> *ret = new struct s_functions_ptr2<T>[26];
+
+  lenght = 26;
+  for (unsigned int i = 0; i < lenght; i++)
+    ret[i] = func2[i];
+  return ret;
 }
 
 #endif

@@ -28,10 +28,22 @@
 #include <pthread.h>
 #include <sstream>
 
+
+#define LIST_TOTAL_TESTS 162535.000000
+#define MAP_TOTAL_TESTS 156897.000000
+#define QUEUE_TOTAL_TESTS 162535.000000
+#define STACK_TOTAL_TESTS 162535.000000
+#define VECTOR_TOTAL_TESTS 162535.000000
+
 extern int G_ERROR_LIMIT;
 extern int G_ERROR_COUNT;
 extern int G_LINE;
-extern float G_TOTAL_TESTS;
+
+extern int G_LIST;
+extern int G_MAP;
+extern int G_QUEUE;
+extern int G_STACK;
+extern int G_VECTOR;
 
 template<typename T>
 struct s_functions_ptr
@@ -55,46 +67,20 @@ struct s_functions_ptr2
 };
 
 template<typename T, typename R>
-struct thread_arg
+struct test_args
 {
-  int num1;
-  int num2;
+  unsigned int containers_number;
   T *my_elems;
   R *real_elems;
-  std::ofstream &output_my;
-  std::ofstream &output_real;
-  int test_lenght;
+  struct s_functions_ptr1<T> *my_func1;
+  struct s_functions_ptr2<T> *my_func2;
+  struct s_functions_ptr1<R> *real_func1;
+  struct s_functions_ptr2<R> *real_func2;
+  unsigned int functions1_number;
+  unsigned int functions2_number;
+  int thread_num1;
+  int thread_num2;
 };
-
-template<typename T>
-void safe_space_test(s_functions_ptr1<T> func[31], unsigned int i, T &l, std::ofstream &fd)
-{
-  pid_t pid = fork(); //vfork is faster than fork, the parent process automatically waits for child process because they share the same stack memory
-  std::streambuf *sfd = fd.rdbuf();
-
-  if (pid == 0)
-  {
-    std::cout.rdbuf(sfd);  //Redirect cout or stream 1 to file
-    func[i].function_pointer(l); //Call real
-    exit(0);
-  }
-  wait(NULL);
-}
-
-template<typename T>
-void safe_space_test(s_functions_ptr2<T> func[26], unsigned int i, T &l, T &l2, std::ofstream &fd)
-{
-  pid_t pid = fork();
-  std::streambuf *sfd = fd.rdbuf();
-
-  if (pid == 0)
-  {
-    std::cout.rdbuf(sfd);  //Redirect cout or stream 1 to file
-    func[i].function_pointer(l, l2); //Call real
-    exit(0);
-  }
-  wait(NULL);
-}
 
 void check_answer(std::ifstream &fd_r, std::ifstream &fd_r_r, std::ofstream &output_my, std::ofstream &output_real);
 void feedback();
@@ -106,10 +92,12 @@ void sigabort( int signum );
 void sigquit(int sig);
 
 //Unittest functions
-#include "src/test_lists.hpp"
-// #include "src/vector_test.hpp"
-#include "src/test_maps.hpp"
-// #include "src/queue_test.hpp"
-// #include "src/stack_test.hpp"
+#include "src/list_tests.hpp"
+#include "src/map_tests.hpp"
+// #include "src/queue_tests.hpp"
+// #include "src/stack_tests.hpp"
+// #include "src/vector_tests.hpp"
+
+#include "src/tests.hpp"
 
 #endif
