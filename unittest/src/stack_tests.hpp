@@ -1,10 +1,10 @@
-#ifndef QUEUE_TESTS_HPP
-#define QUEUE_TESTS_HPP
+#ifndef STACK_TESTS_HPP
+#define STACK_TESTS_HPP
 
 #include "../main.hpp"
 
 template<typename T, typename T2>
-T *queue_container_object_creation1(unsigned int &lenght)
+T *stack_container_object_creation1(unsigned int &lenght)
 {
   T *my_elems = new T[6];
   lenght = 6;
@@ -59,31 +59,25 @@ T *queue_container_object_creation1(unsigned int &lenght)
 }
 
 template<typename T>
-void qget_back(T &ob) { std::cout << "~~ Back: "; std::cout << ob.back() << std::endl; }
-
-template<typename T>
-void qget_front(T &ob) { std::cout << "~~ Front: "; std::cout << ob.front() << std::endl; }
-
-template<typename T>
-void qget_size(T &ob) { std::cout << "~~ Size: "; std::cout << ob.size() << std::endl; }
-
-template<typename T>
-void show_queue(T &s)
+void show_stack(T &s)
 {
   while (!s.empty())
   {
-    std::cout << s.front();
-    s.pop(); //To iterate over whole queue you have to destroy it, reading it from start to end
+    std::cout << s.top();
+    s.pop(); //To iterate over whole stack you have to destoy it and start from end to start
   }
   std::cout << std::endl;
 }
 
 template<typename T>
-void qaccess(T &l) //All the subtests indicated with ~~
-{
-  struct s_functions_ptr1<T> func[5] = {{qget_size<T>, 0}, {qget_front<T>, 1}, {qget_back<T>, 2}, {show_queue<T>, 3}};
+void sget_size(T &ob) { std::cout << "~~ Size: "; std::cout << ob.size() << std::endl; }
 
-  for (int i = 0; i < 5; i++)
+template<typename T>
+void saccess(T &l) //All the subtests indicated with ~~
+{
+  struct s_functions_ptr1<T> func[2] = {{sget_size<T>, 0}, {show_stack<T>, 1}};
+
+  for (int i = 0; i < 2; i++)
   {
     pid_t pid = fork();
 
@@ -97,19 +91,19 @@ void qaccess(T &l) //All the subtests indicated with ~~
 }
 
 template<typename T>
-void qdefault_constructor()
+void sdefault_constructor()
 {
   std::cout << std::setfill ('#') << std::setw (100) << std::left << "Default constructor " << std::endl;
   T l;
-  qaccess<T>(l);
+  saccess<T>(l);
 }
 
 template<typename T>
-void qempty(T &l)
+void sempty(T &l)
 {
   std::cout << std::setfill ('#') << std::setw (100) << std::left << "Empty function " << std::endl;
   std::cout << std::setfill ('>') << std::setw (50) << std::left << "Tested container: " << std::endl;
-  qaccess<T>(l);
+  saccess<T>(l);
   std::cout << std::setfill ('>') << std::setw (50) << std::left << "Result: " << std::endl;
   if (l.empty() == false) //Returns false if not empty
     std::cout << "false" << std::endl;
@@ -118,61 +112,54 @@ void qempty(T &l)
 }
 
 template<typename T>
-void qfront(T &l)
+void stop(T &l)
 {
-  std::cout << std::setfill ('#') << std::setw (100) << std::left << "Front function " << std::endl;
+  std::cout << std::setfill ('#') << std::setw (100) << std::left << "Top function " << std::endl;
   std::cout << std::setfill ('>') << std::setw (50) << std::left << "Tested container: " << std::endl;
-  qaccess<T>(l);
+  if (l.size() == 0)
+    return ;
+  saccess<T>(l);
   std::cout << std::setfill ('>') << std::setw (50) << std::left << "Result: " << std::endl;
-  l.front() = l.back(); //If this line causes compilation error review your code const problem
-  qaccess<T>(l);
+  l.top() = 52; //If this line causes compilation error review your code const problem
+  saccess<T>(l);
 }
 
 template<typename T>
-void qback(T &l)
+void spush(T &l)
 {
-  std::cout << std::setfill ('#') << std::setw (100) << std::left << "Back function " << std::endl;
+  std::cout << std::setfill ('#') << std::setw (100) << std::left << "Push function " << std::endl;
   std::cout << std::setfill ('>') << std::setw (50) << std::left << "Tested container: " << std::endl;
-  qaccess<T>(l);
-  std::cout << std::setfill ('>') << std::setw (50) << std::left << "Result: " << std::endl;
-  l.back() = l.front(); //If this line causes compilation error review your code const problem
-  qaccess<T>(l);
-}
-
-template<typename T>
-void qpush(T &l)
-{
-  std::cout << std::setfill ('#') << std::setw (100) << std::left << "Push_front function " << std::endl;
-  std::cout << std::setfill ('>') << std::setw (50) << std::left << "Tested container: " << std::endl;
-  qaccess<T>(l);
+  if (l.size() == 0)
+    return ;
+  saccess<T>(l);
   std::cout << std::setfill ('>') << std::setw (50) << std::left << "Result: " << std::endl;
   l.push(7);
   l.push(0);
-  qaccess<T>(l);
+  saccess<T>(l);
 }
 
 template<typename T>
-void qpop(T &l)
+void spop(T &l)
 {
-  std::cout << std::setfill ('#') << std::setw (100) << std::left << "Pop_front function " << std::endl;
+  std::cout << std::setfill ('#') << std::setw (100) << std::left << "Pop function " << std::endl;
   std::cout << std::setfill ('>') << std::setw (50) << std::left << "Tested container: " << std::endl;
-  qaccess<T>(l);
+  saccess<T>(l);
   std::cout << std::setfill ('>') << std::setw (50) << std::left << "Result: " << std::endl;
-  if (l.size() != 0) //Undefined bahavior segfault
-    l.pop();
-  if (l.size() != 0) //Undefined bahavior segfault
-    l.pop();
-  if (l.size() != 0) //Undefined bahavior random value
-    qaccess<T>(l);
+  // if (l.size() != 0) //Undefined bahavior segfault
+  l.pop();
+  // if (l.size() != 0) //Undefined bahavior segfault
+  l.pop();
+  // if (l.size() != 0) //Undefined bahavior random value
+  saccess<T>(l);
 }
 
 template<typename T>
-void qequal(T &l, T &l2)
+void sequal(T &l, T &l2)
 {
   std::cout << std::setfill ('#') << std::setw (100) << std::left << "Equal operator " << std::endl;
   std::cout << std::setfill ('>') << std::setw (50) << std::left << "Compared containers: " << std::endl;
-  qaccess<T>(l);
-  qaccess<T>(l2);
+  saccess<T>(l);
+  saccess<T>(l2);
   std::cout << std::setfill ('>') << std::setw (50) << std::left << "Result: " << std::endl;
   if (l == l2)
     std::cout << "YES" << std::endl;
@@ -181,12 +168,12 @@ void qequal(T &l, T &l2)
 }
 
 template<typename T>
-void qnon_equal(T &l, T &l2)
+void snon_equal(T &l, T &l2)
 {
   std::cout << std::setfill ('#') << std::setw (100) << std::left << "Non-equal operator " << std::endl;
   std::cout << std::setfill ('>') << std::setw (50) << std::left << "Compared containers: " << std::endl;
-  qaccess<T>(l);
-  qaccess<T>(l2);
+  saccess<T>(l);
+  saccess<T>(l2);
   std::cout << std::setfill ('>') << std::setw (50) << std::left << "Result: " << std::endl;
   if (l != l2)
     std::cout << "YES" << std::endl;
@@ -195,12 +182,12 @@ void qnon_equal(T &l, T &l2)
 }
 
 template<typename T>
-void qsmaller_than(T &l, T &l2)
+void ssmaller_than(T &l, T &l2)
 {
   std::cout << std::setfill ('#') << std::setw (100) << std::left << "Smaller than operator " << std::endl;
   std::cout << std::setfill ('>') << std::setw (50) << std::left << "Compared containers: " << std::endl;
-  qaccess<T>(l);
-  qaccess<T>(l2);
+  saccess<T>(l);
+  saccess<T>(l2);
   std::cout << std::setfill ('>') << std::setw (50) << std::left << "Result: " << std::endl;
   if (l < l2)
     std::cout << "YES" << std::endl;
@@ -209,12 +196,12 @@ void qsmaller_than(T &l, T &l2)
 }
 
 template<typename T>
-void qsmaller_than_equal(T &l, T &l2)
+void ssmaller_than_equal(T &l, T &l2)
 {
   std::cout << std::setfill ('#') << std::setw (100) << std::left << "Smaller than or equal operator " << std::endl;
   std::cout << std::setfill ('>') << std::setw (50) << std::left << "Compared containers: " << std::endl;
-  qaccess<T>(l);
-  qaccess<T>(l2);
+  saccess<T>(l);
+  saccess<T>(l2);
   std::cout << std::setfill ('>') << std::setw (50) << std::left << "Result: " << std::endl;
   if (l <= l2)
     std::cout << "YES" << std::endl;
@@ -223,12 +210,12 @@ void qsmaller_than_equal(T &l, T &l2)
 }
 
 template<typename T>
-void qbigger_than(T &l, T &l2)
+void sbigger_than(T &l, T &l2)
 {
   std::cout << std::setfill ('#') << std::setw (100) << std::left << "Bigger than operator " << std::endl;
   std::cout << std::setfill ('>') << std::setw (50) << std::left << "Compared containers: " << std::endl;
-  qaccess<T>(l);
-  qaccess<T>(l2);
+  saccess<T>(l);
+  saccess<T>(l2);
   std::cout << std::setfill ('>') << std::setw (50) << std::left << "Result: " << std::endl;
   if (l > l2)
     std::cout << "YES" << std::endl;
@@ -237,12 +224,12 @@ void qbigger_than(T &l, T &l2)
 }
 
 template<typename T>
-void qbigger_than_equal(T &l, T &l2)
+void sbigger_than_equal(T &l, T &l2)
 {
   std::cout << std::setfill ('#') << std::setw (100) << std::left << "Bigger than or equal operator " << std::endl;
   std::cout << std::setfill ('>') << std::setw (50) << std::left << "Compared containers: " << std::endl;
-  qaccess<T>(l);
-  qaccess<T>(l2);
+  saccess<T>(l);
+  saccess<T>(l2);
   std::cout << std::setfill ('>') << std::setw (50) << std::left << "Result: " << std::endl;
   if (l >= l2)
     std::cout << "YES" << std::endl;
@@ -251,9 +238,9 @@ void qbigger_than_equal(T &l, T &l2)
 }
 
 template<typename T>
-struct s_functions_ptr<T> *queue_basic_func(unsigned int &lenght)
+struct s_functions_ptr<T> *stack_basic_func(unsigned int &lenght)
 {
-  struct s_functions_ptr<T> func[1] = {{qdefault_constructor<T>, 1}};
+  struct s_functions_ptr<T> func[1] = {{sdefault_constructor<T>, 1}};
   struct s_functions_ptr<T> *ret = new struct s_functions_ptr<T>[1];
 
   lenght = 1;
@@ -264,22 +251,22 @@ struct s_functions_ptr<T> *queue_basic_func(unsigned int &lenght)
 
 
 template<typename T>
-struct s_functions_ptr1<T> *queue_func1(unsigned int &lenght)
+struct s_functions_ptr1<T> *stack_func1(unsigned int &lenght)
 {
-  struct s_functions_ptr1<T> func1[5] = {{qempty<T>, 1}, {qfront<T>, 2}, {qback<T>, 3}, {qpush<T>, 4}, {qpop<T>, 5}};
-  struct s_functions_ptr1<T> *ret = new struct s_functions_ptr1<T>[5];
+  struct s_functions_ptr1<T> func1[4] = {{sempty<T>, 1}, {stop<T>, 2}, {spush<T>, 3}, {spop<T>, 4}};
+  struct s_functions_ptr1<T> *ret = new struct s_functions_ptr1<T>[4];
 
-  lenght = 5;
+  lenght = 4;
   for (unsigned int i = 0; i < lenght; i++)
     ret[i] = func1[i];
   return ret;
 }
 
 template<typename T>
-struct s_functions_ptr2<T> *queue_func2(unsigned int &lenght)
+struct s_functions_ptr2<T> *stack_func2(unsigned int &lenght)
 {
-  struct s_functions_ptr2<T> func2[6] = {{qequal<T>, 6}, {qnon_equal<T>, 7}, {qsmaller_than<T>, 8}, \
-  {qsmaller_than_equal<T>, 9}, {qbigger_than<T>, 10}, {qbigger_than_equal<T>, 11}};
+  struct s_functions_ptr2<T> func2[6] = {{sequal<T>, 5}, {snon_equal<T>, 6}, {ssmaller_than<T>, 7}, \
+  {ssmaller_than_equal<T>, 8}, {sbigger_than<T>, 9}, {sbigger_than_equal<T>, 10}};
   struct s_functions_ptr2<T> *ret = new struct s_functions_ptr2<T>[6];
 
   lenght = 6;

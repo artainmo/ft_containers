@@ -139,6 +139,21 @@ int main(int argc, char **argv)
     feedback();
     std::cout << "\033[1m\033[33m" << "~~~~!!End tests for queue container!!~~~~" << std::endl;
   }
+  if (std::strcmp("stack", argv[1]) == 0)
+  {
+    G_STACK = 1;
+    std::cout << "\033[1m\033[33m" << "~~~~!!Starting tests for stack container...!!~~~~" << std::endl;
+    basis_tests<ft::stack<int>, std::stack<int>, int>(stack_basic_func<ft::stack<int> >, stack_basic_func<std::stack<int> >);
+
+    call_tests<ft::stack<int>, std::stack<int>, int, int>("int", "stack", stack_container_object_creation1<ft::stack<int>, std::deque<int> >, stack_container_object_creation1<std::stack<int>, std::deque<int> >,
+          stack_func1<ft::stack<int> >, stack_func2<ft::stack<int> >, stack_func1<std::stack<int> >, stack_func2<std::stack<int> >);
+    call_tests<ft::stack<char, std::list<char> >, std::stack<char, std::list<char> >, char, char>("char", "stack", stack_container_object_creation1<ft::stack<char, std::list<char> >, std::list<char> >,
+          stack_container_object_creation1<std::stack<char, std::list<char> >, std::list<char> >, stack_func1<ft::stack<char, std::list<char> > >, stack_func2<ft::stack<char, std::list<char> > >,
+                stack_func1<std::stack<char, std::list<char> > >, stack_func2<std::stack<char, std::list<char> > >);
+    feedback();
+    std::cout << "\033[1m\033[33m" << "~~~~!!End tests for stack container!!~~~~" << std::endl;
+  }
+
 
   std::remove("output/tmp_my");
   std::remove("output/tmp_real");
