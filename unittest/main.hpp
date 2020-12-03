@@ -31,7 +31,7 @@
 
 #define LIST_TOTAL_TESTS 162535.000000
 #define MAP_TOTAL_TESTS 156897.000000
-#define QUEUE_TOTAL_TESTS 162535.000000
+#define QUEUE_TOTAL_TESTS 11592.000000
 #define STACK_TOTAL_TESTS 162535.000000
 #define VECTOR_TOTAL_TESTS 162535.000000
 
@@ -94,7 +94,7 @@ void sigquit(int sig);
 //Unittest functions
 #include "src/list_tests.hpp"
 #include "src/map_tests.hpp"
-// #include "src/queue_tests.hpp"
+#include "src/queue_tests.hpp"
 // #include "src/stack_tests.hpp"
 // #include "src/vector_tests.hpp"
 

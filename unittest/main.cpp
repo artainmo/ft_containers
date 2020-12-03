@@ -99,19 +99,19 @@ int main(int argc, char **argv)
   signal(SIGQUIT, sigquit);
   signal(SIGSEGV, segfault);
   signal(SIGABRT, sigabort);
-  // if (std::strcmp("list", argv[1]) == 0)
-  // {
-  //   G_LIST = 1;
-  //   std::cout << "\033[1m\033[33m" << "~~~~!!Starting tests for list container...!!~~~~" << std::endl;
-  //   basis_tests<ft::list<int>, std::list<int>, int>(list_basic_func<ft::list<int>, int>, list_basic_func<std::list<int>, int>);
-  //
-  //   call_tests<ft::list<int>, std::list<int>, int, int>("int", "list", list_container_object_creation1<ft::list<int> >, list_container_object_creation1<std::list<int> >,
-  //         list_func1<ft::list<int>, int>, list_func2<ft::list<int>, int>, list_func1<std::list<int>, int>, list_func2<std::list<int>, int>);
-  //   call_tests<ft::list<char>, std::list<char>, char, char>("char", "list", list_container_object_creation1<ft::list<char> >, list_container_object_creation1<std::list<char> >,
-  //         list_func1<ft::list<char>, char>, list_func2<ft::list<char>, char>, list_func1<std::list<char>, char>, list_func2<std::list<char>, char>);
-  //   feedback();
-  //   std::cout << "\033[1m\033[33m" << "~~~~!!End tests for list container!!~~~~" << std::endl;
-  // }
+  if (std::strcmp("list", argv[1]) == 0)
+  {
+    G_LIST = 1;
+    std::cout << "\033[1m\033[33m" << "~~~~!!Starting tests for list container...!!~~~~" << std::endl;
+    basis_tests<ft::list<int>, std::list<int>, int>(list_basic_func<ft::list<int>, int>, list_basic_func<std::list<int>, int>);
+
+    call_tests<ft::list<int>, std::list<int>, int, int>("int", "list", list_container_object_creation1<ft::list<int> >, list_container_object_creation1<std::list<int> >,
+          list_func1<ft::list<int>, int>, list_func2<ft::list<int>, int>, list_func1<std::list<int>, int>, list_func2<std::list<int>, int>);
+    call_tests<ft::list<char>, std::list<char>, char, char>("char", "list", list_container_object_creation1<ft::list<char> >, list_container_object_creation1<std::list<char> >,
+          list_func1<ft::list<char>, char>, list_func2<ft::list<char>, char>, list_func1<std::list<char>, char>, list_func2<std::list<char>, char>);
+    feedback();
+    std::cout << "\033[1m\033[33m" << "~~~~!!End tests for list container!!~~~~" << std::endl;
+  }
   if (std::strcmp("map", argv[1]) == 0)
   {
     G_MAP = 1;
@@ -125,36 +125,21 @@ int main(int argc, char **argv)
     feedback();
     std::cout << "\033[1m\033[33m" << "~~~~!!End tests for map container!!~~~~" << std::endl;
   }
-  // else if (std::strcmp("vector", argv[1]) == 0)
-  // {
-  //   std::ofstream fd_w("output/vector");
-  //   std::ifstream fd_r("output/vector");
-  //   test_vector(fd_w);
-  //   test_real_vector(fd_w_r);
-  //   check_answer(fd_r, fd_r_r);
-  //   fd_w.close();
-  //   fd_r.close();
-  // }
-  // else if (std::strcmp("stack", argv[1]) == 0)
-  // {
-  //   std::ofstream fd_w("output/stack");
-  //   std::ifstream fd_r("output/stack");
-  //   test_stack(fd_w);
-  //   test_real_stack(fd_w_r);
-  //   check_answer(fd_r, fd_r_r);
-  //   fd_w.close();
-  //   fd_r.close();
-  // }
-  // else if (std::strcmp("queue", argv[1]) == 0)
-  // {
-  //   std::ofstream fd_w("output/queue");
-  //   std::ifstream fd_r("output/queue");
-  //   test_queue(fd_w);
-  //   test_real_queue(fd_w_r);
-  //   check_answer(fd_r, fd_r_r);
-  //   fd_w.close();
-  //   fd_r.close();
-  // }
+  if (std::strcmp("queue", argv[1]) == 0)
+  {
+    G_QUEUE = 1;
+    std::cout << "\033[1m\033[33m" << "~~~~!!Starting tests for queue container...!!~~~~" << std::endl;
+    basis_tests<ft::queue<int>, std::queue<int>, int>(queue_basic_func<ft::queue<int> >, queue_basic_func<std::queue<int> >);
+
+    call_tests<ft::queue<int>, std::queue<int>, int, int>("int", "queue", queue_container_object_creation1<ft::queue<int>, std::deque<int> >, queue_container_object_creation1<std::queue<int>, std::deque<int> >,
+          queue_func1<ft::queue<int> >, queue_func2<ft::queue<int> >, queue_func1<std::queue<int> >, queue_func2<std::queue<int> >);
+    call_tests<ft::queue<char, std::list<char> >, std::queue<char, std::list<char> >, char, char>("char", "queue", queue_container_object_creation1<ft::queue<char, std::list<char> >, std::list<char> >,
+          queue_container_object_creation1<std::queue<char, std::list<char> >, std::list<char> >, queue_func1<ft::queue<char, std::list<char> > >, queue_func2<ft::queue<char, std::list<char> > >,
+                queue_func1<std::queue<char, std::list<char> > >, queue_func2<std::queue<char, std::list<char> > >);
+    feedback();
+    std::cout << "\033[1m\033[33m" << "~~~~!!End tests for queue container!!~~~~" << std::endl;
+  }
+
   std::remove("output/tmp_my");
   std::remove("output/tmp_real");
 }
