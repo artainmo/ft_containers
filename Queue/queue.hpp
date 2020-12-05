@@ -35,17 +35,17 @@ public:
   void pop() { if (_size != 0) _size--; _cont.pop_front(); } //Erases elements from front of list
 
   //Relational operators
-  bool operator==(const queue<T,Container> &r) { return _cont == r._cont; } //Will call relational operators of Container class
+  bool operator==(const queue<T,Container> &r) const { return _cont == r._cont; } //Will call relational operators of Container class
 
-  bool operator!=(const queue<T,Container> &r) { return _cont != r._cont; }
+  bool operator!=(const queue<T,Container> &r) const { return _cont != r._cont; }
 
-  bool operator<(const queue<T,Container> &r) { return _cont < r._cont; }
+  bool operator<(const queue<T,Container> &r) const { return _cont < r._cont; }
 
-  bool operator<=(const queue<T,Container> &r) { return _cont <= r._cont; }
+  bool operator<=(const queue<T,Container> &r) const { return _cont <= r._cont; }
 
-  bool operator>(const queue<T,Container> &r) { return _cont > r._cont; }
+  bool operator>(const queue<T,Container> &r) const { return _cont > r._cont; }
 
-  bool operator>=(const queue<T,Container> &r) { return _cont >= r._cont; }
+  bool operator>=(const queue<T,Container> &r) const { return _cont >= r._cont; }
 
 
 };

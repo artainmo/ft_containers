@@ -60,7 +60,7 @@ namespace ft
     vector(): _size(0) { realloc(0); } //Realloc is own function that uses new keyword
     vector(size_t n, const T &value): _size(0) { assign(n, value); }
     template<typename inputiterator>
-    vector(inputiterator first, inputiterator last): _size(0) { assign(first, last); } //If you do not take as a reference you will lose the values contained in it!!
+    vector(inputiterator first, inputiterator last): _size(0) { assign(first, last); } //If you do not take as a reference you will lose the values contained in it
     vector(const vector<T> &to_copy): _size(0) {*this = to_copy;}
     void operator=(const vector<T> &to_copy) { _size = 0; copy(to_copy.begin(), to_copy.end()); } //Deep copy
     ~vector() { clear(); }

@@ -68,10 +68,8 @@ public:
       _list->value = ft_strlen();
     return (_list->value);
   }
-  T &operator*() const
+  const T &operator*() const
   {
-    if (_list->next == 0)
-      return T(ft_strlen());
     return (_list->value);
   }
   void operator*=(T value) { _list->value = value; }

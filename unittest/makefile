@@ -19,11 +19,12 @@ vector: clear
 
 
 const:
-	clang++ -Wall -Wextra -Werror const_main.cpp -o const_container && ./const_container
+	@ printf "\n\x1B[0;31mYOU SHOULD HAVE 11 COMPILATION ERRORS NOT MORE OR LESS. THEY SHOULD ALL BE COMMENTED WITH OK.\x1B[0m\n\n"
+	@ clang++ -Wall -Wextra -Werror const_main.cpp -o const_container && ./const_container
 #Compile const program to test for const containers
 
 clean:
-	rm -f output/my output/real output/tmp_my output/tmp_real
+	rm -f output/tmp_my output/tmp_real
 
 fclean: clean
 		rm -f container const_container a.out

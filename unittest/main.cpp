@@ -26,6 +26,7 @@
 **CONST UNITTEST
 **Launch const unittest -> make const
 **You should have a certain amount of compilation errors not more or less
+**Read the compilation error lines, in comment should be written if it should indeed be a compilation error or not
 **
 **ABOUT UNITTEST
 **Written in c++

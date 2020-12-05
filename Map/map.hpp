@@ -392,15 +392,9 @@ namespace ft
     std::pair<const_iterator, const_iterator > ret;
 
     if (is_in(k)) //Return lower and upper bound in pair tuple if key_value exists
-    {
-      ret.first = lower_bound(k);
-      ret.second = upper_bound(k);
-    }
+      return std::pair<const_iterator, const_iterator >(lower_bound(k), upper_bound(k));
     else //Returns two same pointers to first key that goes after k (upper_bound)
-    {
-      ret.first = lower_bound(k);
-      ret.second = lower_bound(k);
-    }
+      return std::pair<const_iterator, const_iterator >(lower_bound(k), lower_bound(k));
     return (ret);
   }
 

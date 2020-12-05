@@ -41,17 +41,17 @@ namespace ft
     void pop() { _cont.pop_back(); _size--; }
 
     //Relational operators
-    bool operator==(const stack<T,Container> &r) { return _cont == r._cont; } //Will call relational operators of Container class
+    bool operator==(const stack<T,Container> &r) const { return _cont == r._cont; } //Will call relational operators of Container class
 
-    bool operator!=(const stack<T,Container> &r) { return _cont != r._cont; }
+    bool operator!=(const stack<T,Container> &r) const { return _cont != r._cont; }
 
-    bool operator<(const stack<T,Container> &r) { return _cont < r._cont; }
+    bool operator<(const stack<T,Container> &r) const { return _cont < r._cont; }
 
-    bool operator<=(const stack<T,Container> &r) { return _cont <= r._cont; }
+    bool operator<=(const stack<T,Container> &r) const { return _cont <= r._cont; }
 
-    bool operator>(const stack<T,Container> &r) { return _cont > r._cont; }
+    bool operator>(const stack<T,Container> &r) const { return _cont > r._cont; }
 
-    bool operator>=(const stack<T,Container> &r) { return _cont >= r._cont; }
+    bool operator>=(const stack<T,Container> &r) const { return _cont >= r._cont; }
 
   };
 

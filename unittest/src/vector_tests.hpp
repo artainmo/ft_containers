@@ -863,6 +863,16 @@ void viterator_tests1()
   else
     std::cout << "NO" << std::endl;
 
+  if (i > k)
+    std::cout << "YES" << std::endl;
+  else
+    std::cout << "NO" << std::endl;
+
+  if (i < k)
+    std::cout << "YES" << std::endl;
+  else
+      std::cout << "NO" << std::endl;
+
   *i = 10;
   std::cout << *i << std::endl;
 

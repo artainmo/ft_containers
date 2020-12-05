@@ -356,8 +356,7 @@ const List::reverse_iterator<T> list<T>::rbegin() const
 
   if (_size == 0)
       return reverse_iterator(_list->next);
-  _list = _list->head;
-  cur = _list;
+  cur = _list->head;
   while (cur->next->next != 0)
     cur = cur->next;
   return reverse_iterator(cur);
@@ -382,8 +381,7 @@ const T &list<T>::back() const
 {
   struct __list *cur;
 
-  _list = _list->head;
-  cur = _list;
+  cur = _list->head;
   if (_size == 0)
     return (cur->value);
   while (cur->next->next != 0)
