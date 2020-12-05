@@ -15,10 +15,9 @@
 **If you make it iterate backwards too much it goes onto random memory space and ends up segfaulting
 **Error with real container -> If iterator points on vector array, and vector array gets resized allocating in new memory space, initial iterator loses what it pointed on
 **
-**Begin, rbegin, end, rend functions should return empty iterator instead of calling segfault when container is empty /
 **When trying to access empty container segfaults (front, back, at, []) /
 **Unused allocated memory should be set to null, c++ automatically sets to null /
-**Iterator object should be able to iterate freely, no protections /
+**Iterator object should be able to iterate freely, no protections, if on unitialized value random output /
 */
 
 namespace ft
@@ -40,9 +39,15 @@ namespace ft
     template<typename inputiterator>
     void copy(inputiterator first, inputiterator last); //Copy with clear and reallocation
     void copy(const vector<T> &cpy); //Copy withouth reallocating
-    T &copy(); //Send a copy of the array
     void new_size(size_t size);
     void reserve2(size_t n);
+
+    void show()
+    {
+      for (unsigned int i = 0; i < size(); i++)
+        std::cout << _array[i];
+      std::cout << std::endl;
+    }
 
   public:
     //Iterators
@@ -52,28 +57,28 @@ namespace ft
     typedef const Vector::reverse_iterator<T> const_reverse_iterator;
 
     //Constructors
-    vector() { realloc(0); } //Realloc is own function that uses new keyword
-    vector(size_t n, const T &value) { assign(n, value); }
+    vector(): _size(0) { realloc(0); } //Realloc is own function that uses new keyword
+    vector(size_t n, const T &value): _size(0) { assign(n, value); }
     template<typename inputiterator>
-    vector(inputiterator first, inputiterator last) { assign(first, last); } //If you do not take as a reference you will lose the values contained in it!!
-    vector(const vector<T> &to_copy) {*this = to_copy;}
-    void operator=(const vector<T> &to_copy) { copy(to_copy.begin(), to_copy.end()); } //Deep copy
+    vector(inputiterator first, inputiterator last): _size(0) { assign(first, last); } //If you do not take as a reference you will lose the values contained in it!!
+    vector(const vector<T> &to_copy): _size(0) {*this = to_copy;}
+    void operator=(const vector<T> &to_copy) { _size = 0; copy(to_copy.begin(), to_copy.end()); } //Deep copy
     ~vector() { clear(); }
 
     //Iterators
-    iterator begin() { if (empty()) return iterator(); else return iterator(_array); }
-    const_iterator begin() const { if (empty()) return const_iterator(); else return const_iterator(_array); }
-    iterator end() { if (empty()) return iterator(); else return iterator(_array + _size - 1); }
-    const_iterator end() const { if (empty()) return const_iterator(); else return const_iterator(_array + _size - 1); }
-    reverse_iterator rbegin() { if (empty()) return reverse_iterator(); else return reverse_iterator(_array + _size - 1); }
-    const_reverse_iterator rbegin() const { if (empty()) return const_reverse_iterator(); else return const_reverse_iterator(_array + _size - 1); }
-    reverse_iterator rend() { if (empty()) return reverse_iterator(); else return reverse_iterator(_array); }
-    const_reverse_iterator rend() const { if (empty()) return const_reverse_iterator(); else return const_reverse_iterator(_array); }
+    iterator begin() { return iterator(_array); }
+    const_iterator begin() const { return const_iterator(_array); }
+    iterator end() { return iterator(_array + _size); }
+    const_iterator end() const { return const_iterator(_array + _size); }
+    reverse_iterator rbegin() { return reverse_iterator(_array + _size - 1); }
+    const_reverse_iterator rbegin() const { return const_reverse_iterator(_array + _size - 1); }
+    reverse_iterator rend() { return reverse_iterator(_array - 1); }
+    const_reverse_iterator rend() const { return const_reverse_iterator(_array - 1); }
 
     //Capacity
     size_t size() const { return (_size); }
     size_t max_size() const { return std::numeric_limits<size_t>::max(); } //Because the size is stored in a size_t, https://en.cppreference.com/w/cpp/container/list/max_size
-    void resize(size_t n, const T &value); //Change size
+    void resize(size_t n, const T &value=T()); //Change size
     size_t capacity() const { return (_total_buffer_storage); }
     bool empty() const;
     void reserve(size_t n); //Change capacity
@@ -115,14 +120,14 @@ namespace ft
   template<typename T>
   bool operator==(const vector<T> &r, const vector<T> &l)
   {
-    int i;
+    size_t i;
 
     i = 0;
     if (r.size() != l.size())
       return false;
     if (r.size() == 0 and l.size() == 0)
       return true;
-    while (r[i] && l[i])
+    while (i < r.size())
     {
       if (r[i] != l[i])
         return false;
@@ -134,14 +139,14 @@ namespace ft
   template<typename T>
   bool operator!=(const vector<T> &r, const vector<T> &l)
   {
-    int i;
+    size_t i;
 
     i = 0;
     if (r.size() != l.size())
       return true;
     if (r.size() == 0 and l.size() == 0)
       return false;
-    while (r[i] and l[i])
+    while (i < r.size())
     {
       if (r[i] != l[i])
         return true;
@@ -153,17 +158,19 @@ namespace ft
   template<typename T>
   bool operator<(const vector<T> &r, const vector<T> &l)
   {
-    int i;
+    size_t i;
 
     i = 0;
-    if (r.size() < l.size())
-      return true;
-    if (r.size() == l.size() || l.size() == 0)
+    if (l.size() == 0)
       return false;
-    while (r[i] and l[i])
+    if (r.size() == 0)
+      return true;
+    while (i < r.size())
     {
       if (r[i] < l[i])
         return true;
+      else if (r[i] > l[i])
+        return false;
       i++;
     }
     return false;
@@ -172,36 +179,42 @@ namespace ft
   template<typename T>
   bool operator<=(const vector<T> &r, const vector<T> &l)
   {
-    int i;
+    size_t i;
 
     i = 0;
-    if (r.size() <= l.size())
+    if (r.size() == 0 && l.size() == 0)
       return true;
     if (l.size() == 0)
       return false;
-    while (r[i] and l[i])
+    if (r.size() == 0)
+      return true;
+    while (i < r.size())
     {
-      if (r[i] <= l[i])
+      if (r[i] > l[i])
+        return false;
+      else if (r[i] < l[i])
         return true;
       i++;
     }
-    return false;
+    return true;
   }
 
   template<typename T>
   bool operator>(const vector<T> &r, const vector<T> &l)
   {
-    int i;
+    size_t i;
 
     i = 0;
-    if (r.size() > l.size())
-      return true;
-    if (r.size() == l.size() || r.size() == 0)
+    if (r.size() == 0)
       return false;
-    while (r[i] and l[i])
+    if (l.size() == 0)
+      return true;
+    while (i < r.size())
     {
       if (r[i] > l[i])
         return true;
+      else if (r[i] < l[i])
+        return false;
       i++;
     }
     return false;
@@ -210,20 +223,24 @@ namespace ft
   template<typename T>
   bool operator>=(const vector<T> &r, const vector<T> &l)
   {
-    int i;
+    size_t i;
 
     i = 0;
-    if (r.size() >= l.size())
+    if (r.size() == 0 && l.size() == 0)
+      return true;
+    if (l.size() == 0)
       return true;
     if (r.size() == 0)
       return false;
-    while (r[i] and l[i])
+    while (i < r.size())
     {
-      if (r[i] >= l[i])
+      if (r[i] < l[i])
+        return false;
+      else if (r[i] > l[i])
         return true;
       i++;
     }
-    return false;
+    return true;
   }
 
   template<typename T>
@@ -304,24 +321,31 @@ namespace ft
   template<typename T>
   Vector::iterator<T> vector<T>::insert(iterator position, const T &value)
   {
-    if (_size == 0)
-    {
-      std::cout << "Out of range calling segfault..." << std::endl;
-      raise (SIGSEGV);
-    }
-    iterator i = end();
-    iterator l = end();
-    T rem;
+    size_t rem_pos = get_size(begin(), position); //Position pointer will get lost if memory has to be reallocated
 
-    rem = *i;
-    while (i != position)
+    size_t rem = _size;
+    reserve2(_size + 1);
+    if (rem == _size)
+      new_size(_size + 1);
+
+    position = begin();
+    while (rem_pos)
     {
+      ++position;
+      rem_pos--;
+    }
+
+    iterator i = end();
+    ft::vector<T> cp = *this;
+    iterator cpi = cp.end();
+
+    while (i != position && cpi != begin())
+    {
+      --cpi;
+      *i = *cpi;
       --i;
-      *l = *i;
-      --l;
     }
     *i = value;
-    push_back(rem);
     return (i);
   }
 
@@ -331,6 +355,7 @@ namespace ft
     while (n)
     {
       position = insert(position, value);
+      ++position;
       n--;
     }
   }
@@ -341,32 +366,24 @@ namespace ft
   {
     while (first != last)
     {
-      insert(position, *first);
+      position = insert(position, *first);
+      ++position;
       ++first;
     }
-    insert(position, *first);
   }
 
   template<typename T>
   Vector::iterator<T> vector<T>::erase(iterator position)
   {
-    if (_size == 0)
-    {
-      std::cout << "Out of range calling segfault..." << std::endl;
-      raise (SIGSEGV);
-    }
     iterator i = end();
-    T tmp1;
-    T tmp2;
+    ft::vector<T> cp = *this;
+    iterator cpi = cp.end();
 
-    tmp1 = *i;
-    *i = 0;
     while (i != position)
     {
       --i;
-      tmp2 = *i;
-      *i = tmp1;
-      tmp1 = tmp2;
+      *i = *cpi;
+      --cpi;
     }
     new_size(_size - 1);
     return (i);
@@ -380,8 +397,7 @@ namespace ft
       first = erase(first);
       --last;
     }
-    erase(first);
-    return last;
+    return first;
   }
 
   template<typename T>
@@ -431,9 +447,8 @@ namespace ft
   template<typename inputiterator>
   size_t vector<T>::get_size(inputiterator first, inputiterator last)
   {
-    size_t counter;
+    size_t counter = 0;
 
-    counter = 1;
     while (first != last)
     {
       ++first;
@@ -457,39 +472,21 @@ namespace ft
       ++first;
       ++i;
     }
-    _array[i] = *first;
-    _array[++i] = 0;
+    _array[i] = 0;
   }
 
   template<typename T>
   void vector<T>::copy(const vector<T> &cpy) //Copy withouth reallocating
   {
-    int i;
+    size_t i;
 
     i = 0;
-    while (cpy[i] != 0)
+    while (i < cpy.size())
     {
       _array[i] = cpy[i];
       ++i;
     }
     _array[i] = 0;
-  }
-
-  template<typename T>
-  T &vector<T>::copy() //Send a copy of the array
-  {
-    int i;
-    T *_new;
-
-    i = 0;
-    _new = new T[_size];
-    while (_array[i] != 0)
-    {
-      _new[i] = _array[i];
-      ++i;
-    }
-    _new[i] = 0;
-    return _new;
   }
 
   template<typename T>

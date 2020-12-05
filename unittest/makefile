@@ -22,8 +22,8 @@ const:
 	clang++ -Wall -Wextra -Werror const_main.cpp -o const_container && ./const_container
 #Compile const program to test for const containers
 
-clean: 
-	rm -f output/list output/vector output/map output/queue output/stack output/real
+clean:
+	rm -f output/my output/real output/tmp_my output/tmp_real
 
 fclean: clean
 		rm -f container const_container a.out

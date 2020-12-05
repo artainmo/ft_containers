@@ -6,7 +6,8 @@
 **
 **USE
 **Prepare -> Change path to your containers hpp's in main.hpp
-**Prepare -> Choose ERROR LIMIT by changing G_ERROR_LIMIT in main.cpp
+**Prepare -> Choose ERROR LIMIT by changing G_ERROR_LIMIT in main.cpp,
+**Optional prepare -> Set G_STOP_AT_TEST to keep testing a particular case independently of errors
 **Launch non-const unittest -> make list/stack/...
 **Results -> output/real and output/list
 **Tests -> list_tests.hpp
@@ -15,6 +16,8 @@
 **Allocator_type
 **Undefined behavior; unintialized memory access, SIGABORT, SEGFAULT
 **Max size as you can have different answer than real one. You must be able to explain, your own implementation of it.
+**Destructor is not tested and memeory leaks are not tested
+**To test vector container correctly set its buffer_size to 10
 **
 **OTHER
 **Infinite loop results can be checked in output/tmp_my and output/tmp_real
@@ -41,8 +44,12 @@
 **Fork gets slower as parent process uses more memory both stack and heap memory, due to its copying feature, using threads detaches from parent process and speeds up the forks
 */
 
-int G_ERROR_LIMIT = 1;
+unsigned int G_ERROR_LIMIT = 1;
 //MAX 200 or potential computer crash risk
+
+unsigned int G_STOP_AT_TEST = 0;
+//Set to zero to deactivate
+//Set to desired number to go until a certain test, independent of error limit
 
 int G_LIST = 0;
 int G_MAP = 0;
@@ -69,7 +76,7 @@ void call_tests(std::string type, std::string cont, T* (*function_pointer)(unsig
   args->real_func1 = function_pointer5(args->functions1_number);
   args->real_func2 = function_pointer6(args->functions2_number);
   test<T, R, T1, T2>(args);
-  std::cout << "\033[1m\033[33m" << "!!End " << cont << "<"<< type << "> container tests!!\n" << std::endl;
+  std::cout << "\033[1m\033[33m" << "!!End " << cont << "<"<< type << "> container tests!!" << std::endl;
   delete args;
 }
 
@@ -86,11 +93,7 @@ int main(int argc, char **argv)
     return 1;
   }
 
-  std::remove("output/list");
-  std::remove("output/map");
-  std::remove("output/queue");
-  std::remove("output/stack");
-  std::remove("output/vector");
+  std::remove("output/my");
   std::remove("output/real");
   std::remove("output/tmp_my");
   std::remove("output/tmp_real");
@@ -107,6 +110,7 @@ int main(int argc, char **argv)
 
     call_tests<ft::list<int>, std::list<int>, int, int>("int", "list", list_container_object_creation1<ft::list<int> >, list_container_object_creation1<std::list<int> >,
           list_func1<ft::list<int>, int>, list_func2<ft::list<int>, int>, list_func1<std::list<int>, int>, list_func2<std::list<int>, int>);
+    cont();
     call_tests<ft::list<char>, std::list<char>, char, char>("char", "list", list_container_object_creation1<ft::list<char> >, list_container_object_creation1<std::list<char> >,
           list_func1<ft::list<char>, char>, list_func2<ft::list<char>, char>, list_func1<std::list<char>, char>, list_func2<std::list<char>, char>);
     feedback();
@@ -120,6 +124,7 @@ int main(int argc, char **argv)
 
     call_tests<ft::map<int, int>, std::map<int, int>, int, int>("int", "map", map_container_object_creation1<ft::map<int, int> >, map_container_object_creation1<std::map<int, int> >,
           map_func1<ft::map<int, int>, int, int>, map_func2<ft::map<int, int>, int, int>, map_func1<std::map<int, int>, int, int>, map_func2<std::map<int, int>, int, int>);
+    cont();
     call_tests<ft::map<char, char>, std::map<char, char>, char, char>("char", "map", map_container_object_creation1<ft::map<char, char> >, map_container_object_creation1<std::map<char, char> >,
           map_func1<ft::map<char, char>, char, char>, map_func2<ft::map<char, char>, char, char>, map_func1<std::map<char, char>, char, char>, map_func2<std::map<char, char>, char, char>);
     feedback();
@@ -133,6 +138,7 @@ int main(int argc, char **argv)
 
     call_tests<ft::queue<int>, std::queue<int>, int, int>("int", "queue", queue_container_object_creation1<ft::queue<int>, std::deque<int> >, queue_container_object_creation1<std::queue<int>, std::deque<int> >,
           queue_func1<ft::queue<int> >, queue_func2<ft::queue<int> >, queue_func1<std::queue<int> >, queue_func2<std::queue<int> >);
+    cont();
     call_tests<ft::queue<char, std::list<char> >, std::queue<char, std::list<char> >, char, char>("char", "queue", queue_container_object_creation1<ft::queue<char, std::list<char> >, std::list<char> >,
           queue_container_object_creation1<std::queue<char, std::list<char> >, std::list<char> >, queue_func1<ft::queue<char, std::list<char> > >, queue_func2<ft::queue<char, std::list<char> > >,
                 queue_func1<std::queue<char, std::list<char> > >, queue_func2<std::queue<char, std::list<char> > >);
@@ -147,11 +153,26 @@ int main(int argc, char **argv)
 
     call_tests<ft::stack<int>, std::stack<int>, int, int>("int", "stack", stack_container_object_creation1<ft::stack<int>, std::deque<int> >, stack_container_object_creation1<std::stack<int>, std::deque<int> >,
           stack_func1<ft::stack<int> >, stack_func2<ft::stack<int> >, stack_func1<std::stack<int> >, stack_func2<std::stack<int> >);
+    cont();
     call_tests<ft::stack<char, std::list<char> >, std::stack<char, std::list<char> >, char, char>("char", "stack", stack_container_object_creation1<ft::stack<char, std::list<char> >, std::list<char> >,
           stack_container_object_creation1<std::stack<char, std::list<char> >, std::list<char> >, stack_func1<ft::stack<char, std::list<char> > >, stack_func2<ft::stack<char, std::list<char> > >,
                 stack_func1<std::stack<char, std::list<char> > >, stack_func2<std::stack<char, std::list<char> > >);
     feedback();
     std::cout << "\033[1m\033[33m" << "~~~~!!End tests for stack container!!~~~~" << std::endl;
+  }
+  if (std::strcmp("vector", argv[1]) == 0)
+  {
+    G_VECTOR = 1;
+    std::cout << "\033[1m\033[33m" << "~~~~!!Starting tests for vector container...!!~~~~" << std::endl;
+    basis_tests<ft::vector<int>, std::vector<int>, int>(vector_basic_func<ft::vector<int>, int>, vector_basic_func<std::vector<int>, int>);
+
+    call_tests<ft::vector<int>, std::vector<int>, int, int>("int", "vector", vector_container_object_creation1<ft::vector<int> >, vector_container_object_creation1<std::vector<int> >,
+          vector_func1<ft::vector<int>, int>, vector_func2<ft::vector<int>, int>, vector_func1<std::vector<int>, int>, vector_func2<std::vector<int>, int>);
+    cont();
+    call_tests<ft::vector<char>, std::vector<char>, char, char>("char", "vector", vector_container_object_creation1<ft::vector<char> >, vector_container_object_creation1<std::vector<char> >,
+          vector_func1<ft::vector<char>, char>, vector_func2<ft::vector<char>, char>, vector_func1<std::vector<char>, char>, vector_func2<std::vector<char>, char>);
+    feedback();
+    std::cout << "\033[1m\033[33m" << "~~~~!!End tests for vector container!!~~~~" << std::endl;
   }
 
 

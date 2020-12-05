@@ -8,7 +8,7 @@
 
 /*
 **FUNCTIONALITY DETAILS
-**Empty container always contains a minimum of 1 end struct (unfortunately by misunderstanding I have two basis structs)
+**Empty container always contains a minimum of 1 end struct (unfortunately by misunderstanding I have two basis structs, can be practical for rend() though)
 **Iterator end returns size (if constructor object cannot accept size like std::string it segfaults)
 **Iterator begin-- goes backward and equals to end
 **Iterator end++ goes backwards and equal to begin()
@@ -41,7 +41,6 @@ namespace ft
 
     void ending_empty_container(); //Empty container should always at least contain two empty structs one for begin and one for end
     int check_if_in(const list<T> &x, List::iterator<T> find) const;
-    List::iterator<T> empty_begin() const { return iterator(_list->head); } //Returns empty begin struct, to protect from iterator input that point on it
 
   public:
     typedef List::iterator<T> iterator;
@@ -54,7 +53,7 @@ namespace ft
     template<typename InputIterator>
     list(InputIterator first,InputIterator last): _size(0) { ending_empty_container(); assign<InputIterator>(first, last); } //Range constructor
     list(const list<T> &to_copy): _size(0) { *this = to_copy;} //copy constructor
-    void operator=(const list<T> &to_copy) { ending_empty_container(); clear(); if (to_copy.empty()) return ; assign<iterator>(to_copy.begin(), to_copy.end()); } //Assignation constructor
+    void operator=(const list<T> &to_copy) { if (_size == 0) ending_empty_container(); clear(); if (to_copy.empty()) return ; assign<iterator>(to_copy.begin(), to_copy.end()); } //Assignation constructor
     ~list() { clear(); delete _list->next; delete _list; } //Destructor
 
     // Iterators

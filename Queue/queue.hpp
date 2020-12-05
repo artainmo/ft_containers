@@ -6,16 +6,16 @@
 
 namespace ft
 {
-
-template<typename T, typename Container = ft::list<T> > //List is used as default because it has been coded by oneself, but technically dequeue can be used too
-class queue //Similar to stack, big difference is that queue works with FIFO(first in first out), elements are inserted from its back but are popped or erased from the front
+//Similar to stack, big difference is that queue works with FIFO(first in first out), elements are inserted from its back but are popped or erased from the front
+template<typename T, typename Container = std::deque<T> > //Can have dequeu or list as adaptator object
+class queue
 {
 private:
   size_t _size;
   Container _cont;
 
 public:
-  explicit queue(const Container &cont_ = Container()): _size(0), _cont(cont_) {} //Explicit keyword is used to block implicit conversions the compiler could make, we set our own explicit conversion to the default container constructor
+  explicit queue(const Container &cont_ = Container()): _size(cont_.size()), _cont(cont_) {} //Explicit keyword is used to block implicit conversions the compiler could make, we set our own explicit conversion to the default container constructor
 
   //Queue has no object destructor, its adaptator object will automatically go through his destructor
   //Queue has no object destructor, its adaptator object will automatically go through his destructor

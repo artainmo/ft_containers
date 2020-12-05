@@ -29,14 +29,14 @@ public:
   T &operator->() { return (*iter); }
   const T &operator->() const { return (*iter); }
   void operator*=(T value) { *iter = value; }
-  T &operator[](const size_t &r) { return (iter + r); }
-  const T &operator[](const size_t &r) const { return (iter + r); }
-  virtual T &operator++() { iter++; return (*iter); }
-  virtual T &operator--() { iter--; return (*iter); }
-  virtual T &operator+(const size_t &r) { iter += r; return (*iter); }
-  virtual T &operator-(const size_t &r) { iter -= r; return (*iter); }
-  virtual T &operator+=(const size_t &r) { iter += r; return (*iter); }
-  virtual T &operator-=(const size_t &r) { iter -= r; return (*iter); }
+  T &operator[](const size_t &r) { return *(iter + r); }
+  const T &operator[](const size_t &r) const { return *(iter + r); }
+  virtual void operator++() { iter++; }
+  virtual void operator--() { iter--; }
+  iterator<T> operator+(const size_t &r) { return iterator<T>(iter + r); }
+  iterator<T> operator-(const size_t &r) { return iterator<T>(iter - r); }
+  virtual void operator+=(const size_t &r) { iter += r; }
+  virtual void operator-=(const size_t &r) { iter -= r; }
 };
 
 template<typename T>
@@ -48,17 +48,18 @@ public:
   reverse_iterator(const reverse_iterator<T> &to_copy) { *this = to_copy; }
   virtual ~reverse_iterator() {}
 
-  const T &operator++() const { iterator<T>::iter--; return (*iterator<T>::iter); }
+  void operator++() { iterator<T>::iter--; }
 
-  const T &operator--() const { iterator<T>::iter++; return (*iterator<T>::iter); }
+  void operator--() { iterator<T>::iter++; }
 
-  const T &operator+(const size_t &r) const { iterator<T>::iter -= r; return (*iterator<T>::iter); }
+  reverse_iterator<T> operator+(const size_t &r) { return reverse_iterator<T>(iterator<T>::iter - r); }
 
-  const T &operator-(const size_t &r) const { iterator<T>::iter += r; return (*iterator<T>::iter); }
+  reverse_iterator<T> operator-(const size_t &r) { return reverse_iterator<T>(iterator<T>::iter + r); }
 
-  const T &operator+=(const size_t &r) const { iterator<T>::iter -= r; return (*iterator<T>::iter); }
+  void operator+=(const size_t &r) { iterator<T>::iter -= r; }
 
-  const T &operator-=(const size_t &r) const { iterator<T>::iter += r; return (*iterator<T>::iter); }
+  void operator-=(const size_t &r) { iterator<T>::iter += r; }
 };
+
 }
 #endif

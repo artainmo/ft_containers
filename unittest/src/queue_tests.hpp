@@ -81,9 +81,9 @@ void show_queue(T &s)
 template<typename T>
 void qaccess(T &l) //All the subtests indicated with ~~
 {
-  struct s_functions_ptr1<T> func[5] = {{qget_size<T>, 0}, {qget_front<T>, 1}, {qget_back<T>, 2}, {show_queue<T>, 3}};
+  struct s_functions_ptr1<T> func[4] = {{qget_size<T>, 0}, {qget_front<T>, 1}, {qget_back<T>, 2}, {show_queue<T>, 3}};
 
-  for (int i = 0; i < 5; i++)
+  for (int i = 0; i < 4; i++)
   {
     pid_t pid = fork();
 

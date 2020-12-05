@@ -31,13 +31,14 @@
 
 #define LIST_TOTAL_TESTS 162535.000000
 #define MAP_TOTAL_TESTS 156897.000000
-#define QUEUE_TOTAL_TESTS 11592.000000
+#define QUEUE_TOTAL_TESTS 10127.000000
 #define STACK_TOTAL_TESTS 6399.000000
-#define VECTOR_TOTAL_TESTS 162535.000000
+#define VECTOR_TOTAL_TESTS 130434.000000
 
-extern int G_ERROR_LIMIT;
-extern int G_ERROR_COUNT;
-extern int G_LINE;
+extern unsigned int G_ERROR_LIMIT;
+extern unsigned int G_STOP_AT_TEST;
+extern unsigned int G_ERROR_COUNT;
+extern unsigned int G_LINE;
 
 extern int G_LIST;
 extern int G_MAP;
@@ -84,6 +85,7 @@ struct test_args
 
 void check_answer(std::ifstream &fd_r, std::ifstream &fd_r_r, std::ofstream &output_my, std::ofstream &output_real);
 void feedback();
+void cont();
 
 std::string itoa(int num);
 
@@ -96,7 +98,7 @@ void sigquit(int sig);
 #include "src/map_tests.hpp"
 #include "src/queue_tests.hpp"
 #include "src/stack_tests.hpp"
-// #include "src/vector_tests.hpp"
+#include "src/vector_tests.hpp"
 
 #include "src/tests.hpp"
 

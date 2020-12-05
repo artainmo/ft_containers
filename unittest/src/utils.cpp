@@ -14,8 +14,8 @@ std::string itoa(int num) //c++ has no itoa!! Only c++11 has itoa equivalent
   return s;
 }
 
-int G_ERROR_COUNT = 0; //Lifetime end is not scope but whole program as assigned in static memory
-int G_LINE = 0; //By knowing how much lines/tests you went through you can view your progress
+unsigned int G_ERROR_COUNT = 0; //Lifetime end is not scope but whole program as assigned in static memory
+unsigned int G_LINE = 0; //By knowing how much lines/tests you went through you can view your progress
 
 void check_answer(std::ifstream &fd_r, std::ifstream &fd_r_r, std::ofstream &output_my, std::ofstream &output_real) //Check all lines takes the test name and compares following test output
 {
@@ -51,12 +51,12 @@ void check_answer(std::ifstream &fd_r, std::ifstream &fd_r_r, std::ofstream &out
   fd_r.open("output/tmp_my", std::ofstream::out | std::ofstream::trunc);
   fd_r_r.open("output/tmp_real", std::ofstream::out | std::ofstream::trunc);
 
-  if (error != 0) //Write errors to output files and check error limit
+  if (error != 0 || (G_STOP_AT_TEST != 0 && G_STOP_AT_TEST <= G_LINE)) //Write errors to output files and check error limit
   {
     G_ERROR_COUNT++;
     output_my << me << std::endl;
     output_real << real << std::endl;
-    if (G_ERROR_COUNT >= G_ERROR_LIMIT)
+    if ((G_ERROR_COUNT >= G_ERROR_LIMIT && G_STOP_AT_TEST == 0) || (G_STOP_AT_TEST != 0 && G_STOP_AT_TEST <= G_LINE))
     {
       int dev_null = open("/dev/null", O_CREAT | O_WRONLY);
       feedback();
@@ -82,9 +82,22 @@ void feedback()
     total = STACK_TOTAL_TESTS;
   if (G_VECTOR == 1)
     total = VECTOR_TOTAL_TESTS;
-  std::cout << "\033[34m" << G_ERROR_COUNT << " ERRORS ATTAINED ON "<< G_LINE << " TESTS" << std::endl;
+  if (G_ERROR_LIMIT > 1)
+    std::cout << "\033[34m" << "\n" << G_ERROR_COUNT << " ERRORS ATTAINED ON "<< G_LINE << " TESTS" << std::endl;
+  else
+    std::cout << "\033[34m" << "\n" << G_ERROR_COUNT << " ERROR ATTAINED ON "<< G_LINE << " TESTS" << std::endl;
   fflush(stdout);
   float correct_answers = G_LINE - G_ERROR_COUNT;
-  std::cout << "\033[34m" << "------> " << std::setprecision(3) << (correct_answers / total) * 100 << "%" << std::endl;
+  std::cout << "\033[34m" << "------> " << std::setprecision(3) << (correct_answers / total) * 100 << "%\n" << std::endl;
   fflush(stdout);
+}
+
+void cont()
+{
+  std::string input;
+
+  feedback();
+  std::cout << "\033[30m" <<"\nPRESS ENTER to continue";
+  std::getline(std::cin, input);
+  std::cout << "\n" << std::cout;
 }
