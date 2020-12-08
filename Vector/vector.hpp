@@ -50,7 +50,14 @@ namespace ft
     }
 
   public:
-    //Iterators
+    typedef T value_type;
+    typedef value_type& reference;
+    typedef const value_type& const_reference;
+    typedef value_type* pointer;
+    typedef const value_type* const_pointer;
+    typedef ptrdiff_t difference_type;
+    typedef size_t size_type;
+
     typedef Vector::iterator<T> iterator;
     typedef const Vector::iterator<T> const_iterator;
     typedef Vector::reverse_iterator<T> reverse_iterator;
@@ -58,7 +65,7 @@ namespace ft
 
     //Constructors
     vector(): _size(0) { realloc(0); } //Realloc is own function that uses new keyword
-    vector(size_t n, const T &value): _size(0) { assign(n, value); }
+    vector(size_t n, const T &value=T()): _size(0) { assign(n, value); }
     template<typename inputiterator>
     vector(inputiterator first, inputiterator last): _size(0) { assign(first, last); } //If you do not take as a reference you will lose the values contained in it
     vector(const vector<T> &to_copy): _size(0) {*this = to_copy;}

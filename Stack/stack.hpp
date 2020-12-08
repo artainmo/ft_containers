@@ -17,6 +17,10 @@ namespace ft
     Container _cont;
 
   public:
+    typedef T value_type;
+    typedef Container container_type;
+    typedef size_t size_type;
+
     explicit stack(const Container &cont_ = Container()): _size(cont_.size()), _cont(cont_) {} //Constructs an adaptor object, adaptor because the object contruction depends on the template parameter //Container() will call the default constructor of the container type
     /*
     **The explicit(stated clearly) keyword is used to protect against bugs due to implicit(suggested) conversions of parameters that the compiler could make.

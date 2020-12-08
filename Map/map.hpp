@@ -30,7 +30,19 @@ namespace ft
     struct __map *_map;
     size_t _size;
 
-    class value_compare //Not necessary to use, but asked to do and return in vlue_comp function
+    void ending_empty_container(); //Empty container should always at least contain two empty structs one for begin and one for end
+    Map::iterator<Key, T> _insert(const Key &k, const T &value);
+    void _erase(struct __map *position);
+    bool is_in(const Key &k) const;
+    template<typename inputiterator>
+    void cpy(inputiterator first, inputiterator last);
+
+  public:
+    typedef Key key_type;
+    typedef T mapped_type;
+    typedef std::pair<const key_type, mapped_type> value_type;
+    typedef Compare key_compare;
+    class value_compare //Not necessary to use, but asked to do and return in value_comp function
     {
     private:
         Compare comp;
@@ -43,15 +55,13 @@ namespace ft
       Compare get_comp() const { return (comp); }
       bool operator()(const std::pair<Key, T> &x, const std::pair<Key, T> &y) { return (comp(x.first, y.first)); } // directly give iterators as argument, easier but not necessary...
     };
+    typedef value_type& reference;
+    typedef const value_type& const_reference;
+    typedef value_type* pointer;
+    typedef const value_type* const_pointer;
+    typedef ptrdiff_t difference_type;
+    typedef size_t size_type;
 
-    void ending_empty_container(); //Empty container should always at least contain two empty structs one for begin and one for end
-    Map::iterator<Key, T> _insert(const Key &k, const T &value);
-    void _erase(struct __map *position);
-    bool is_in(const Key &k) const;
-    template<typename inputiterator>
-    void cpy(inputiterator first, inputiterator last);
-
-  public:
     typedef Map::iterator<Key, T> iterator;
     typedef const Map::iterator<Key, T> const_iterator;
     typedef Map::reverse_iterator<Key, T> reverse_iterator;

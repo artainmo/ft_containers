@@ -15,6 +15,10 @@ private:
   Container _cont;
 
 public:
+  typedef T value_type;
+  typedef Container container_type;
+  typedef size_t size_type;
+
   explicit queue(const Container &cont_ = Container()): _size(cont_.size()), _cont(cont_) {} //Explicit keyword is used to block implicit conversions the compiler could make, we set our own explicit conversion to the default container constructor
 
   //Queue has no object destructor, its adaptator object will automatically go through his destructor

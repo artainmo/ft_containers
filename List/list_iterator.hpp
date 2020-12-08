@@ -73,24 +73,46 @@ public:
     return (_list->value);
   }
   void operator*=(T value) { _list->value = value; }
-  virtual void operator++()
+  virtual T& operator++() //Returns a reference
   {
     if (_list->next == 0)
     {
       go_to_start();
-      return ;
+      return _list->value;
     }
     _list = _list->next;
+    return _list->value;
+  }
+  virtual T operator++(int) //(int) Used to indicate that ++ comes after variable and not before //Returns a copy
+  {
+    if (_list->next == 0)
+    {
+      go_to_start();
+      return _list->value;
+    }
+    _list = _list->next;
+    return _list->value;
   }
 
-  virtual void operator--()
+  virtual T& operator--()
   {
     if (_list->prev->prev == 0)
     {
       go_to_end();
-      return ;
+      return _list->value;
     }
     _list = _list->prev;
+    return _list->value;
+  }
+  virtual T operator--(int)
+  {
+    if (_list->prev->prev == 0)
+    {
+      go_to_end();
+      return _list->value;
+    }
+    _list = _list->prev;
+    return _list->value;
   }
 
   //*++ and *-- increment and decrement the value returned by *
@@ -106,24 +128,46 @@ public:
   reverse_iterator(void *list_):iterator<T>(list_) {}
   virtual ~reverse_iterator() {}
 
-  void operator++()
+  T& operator++()
   {
     if (iterator<T>::_list->prev->prev == 0)
     {
       iterator<T>::go_to_end();
-      return ;
+      return iterator<T>::_list->value;
     }
     iterator<T>::_list = iterator<T>::_list->prev;
+    return iterator<T>::_list->value;
+  }
+  T operator++(int)
+  {
+    if (iterator<T>::_list->prev->prev == 0)
+    {
+      iterator<T>::go_to_end();
+      return iterator<T>::_list->value;
+    }
+    iterator<T>::_list = iterator<T>::_list->prev;
+    return iterator<T>::_list->value;
   }
 
-  void operator--()
+  T& operator--()
   {
     if (iterator<T>::_list->next == 0)
     {
       iterator<T>::go_to_start();
-      return ;
+      return iterator<T>::_list->value;
     }
     iterator<T>::_list = iterator<T>::_list->next;
+    return iterator<T>::_list->value;
+  }
+  T operator--(int)
+  {
+    if (iterator<T>::_list->next == 0)
+    {
+      iterator<T>::go_to_start();
+      return iterator<T>::_list->value;;
+    }
+    iterator<T>::_list = iterator<T>::_list->next;
+    return iterator<T>::_list->value;
   }
 
 };

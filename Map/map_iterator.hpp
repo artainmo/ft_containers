@@ -34,17 +34,19 @@ public:
   bool operator!=(const iterator &r) const { if (_map != r.get_map()) return true; return false; }
   std::pair<Key, T> *operator->();
   const std::pair<Key, T> *operator->() const;
-  std::pair<Key, T> operator*();
-  const std::pair<Key, T> operator*() const;
+  std::pair<Key, T> &operator*();
+  const std::pair<Key, T> &operator*() const;
   void operator*=(T value) { _map->element_value = value; }
-  virtual void operator++() { if (_map->next == 0) raise(SIGSEGV); _map = _map->next; }
+  virtual std::pair<Key, T> &operator++() { if (_map->next == 0) raise(SIGSEGV); _map = _map->next; return operator*(); }
+  virtual std::pair<Key, T> operator++(int) { if (_map->next == 0) raise(SIGSEGV); _map = _map->next; return operator*(); }
   virtual void operator--() { if (_map->prev == 0) raise(SIGSEGV); _map = _map->prev; }
+  virtual void operator--(int) { if (_map->prev == 0) raise(SIGSEGV); _map = _map->prev; }
 
   //*++ and *-- increment and decrement the value returned by *
 };
 
 template<typename Key, typename T>
-std::pair<Key, T> iterator<Key, T>::operator*()
+std::pair<Key, T> &iterator<Key, T>::operator*()
 {
   std::pair<Key, T> *ret;
   if (_map->next == 0 || _map->prev == 0)
@@ -57,7 +59,7 @@ std::pair<Key, T> iterator<Key, T>::operator*()
 }
 
 template<typename Key, typename T>
-const std::pair<Key, T> iterator<Key, T>::operator*() const
+const std::pair<Key, T> &iterator<Key, T>::operator*() const
 {
   std::pair<Key, T> *ret;
   if (_map->next == 0 || _map->prev == 0)
@@ -104,8 +106,10 @@ public:
   reverse_iterator(void *map_):iterator<Key, T>(map_) {}
   virtual ~reverse_iterator() {}
 
-  void operator++() { if (iterator<Key, T>::_map->prev == 0) raise(SIGSEGV); iterator<Key, T>::_map = iterator<Key, T>::_map->prev; }
+  std::pair<Key, T> &operator++() { if (iterator<Key, T>::_map->prev == 0) raise(SIGSEGV); iterator<Key, T>::_map = iterator<Key, T>::_map->prev; return iterator<Key, T>::operator*(); }
+  std::pair<Key, T> operator++(int) { if (iterator<Key, T>::_map->prev == 0) raise(SIGSEGV); iterator<Key, T>::_map = iterator<Key, T>::_map->prev; return iterator<Key, T>::operator*(); }
   void operator--() { if (iterator<Key, T>::_map->next == 0) raise(SIGSEGV); iterator<Key, T>::_map = iterator<Key, T>::_map->next; }
+  void operator--(int) { if (iterator<Key, T>::_map->next == 0) raise(SIGSEGV); iterator<Key, T>::_map = iterator<Key, T>::_map->next; }
 };
 }
 #endif
