@@ -24,7 +24,7 @@ protected:
 public:
   iterator():_map(nullptr) {}
   iterator(const iterator<Key, T> &to_copy) { *this = to_copy; }
-  void operator=(const iterator<Key, T> &to_copy) { _map = to_copy.get_map(); }
+  iterator &operator=(const iterator<Key, T> &to_copy) { _map = to_copy.get_map(); return *this; }
   iterator(void *map_): _map(static_cast<struct __map *>(map_)) {}
   virtual ~iterator() {} //Parent classes always need to have virtual destructor to avoid error
 
@@ -37,10 +37,10 @@ public:
   std::pair<Key, T> &operator*();
   const std::pair<Key, T> &operator*() const;
   void operator*=(T value) { _map->element_value = value; }
-  virtual std::pair<Key, T> &operator++() { if (_map->next == 0) raise(SIGSEGV); _map = _map->next; return operator*(); }
-  virtual std::pair<Key, T> operator++(int) { if (_map->next == 0) raise(SIGSEGV); _map = _map->next; return operator*(); }
-  virtual void operator--() { if (_map->prev == 0) raise(SIGSEGV); _map = _map->prev; }
-  virtual void operator--(int) { if (_map->prev == 0) raise(SIGSEGV); _map = _map->prev; }
+  iterator<Key, T> operator++() { if (_map->next == 0) raise(SIGSEGV); _map = _map->next; return iterator<Key, T>(_map); }
+  iterator<Key, T> operator++(int) { struct __map *rem = _map; if (_map->next == 0) raise(SIGSEGV); _map = _map->next; return iterator<Key, T>(rem); }
+  iterator<Key, T> operator--() { if (_map->prev == 0) raise(SIGSEGV); _map = _map->prev; return iterator<Key, T>(_map); }
+  iterator<Key, T> operator--(int) { struct __map *rem = _map; if (_map->prev == 0) raise(SIGSEGV); _map = _map->prev; return iterator<Key, T>(rem); }
 
   //*++ and *-- increment and decrement the value returned by *
 };
@@ -106,10 +106,10 @@ public:
   reverse_iterator(void *map_):iterator<Key, T>(map_) {}
   virtual ~reverse_iterator() {}
 
-  std::pair<Key, T> &operator++() { if (iterator<Key, T>::_map->prev == 0) raise(SIGSEGV); iterator<Key, T>::_map = iterator<Key, T>::_map->prev; return iterator<Key, T>::operator*(); }
-  std::pair<Key, T> operator++(int) { if (iterator<Key, T>::_map->prev == 0) raise(SIGSEGV); iterator<Key, T>::_map = iterator<Key, T>::_map->prev; return iterator<Key, T>::operator*(); }
-  void operator--() { if (iterator<Key, T>::_map->next == 0) raise(SIGSEGV); iterator<Key, T>::_map = iterator<Key, T>::_map->next; }
-  void operator--(int) { if (iterator<Key, T>::_map->next == 0) raise(SIGSEGV); iterator<Key, T>::_map = iterator<Key, T>::_map->next; }
+  reverse_iterator<Key, T> operator++() { if (iterator<Key, T>::_map->prev == 0) raise(SIGSEGV); iterator<Key, T>::_map = iterator<Key, T>::_map->prev; return reverse_iterator<Key, T>(iterator<Key, T>::_map); }
+  reverse_iterator<Key, T> operator++(int) { struct iterator<Key, T>::__map *rem = iterator<Key, T>::_map; if (iterator<Key, T>::_map->prev == 0) raise(SIGSEGV); iterator<Key, T>::_map = iterator<Key, T>::_map->prev; return reverse_iterator<Key, T>(rem); }
+  reverse_iterator<Key, T> operator--() { if (iterator<Key, T>::_map->next == 0) raise(SIGSEGV); iterator<Key, T>::_map = iterator<Key, T>::_map->next; return reverse_iterator<Key, T>(iterator<Key, T>::_map);}
+  reverse_iterator<Key, T> operator--(int) { struct iterator<Key, T>::__map *rem = iterator<Key, T>::_map; if (iterator<Key, T>::_map->next == 0) raise(SIGSEGV); iterator<Key, T>::_map = iterator<Key, T>::_map->next; return reverse_iterator<Key, T>(rem);}
 };
 }
 #endif

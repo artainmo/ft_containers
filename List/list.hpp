@@ -61,7 +61,7 @@ namespace ft
     template<typename InputIterator>
     list(InputIterator first,InputIterator last): _size(0) { ending_empty_container(); assign<InputIterator>(first, last); } //Range constructor
     list(const list<T> &to_copy): _size(0) { *this = to_copy;} //copy constructor
-    void operator=(const list<T> &to_copy) { if (_size == 0) ending_empty_container(); clear(); if (to_copy.empty()) return ; assign<iterator>(to_copy.begin(), to_copy.end()); } //Assignation constructor
+    list &operator=(const list<T> &to_copy) { if (_size == 0) ending_empty_container(); clear(); if (to_copy.empty()) return *this; assign<iterator>(to_copy.begin(), to_copy.end()); return *this; } //Assignation constructor
     ~list() { clear(); delete _list->next; delete _list; } //Destructor
 
     // Iterators
@@ -88,13 +88,13 @@ namespace ft
     //Modifiers
     template<typename InputIterator>
     void assign(InputIterator first, InputIterator last); //Range
-    void assign(size_t n, T value); //fill
+    void assign(size_type n, value_type value); //fill
     void push_front (const T &value);
     void pop_front();
     void push_back(const T& value);
     void pop_back();
     iterator insert(iterator position, const T &value); //single element
-    void insert(iterator position, size_t n, const T &value); //fill
+    void insert(iterator position, size_type n, const value_type &value); //fill
     template <typename InputIterator>
     void insert(iterator position, InputIterator first, InputIterator last); //range
     iterator erase(iterator position);
@@ -815,11 +815,11 @@ void list<T>::ending_empty_container()
   struct __list *end = new struct __list;
   _list->next = end;
   _list->prev = 0;
-  _list->value = T(0);
+  _list->value = T(); //Accepts ints, std::string,....
   _list->head = _list;
   end->next = 0;
   end->prev = _list;
-  end->value = T(0);
+  end->value = T();
   end->head = _list;
   return ;
  }

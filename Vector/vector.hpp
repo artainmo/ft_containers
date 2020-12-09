@@ -69,7 +69,7 @@ namespace ft
     template<typename inputiterator>
     vector(inputiterator first, inputiterator last): _size(0) { assign(first, last); } //If you do not take as a reference you will lose the values contained in it
     vector(const vector<T> &to_copy): _size(0) {*this = to_copy;}
-    void operator=(const vector<T> &to_copy) { _size = 0; copy(to_copy.begin(), to_copy.end()); } //Deep copy
+    vector &operator=(const vector<T> &to_copy) { _size = 0; copy(to_copy.begin(), to_copy.end()); return *this; } //Deep copy
     ~vector() { clear(); }
 
     //Iterators
@@ -103,11 +103,11 @@ namespace ft
     //Modifiers
     template<typename inputiterator>
     void assign(inputiterator first, inputiterator last) { realloc(0); copy(first, last); }
-    void assign(size_t n, const T &value);
+    void assign(size_type n, const value_type &value);
     void push_back(const T &value);
     void pop_back();
     iterator insert(iterator position, const T &value);
-    void insert(iterator position, size_t n, const T &value);
+    void insert(iterator position, size_type n, const value_type &value);
     template<typename inputiterator>
     void insert(iterator position, inputiterator first, inputiterator last);
     iterator erase(iterator position);

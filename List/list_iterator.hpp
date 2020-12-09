@@ -54,7 +54,7 @@ protected:
 public:
   iterator(): _list(nullptr) {}
   iterator(const iterator<T> &to_copy) { *this = to_copy; }
-  void operator=(const iterator<T> &to_copy) { _list = to_copy.get_list(); }
+  iterator &operator=(const iterator<T> &to_copy) { _list = to_copy.get_list(); return *this; }
   iterator(void *list_): _list(static_cast<struct __list *>(list_)) {} //If conversion to type not possible static cast returns compilation error, takes in void * to keep struct __list private
   virtual ~iterator() {} //Parent classes always need to have virtual destructor to avoid error
 
@@ -73,46 +73,48 @@ public:
     return (_list->value);
   }
   void operator*=(T value) { _list->value = value; }
-  virtual T& operator++() //Returns a reference
+  iterator<T> operator++() //Equals to ++var and returns new value
   {
     if (_list->next == 0)
     {
       go_to_start();
-      return _list->value;
+      return iterator<T>(_list);
     }
     _list = _list->next;
-    return _list->value;
+    return iterator<T>(_list);
   }
-  virtual T operator++(int) //(int) Used to indicate that ++ comes after variable and not before //Returns a copy
+  iterator<T> operator++(int) //(int) Used to indicate that ++ comes after variable and not before //Equals to var++ and returns old value
   {
+    struct __list *rem = _list;
     if (_list->next == 0)
     {
       go_to_start();
-      return _list->value;
+      return iterator<T>(rem);
     }
     _list = _list->next;
-    return _list->value;
+    return iterator<T>(rem);
   }
 
-  virtual T& operator--()
+  iterator<T> operator--()
   {
     if (_list->prev->prev == 0)
     {
       go_to_end();
-      return _list->value;
+      return iterator<T>(_list);
     }
     _list = _list->prev;
-    return _list->value;
+    return iterator<T>(_list);
   }
-  virtual T operator--(int)
+  iterator<T> operator--(int)
   {
+    struct __list *rem = _list;
     if (_list->prev->prev == 0)
     {
       go_to_end();
-      return _list->value;
+      return iterator<T>(rem);
     }
     _list = _list->prev;
-    return _list->value;
+    return iterator<T>(rem);
   }
 
   //*++ and *-- increment and decrement the value returned by *
@@ -128,46 +130,50 @@ public:
   reverse_iterator(void *list_):iterator<T>(list_) {}
   virtual ~reverse_iterator() {}
 
-  T& operator++()
+  reverse_iterator<T> operator++()
   {
-    if (iterator<T>::_list->prev->prev == 0)
+    if (iterator<T>::_list->prev == 0)
     {
       iterator<T>::go_to_end();
-      return iterator<T>::_list->value;
+      return reverse_iterator<T>(iterator<T>::_list);
     }
     iterator<T>::_list = iterator<T>::_list->prev;
-    return iterator<T>::_list->value;
+    return reverse_iterator<T>(iterator<T>::_list);
   }
-  T operator++(int)
+  reverse_iterator<T> operator++(int)
   {
-    if (iterator<T>::_list->prev->prev == 0)
+    struct iterator<T>::__list *rem = iterator<T>::_list;
+
+    if (iterator<T>::_list->prev == 0)
     {
       iterator<T>::go_to_end();
-      return iterator<T>::_list->value;
+      return reverse_iterator<T>(rem);
     }
     iterator<T>::_list = iterator<T>::_list->prev;
-    return iterator<T>::_list->value;
+    return reverse_iterator<T>(rem);
   }
 
-  T& operator--()
+  reverse_iterator<T> operator--()
   {
     if (iterator<T>::_list->next == 0)
     {
       iterator<T>::go_to_start();
-      return iterator<T>::_list->value;
+      return reverse_iterator<T>(iterator<T>::_list);
     }
     iterator<T>::_list = iterator<T>::_list->next;
-    return iterator<T>::_list->value;
+    return reverse_iterator<T>(iterator<T>::_list);
   }
-  T operator--(int)
+  reverse_iterator<T> operator--(int)
   {
+    struct iterator<T>::__list *rem = iterator<T>::_list;
+
     if (iterator<T>::_list->next == 0)
     {
       iterator<T>::go_to_start();
-      return iterator<T>::_list->value;;
+      return reverse_iterator<T>(rem);
     }
     iterator<T>::_list = iterator<T>::_list->next;
-    return iterator<T>::_list->value;
+    return reverse_iterator<T>(rem);
   }
 
 };

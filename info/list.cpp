@@ -33,6 +33,8 @@ int main()
   i.push_back(2);
   i.push_back(3);
   i.push_back(5);
+  std::list<int>::iterator t1, t2;
+  t1 = t2 = i.begin();
   std::list<int>::iterator il = i.begin();
   std::list<int>::iterator im = i.end();
   std::cout << "Begin"<< std::endl;

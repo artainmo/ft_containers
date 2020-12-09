@@ -71,7 +71,7 @@ namespace ft
     template<typename inputiterator>
     map(inputiterator first, inputiterator last): _size(0) { ending_empty_container(); cpy(first, last); } //range constructor
     map(const map<Key, T> &to_copy): _size(0) { *this = to_copy; }
-    void operator=(const map<Key, T> &to_copy) { if (_size == 0) ending_empty_container(); clear(); cpy(to_copy.begin(), to_copy.end()); }
+    map &operator=(const map<Key, T> &to_copy) { if (_size == 0) ending_empty_container(); clear(); cpy(to_copy.begin(), to_copy.end()); return *this; }
     ~map() { clear(); delete _map->next; delete _map; };
 
     //Iterators
@@ -171,7 +171,7 @@ namespace ft
   template<typename Key, typename T, typename Compare> //If key not found inserts it as new key with a non specified element value 0
   T &map<Key, T, Compare>::operator[](const Key &k)
   {
-    _insert(k, 0);
+    _insert(k, T());
     struct __map *tmp = _map->head->next;
     while (tmp->key_value != k)
       tmp = tmp->next;
@@ -495,13 +495,13 @@ namespace ft
     struct __map *end = new struct __map;
     _map->next = end;
     _map->prev = 0;
-    _map->element_value = T(0);
-    _map->key_value = Key(0);
+    _map->element_value = T();
+    _map->key_value = Key();
     _map->head = _map;
     end->next = 0;
     end->prev = _map;
-    end->element_value = T(0);
-    end->key_value = Key(0);
+    end->element_value = T();
+    end->key_value = Key();
     end->head = _map;
     return ;
    }

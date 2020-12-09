@@ -35,9 +35,9 @@ int main()
   i.push_back(5);
   std::vector<int>::iterator il = i.begin();
   std::vector<int>::iterator im = i.end();
-  std::cout << *il<< std::endl;
-  il = im - 2;
-  std::cout << *il<< std::endl;
+  //std::cout << *il<< std::endl;
+  //il = im - 2;
+  //std::cout << *il<< std::endl;
   std::cout << "Begin"<< std::endl;
   std::cout << *il << std::endl;
   std::cout << "End"<< std::endl;
