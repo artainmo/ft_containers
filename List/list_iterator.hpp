@@ -40,13 +40,13 @@ protected:
   }
   size_t ft_strlen() const
   {
-    struct __list *tmp = _list;
+    struct __list *tmp = _list->head;
     size_t lenght = 0;
 
-    while (tmp->prev->prev != 0)
+    while (tmp->next->next != 0)
     {
       lenght++;
-      tmp = tmp->prev;
+      tmp = tmp->next;
     }
     return lenght;
   }
@@ -65,6 +65,8 @@ public:
   T &operator*()
   {
     if (_list->next == 0)
+      _list->value = ft_strlen();
+    else if (_list->prev == 0)
       _list->value = ft_strlen();
     return (_list->value);
   }
