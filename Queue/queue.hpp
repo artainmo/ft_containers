@@ -2,6 +2,7 @@
 #define QUEUE_HPP
 
 #include <iostream>
+#include <deque>
 #include "../List/list.hpp"
 
 namespace ft

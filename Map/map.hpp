@@ -5,7 +5,7 @@
 #include <utility>
 #include <climits>
 #include "map_iterator.hpp"
-
+#include <csignal>
 /*
 **SPECIAL CASES
 *

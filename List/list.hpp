@@ -57,7 +57,7 @@ namespace ft
     typedef const List::reverse_iterator<T> const_reverse_iterator;
 
     list(): _size(0) { ending_empty_container(); } //empty/default constructor
-    list(size_t __size, T value): _size(0) { ending_empty_container(); assign(__size, value); } //fill constructor
+    list(size_t __size, T value = T()): _size(0) { ending_empty_container(); assign(__size, value); } //fill constructor
     template<typename InputIterator>
     list(InputIterator first,InputIterator last): _size(0) { ending_empty_container(); assign<InputIterator>(first, last); } //Range constructor
     list(const list<T> &to_copy): _size(0) { *this = to_copy;} //copy constructor
